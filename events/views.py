@@ -319,106 +319,13 @@ def event_detail(request, event_id):
                             link=event.get_absolute_url()
                         )
 
-    if request.method == 'POST' and request.user.is_authenticated:
-        # Prevent banned users from RSVPing
-        if is_banned_by_organizer or is_banned_from_group:
-            messages.error(request, 'You are banned from RSVPing to events by this organizer or group.', extra_tags='admin_notification')
-            return redirect('event_detail', event_id=event.id)
-
-        if 'cancel_event' in request.POST and can_cancel_event:
-            with transaction.atomic():
-                event.status = 'cancelled'
-                event.save()
-                
-                # Notify all confirmed and waitlisted attendees
-                for rsvp in event.rsvps.filter(status__in=['confirmed', 'waitlisted']):
-                    if rsvp.user:
-                        create_notification(
-                            rsvp.user,
-                            f'Event "{event.title}" has been cancelled.',
-                            link=event.get_absolute_url()
-                        )
-                
-                return redirect('event_detail', event_id=event.id)
-
-        if 'remove_rsvp' in request.POST:
-            if user_rsvp: # Ensure there is an RSVP to remove
-                with transaction.atomic():
-                    was_confirmed = (user_rsvp.status == 'confirmed')
-                    
-                    # Log the RSVP removal
-                    AuditLog.log_action(
-                        user=request.user,
-                        action='rsvp_deleted',
-                        description=f'Removed RSVP for {event.title}',
-                        group=event.group,
-                        event=event,
-                        target_user=request.user,
-                        ip_address=request.META.get('REMOTE_ADDR'),
-                        user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                        additional_data={
-                            'previous_status': user_rsvp.status,
-                            'was_confirmed': was_confirmed
-                        }
-                    )
-                    
-                    user_rsvp.delete()
-                    create_notification(request.user, f'You have removed your RSVP for {event.title}.', link=event.get_absolute_url())
-                    # Telegram webhook for public RSVP removal
-                    if event.attendee_list_public and event.group and getattr(event.group, 'telegram_webhook_channel', None):
-                        telegram_username = None
-                        if hasattr(request.user, 'profile') and getattr(request.user.profile, 'telegram_username', None):
-                            telegram_username = request.user.profile.telegram_username
-                        if telegram_username:
-                            mention = f'@{telegram_username}'
-                        else:
-                            mention = request.user.get_username() if request.user else 'Someone'
-                        date_str = event.date.strftime('%m/%d/%Y') if hasattr(event.date, 'strftime') else str(event.date)
-                        event_url = request.build_absolute_uri(event.get_absolute_url())
-                        msg = (
-                            f'❌ {mention} removed their RSVP for [{event.title}]({event_url}).\n'
-                            f'*Date:* {date_str}\n'
-                            f'*Group:* {event.group.name}'
-                        )
-                        post_to_telegram_channel(event.group.telegram_webhook_channel, msg, parse_mode="Markdown")
-                    # If a confirmed spot opened up and waitlist is enabled, promote oldest waitlisted
-                    if was_confirmed:
-                        promote_waitlisted_if_spot(event)
-            else:
-                messages.error(request, 'You do not have an RSVP to remove.', extra_tags='admin_notification')
-            return redirect('event_detail', event_id=event.id)
-        
-        if 'delete_event' in request.POST and can_ban_user:
-            event_title = event.title
-            event_url = request.build_absolute_uri(event.get_absolute_url())
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            messages.error(request, 'You must be logged in to RSVP.')
+            return redirect('login')
             
-            # Log the event deletion before deleting
-            AuditLog.log_action(
-                user=request.user,
-                action='event_deleted',
-                description=f'Deleted event: {event_title}',
-                group=event.group,
-                event=event,
-                ip_address=request.META.get('REMOTE_ADDR'),
-                user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                additional_data={
-                    'event_title': event_title,
-                    'event_date': event.date.isoformat(),
-                    'event_group': event.group.name if event.group else None,
-                    'event_url': event_url
-                }
-            )
-            
-            event.delete()
-            create_notification(request.user, f'Event "{event_title}" has been deleted.', link='/') # Link to home since event is deleted
-            # Telegram webhook for event deletion
-            if event.group and getattr(event.group, 'telegram_webhook_channel', None):
-                msg = (
-                    f'🚫 *Event Deleted!*\n'
-                    f'*Title:* [{event_title}]({event_url})\n'
-                    f'*Group:* {event.group.name}'
-                )
-                post_to_telegram_channel(event.group.telegram_webhook_channel, msg, parse_mode="Markdown")
+        if event.is_cancelled:
+            messages.error(request, 'This event has been cancelled.')
             return redirect('home')
             
         form = RSVPForm(request.POST, instance=user_rsvp, event=event)
@@ -428,41 +335,6 @@ def event_detail(request, event_id):
             rsvp.event = event
             rsvp.user = request.user
             rsvp.save()
-            
-            # Log the RSVP action
-            if user_rsvp:
-                # This is an update
-                AuditLog.log_action(
-                    user=request.user,
-                    action='rsvp_updated',
-                    description=f'Updated RSVP status to {rsvp.get_status_display()} for {event.title}',
-                    group=event.group,
-                    event=event,
-                    target_user=request.user,
-                    ip_address=request.META.get('REMOTE_ADDR'),
-                    user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                    additional_data={
-                        'old_status': user_rsvp.status,
-                        'new_status': new_status,
-                        'rsvp_id': rsvp.id
-                    }
-                )
-            else:
-                # This is a new RSVP
-                AuditLog.log_action(
-                    user=request.user,
-                    action='rsvp_created',
-                    description=f'Created RSVP with status {rsvp.get_status_display()} for {event.title}',
-                    group=event.group,
-                    event=event,
-                    target_user=request.user,
-                    ip_address=request.META.get('REMOTE_ADDR'),
-                    user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                    additional_data={
-                        'status': new_status,
-                        'rsvp_id': rsvp.id
-                    }
-                )
             
             create_notification(request.user, f'Your RSVP status has been updated to {rsvp.get_status_display()!s} for {event.title}.', link=event.get_absolute_url())
             # Telegram webhook for public RSVP (any status)

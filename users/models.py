@@ -16,6 +16,8 @@ class AuditLog(models.Model):
         ('user_banned', 'User Banned'),
         ('user_unbanned', 'User Unbanned'),
         ('user_profile_updated', 'User Profile Updated'),
+        ('admin_login', 'Admin Login'),
+        ('admin_logout', 'Admin Logout'),
         
         # Group management actions
         ('group_created', 'Group Created'),
@@ -30,12 +32,6 @@ class AuditLog(models.Model):
         ('event_cancelled', 'Event Cancelled'),
         ('event_activated', 'Event Activated'),
         
-        # RSVP actions
-        ('rsvp_created', 'RSVP Created'),
-        ('rsvp_updated', 'RSVP Updated'),
-        ('rsvp_deleted', 'RSVP Deleted'),
-        ('rsvp_status_changed', 'RSVP Status Changed'),
-        
         # Notification actions
         ('notification_sent', 'Notification Sent'),
         ('bulk_notification_sent', 'Bulk Notification Sent'),
@@ -49,8 +45,6 @@ class AuditLog(models.Model):
         ('blog_post_deleted', 'Blog Post Deleted'),
         
         # Other actions
-        ('admin_login', 'Admin Login'),
-        ('admin_logout', 'Admin Logout'),
         ('other', 'Other'),
     ]
     
