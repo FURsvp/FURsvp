@@ -4,7 +4,7 @@ from .views import manage_group_leadership, telegram_bot_webhook, rsvp_telegram,
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('calendar/', views.event_calendar, name='event_calendar'),
+    path('events/', views.event_index, name='event_index'),
     path('event/<int:event_id>/', views.event_detail, name='event_detail'),
     path('event/<int:event_id>/edit/', views.edit_event, name='edit_event'),
     path('event/<int:event_id>/uncancel/', views.uncancel_event, name='uncancel_event'),
@@ -19,5 +19,6 @@ urlpatterns = [
     path('event/<int:event_id>/rsvp_answers/<int:user_id>/', views.rsvp_answers, name='rsvp_answers'),
     path('telegram/bot/', telegram_bot_webhook, name='telegram_bot_webhook'),
     path('event/<int:event_id>/rsvp_telegram/', rsvp_telegram, name='rsvp_telegram'),
+    path('save-location/', views.save_user_location, name='save_user_location'),
     path('blog/', blog, name='blog'),
 ] 

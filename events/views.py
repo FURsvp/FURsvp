@@ -221,6 +221,20 @@ def home(request):
     # Get all unique states for the dropdown
     all_states = Event.objects.exclude(state__isnull=True).exclude(state__exact='').values_list('state', flat=True).distinct().order_by('state')
     
+    # Calculate actual statistics
+    from django.contrib.auth.models import User
+    from .models import PlatformStats
+    
+    # Get cumulative stats that always increase
+    stats = PlatformStats.get_or_create_stats()
+    
+    # Active events (current and future)
+    active_events = Event.objects.filter(
+        models.Q(date__gte=now.date()) | 
+        (models.Q(date=now.date()) & models.Q(end_time__gt=now.time())),
+        status='active'
+    ).count()
+    
     context = {
         'events': events_page,
         'current_sort': sort_by,
@@ -232,6 +246,11 @@ def home(request):
         'page_obj': events_page,
         'today': timezone.now().date(),
         'all_states': all_states,
+        'events_count': stats.total_events_created,
+        'groups_count': stats.total_groups_created,
+        'users_count': stats.total_users_registered,
+        'rsvps_count': stats.total_rsvps_created,
+        'active_events_count': active_events,
     }
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -878,10 +897,22 @@ def groups_list(request):
     }
     return render(request, 'events/groups_list.html', context)
 
-def event_calendar(request):
+def event_index(request):
+    """Calendar view with all events underneath"""
     # Get year and month from request, default to current
     year = int(request.GET.get('year', timezone.now().year))
     month = int(request.GET.get('month', timezone.now().month))
+    
+    # Get filter parameters for events list
+    sort_by = request.GET.get('sort', 'date')
+    sort_order = request.GET.get('order', 'asc')
+    filter_adult = request.GET.get('adult', 'true')
+    view_type = request.GET.get('view', 'list')
+    page = request.GET.get('page', 1)
+    search_query = request.GET.get('search', '').strip()
+    state_filter = request.GET.get('state', '').strip()
+    mileage_range = request.GET.get('mileage', '50')  # Default 50 miles
+    
     # Set first weekday to Sunday
     calendar.setfirstweekday(calendar.SUNDAY)
     # Create calendar object
@@ -893,15 +924,15 @@ def event_calendar(request):
     if month == 12:
         end_date = datetime(year + 1, 1, 1).date()
     else:
-        end_date = datetime(year, month + 1, 1).date()
-    events = Event.objects.filter(
+        end_date = datetime(year, month + 1, 1, 1).date()
+    calendar_events = Event.objects.filter(
         date__gte=start_date,
         date__lt=end_date,
         status='active'
     ).order_by('date', 'start_time')
     # Group events by date
     events_by_date = {}
-    for event in events:
+    for event in calendar_events:
         date_key = event.date.strftime('%Y-%m-%d')
         if date_key not in events_by_date:
             events_by_date[date_key] = []
@@ -914,6 +945,182 @@ def event_calendar(request):
     
     eastern = pytz.timezone('America/New_York')
     today = timezone.now().astimezone(eastern).date()
+    
+    # Get all events for the list section
+    now = timezone.now()
+    all_events = Event.objects.filter(
+        models.Q(date__gt=now.date()) | 
+        (models.Q(date=now.date()) & models.Q(end_time__gt=now.time())),
+        status='active'
+    )
+
+    if filter_adult == 'false':
+        all_events = all_events.exclude(age_restriction__in=['adult', 'mature'])
+
+    # Apply search filter
+    if search_query:
+        all_events = all_events.filter(
+            models.Q(title__icontains=search_query) |
+            models.Q(description__icontains=search_query) |
+            models.Q(city__icontains=search_query) |
+            models.Q(group__name__icontains=search_query)
+        )
+
+    # Apply state filter
+    if state_filter:
+        all_events = all_events.filter(state__iexact=state_filter)
+
+    # Get user location from form or session
+    user_location = request.GET.get('user_location') or request.session.get('user_location', 'CA')
+    if user_location:
+        request.session['user_location'] = user_location
+    
+    # Apply mileage filter using OpenStreetMap geocoding
+    if mileage_range and mileage_range != 'all':
+        try:
+            mileage = int(mileage_range)
+            
+            # Get user coordinates from session
+            user_lat = request.session.get('user_lat')
+            user_lng = request.session.get('user_lng')
+            
+            if user_lat and user_lng:
+                # Use OpenStreetMap to calculate distances to event cities
+                import requests
+                import math
+                
+                def calculate_distance(lat1, lon1, lat2, lon2):
+                    """Calculate distance between two points using Haversine formula"""
+                    R = 3959  # Earth's radius in miles
+                    
+                    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+                    dlat = lat2 - lat1
+                    dlon = lon2 - lon1
+                    
+                    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+                    c = 2 * math.asin(math.sqrt(a))
+                    distance = R * c
+                    
+                    return distance
+                
+                def geocode_city(city, state):
+                    """Geocode a city using OpenStreetMap Nominatim API"""
+                    try:
+                        query = f"{city}, {state}, USA"
+                        url = "https://nominatim.openstreetmap.org/search"
+                        params = {
+                            'q': query,
+                            'format': 'json',
+                            'limit': 1,
+                            'countrycodes': 'us'
+                        }
+                        headers = {
+                            'User-Agent': 'FURsvp/1.0 (https://fursvp.org)'
+                        }
+                        
+                        response = requests.get(url, params=params, headers=headers, timeout=5)
+                        if response.status_code == 200:
+                            data = response.json()
+                            if data:
+                                return float(data[0]['lat']), float(data[0]['lon'])
+                    except Exception as e:
+                        print(f"Geocoding error for {city}, {state}: {e}")
+                    return None, None
+                
+                # Filter events by distance
+                events_within_range = []
+                user_lat, user_lng = float(user_lat), float(user_lng)
+                
+                for event in all_events:
+                    if event.city and event.state:
+                        # Try to get coordinates for the event city
+                        event_lat, event_lng = geocode_city(event.city, event.state)
+                        
+                        if event_lat and event_lng:
+                            # Calculate distance
+                            distance = calculate_distance(user_lat, user_lng, event_lat, event_lng)
+                            
+                            if distance <= mileage:
+                                events_within_range.append(event.id)
+                        else:
+                            # Fallback: include events in the same state for local searches
+                            if mileage <= 50:
+                                user_state = request.session.get('user_state', user_location)
+                                if event.state == user_state:
+                                    events_within_range.append(event.id)
+                
+                # Filter the queryset to only include events within range
+                if events_within_range:
+                    all_events = all_events.filter(id__in=events_within_range)
+                else:
+                    # If no events found, show events in the same state
+                    user_state = request.session.get('user_state', user_location)
+                    all_events = all_events.filter(state__iexact=user_state)
+            else:
+                # Fallback to state-based filtering if no coordinates
+                if mileage <= 100:
+                    all_events = all_events.filter(state__iexact=user_location)
+                
+        except ValueError:
+            pass
+
+    all_events = all_events.annotate(
+        confirmed_count=models.Count('rsvps', filter=models.Q(rsvps__status='confirmed'))
+    )
+    
+    # Add user's RSVP information if user is authenticated
+    if request.user.is_authenticated:
+        all_events = all_events.annotate(
+            user_rsvp_status=models.Subquery(
+                RSVP.objects.filter(
+                    event=models.OuterRef('pk'),
+                    user=request.user
+                ).values('status')[:1]
+            )
+        )
+        
+        # Add user's RSVP list for template compatibility
+        for event in all_events:
+            user_rsvp = event.rsvps.filter(user=request.user).first()
+            if user_rsvp:
+                event.user_rsvp_list = [user_rsvp]
+            else:
+                event.user_rsvp_list = []
+    
+    # Apply sorting
+    if sort_by == 'date':
+        all_events = all_events.order_by('date', 'start_time') if sort_order == 'asc' else all_events.order_by('-date', '-start_time')
+    elif sort_by == 'group':
+        all_events = all_events.order_by(models.functions.Lower('group__name') if sort_order == 'asc' else models.functions.Lower('group__name').desc())
+    elif sort_by == 'title':
+        all_events = all_events.order_by(models.functions.Lower('title') if sort_order == 'asc' else models.functions.Lower('title').desc())
+    elif sort_by == 'rsvps':
+        all_events = all_events.annotate(rsvp_count=models.Count('rsvps')).order_by(
+            'rsvp_count' if sort_order == 'asc' else '-rsvp_count'
+        )
+    
+    # Pagination
+    paginator = Paginator(all_events, 20)  # Show 20 events per page for expanded view
+    try:
+        events_page = paginator.page(page)
+    except PageNotAnInteger:
+        events_page = paginator.page(1)
+    except EmptyPage:
+        events_page = paginator.page(paginator.num_pages)
+    
+    # Add user's RSVP information if user is authenticated (AFTER pagination)
+    if request.user.is_authenticated:
+        # Add user's RSVP list for template compatibility
+        for event in events_page:
+            user_rsvp = event.rsvps.filter(user=request.user).first()
+            if user_rsvp:
+                event.user_rsvp_list = [user_rsvp]
+            else:
+                event.user_rsvp_list = []
+    
+    # Get all unique states for the dropdown
+    all_states = Event.objects.exclude(state__isnull=True).exclude(state__exact='').values_list('state', flat=True).distinct().order_by('state')
+    
     context = {
         'calendar': cal,
         'month_name': month_name,
@@ -925,9 +1132,48 @@ def event_calendar(request):
         'next_month': next_month,
         'next_year': next_year,
         'today': today,
+        'events': events_page,
+        'current_sort': sort_by,
+        'current_order': sort_order,
+        'filter_adult': filter_adult,
+        'view_type': view_type,
+        'paginator': paginator,
+        'page_obj': events_page,
+        'all_states': all_states,
+        'mileage_range': mileage_range,
+        'search_query': search_query,
+        'state_filter': state_filter,
     }
     
-    return render(request, 'events/event_calendar.html', context)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # If it's an AJAX request, only return the partial event list HTML
+        return render(request, 'events/events_list_partial.html', context)
+    
+    return render(request, 'events/event_index.html', context)
+
+@csrf_exempt
+def save_user_location(request):
+    """Save user's geolocation coordinates"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            lat = data.get('lat')
+            lng = data.get('lng')
+            state = data.get('state')
+            
+            if lat and lng:
+                request.session['user_lat'] = lat
+                request.session['user_lng'] = lng
+                if state:
+                    request.session['user_state'] = state
+                
+                return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+
 
 @login_required
 def rsvp_answers(request, event_id, user_id):

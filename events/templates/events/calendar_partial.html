@@ -1,0 +1,73 @@
+{% load calendar_extras %}
+
+<div class="calendar-container">
+    <div class="calendar-header">
+        <div class="calendar-nav">
+            <a href="?year={{ prev_year }}&month={{ prev_month }}&sort={{ current_sort|escapejs }}&order={{ current_order|escapejs }}&adult={{ filter_adult|escapejs }}&search={{ search_query|escapejs }}&state={{ state_filter|escapejs }}&mileage={{ mileage_range|escapejs }}" class="calendar-nav-btn">
+                <i class="material-icons">chevron_left</i>
+            </a>
+            <h2 class="calendar-title">{{ month_name }} {{ year }}</h2>
+            <a href="?year={{ next_year }}&month={{ next_month }}&sort={{ current_sort|escapejs }}&order={{ current_order|escapejs }}&adult={{ filter_adult|escapejs }}&search={{ search_query|escapejs }}&state={{ state_filter|escapejs }}&mileage={{ mileage_range|escapejs }}" class="calendar-nav-btn">
+                <i class="material-icons">chevron_right</i>
+            </a>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'event_index' %}?sort={{ current_sort|escapejs }}&order={{ current_order|escapejs }}&adult={{ filter_adult|escapejs }}&search={{ search_query|escapejs }}&state={{ state_filter|escapejs }}&mileage={{ mileage_range|escapejs }}" class="btn btn-today-pretty">
+                <i class="material-icons me-1">today</i> Today
+            </a>
+        </div>
+    </div>
+
+    <div class="calendar-grid-scroll">
+        <div class="calendar-grid">
+            <!-- Day headers -->
+            <div class="calendar-day-header">Sunday</div>
+            <div class="calendar-day-header">Monday</div>
+            <div class="calendar-day-header">Tuesday</div>
+            <div class="calendar-day-header">Wednesday</div>
+            <div class="calendar-day-header">Thursday</div>
+            <div class="calendar-day-header">Friday</div>
+            <div class="calendar-day-header">Saturday</div>
+
+            <!-- Calendar days -->
+            {% for week in calendar %}
+                {% for day in week %}
+                    {% if day == 0 %}
+                        <div class="calendar-day other-month"></div>
+                    {% else %}
+                        {% make_date_key year month day as date_key %}
+                        <div class="calendar-day{% if events_by_date|get_item:date_key|length > 0 %} has-events{% endif %}"
+                             {% if events_by_date|get_item:date_key|length > 0 %}data-date="{{ date_key }}"{% endif %}>
+                            <div class="day-number">{{ day }}</div>
+                            {% if events_by_date|get_item:date_key|length > 0 %}
+                                <span class="event-dot-prominent"></span>
+                                {% for event in events_by_date|get_item:date_key %}
+                                    <a href="{% url 'event_detail' event.id %}" 
+                                       class="event-item {% if event.age_restriction == 'adult' %}adult{% elif event.age_restriction == 'mature' %}mature{% endif %}">
+                                        {{ event.title|truncatechars:20 }}
+                                    </a>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="calendar-legend">
+        <h5 class="mb-3">Legend</h5>
+        <div class="legend-item">
+            <div class="legend-color all-ages"></div>
+            <span>All Ages</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color adult"></div>
+            <span>18+ (Adult)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color mature"></div>
+            <span>21+ (Mature)</span>
+        </div>
+    </div>
+</div> 

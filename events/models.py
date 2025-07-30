@@ -182,3 +182,96 @@ class Post(models.Model):
         if len(text) > length:
             return text[:length] + '…'
         return text
+
+
+class PlatformStats(models.Model):
+    """Track cumulative platform statistics that always increase"""
+    total_events_created = models.PositiveIntegerField(default=0, help_text="Total events ever created")
+    total_rsvps_created = models.PositiveIntegerField(default=0, help_text="Total RSVPs ever created")
+    total_users_registered = models.PositiveIntegerField(default=0, help_text="Total users ever registered")
+    total_groups_created = models.PositiveIntegerField(default=0, help_text="Total groups ever created")
+    last_updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Platform Statistics"
+        verbose_name_plural = "Platform Statistics"
+    
+    def __str__(self):
+        return f"Platform Stats - {self.last_updated.strftime('%Y-%m-%d %H:%M')}"
+    
+    @classmethod
+    def get_or_create_stats(cls):
+        """Get the current stats record or create one if it doesn't exist"""
+        stats, created = cls.objects.get_or_create(pk=1)
+        return stats
+    
+    @classmethod
+    def increment_events(cls):
+        """Increment the total events count"""
+        stats = cls.get_or_create_stats()
+        stats.total_events_created += 1
+        stats.save()
+    
+    @classmethod
+    def increment_rsvps(cls):
+        """Increment the total RSVPs count"""
+        stats = cls.get_or_create_stats()
+        stats.total_rsvps_created += 1
+        stats.save()
+    
+    @classmethod
+    def increment_users(cls):
+        """Increment the total users count"""
+        stats = cls.get_or_create_stats()
+        stats.total_users_registered += 1
+        stats.save()
+    
+    @classmethod
+    def increment_groups(cls):
+        """Increment the total groups count"""
+        stats = cls.get_or_create_stats()
+        stats.total_groups_created += 1
+        stats.save()
+    
+    @classmethod
+    def decrement_users(cls):
+        """Decrement the total users count"""
+        stats = cls.get_or_create_stats()
+        if stats.total_users_registered > 0:
+            stats.total_users_registered -= 1
+            stats.save()
+    
+    @classmethod
+    def decrement_groups(cls):
+        """Decrement the total groups count"""
+        stats = cls.get_or_create_stats()
+        if stats.total_groups_created > 0:
+            stats.total_groups_created -= 1
+            stats.save()
+    
+    @classmethod
+    def sync_with_current_data(cls):
+        """Sync cumulative stats with current database state"""
+        from django.contrib.auth.models import User
+        from django.db.models import Count
+        
+        stats = cls.get_or_create_stats()
+        
+        # Get current counts
+        current_events = Event.objects.count()
+        current_rsvps = RSVP.objects.count()
+        current_users = User.objects.count()
+        current_groups = Group.objects.count()
+        
+        # Update if current counts are higher than stored counts
+        if current_events > stats.total_events_created:
+            stats.total_events_created = current_events
+        if current_rsvps > stats.total_rsvps_created:
+            stats.total_rsvps_created = current_rsvps
+        if current_users > stats.total_users_registered:
+            stats.total_users_registered = current_users
+        if current_groups > stats.total_groups_created:
+            stats.total_groups_created = current_groups
+        
+        stats.save()
+        return stats

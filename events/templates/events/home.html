@@ -2,555 +2,412 @@
 {% block title %}Home - FURsvp{% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<section class="hero-section mb-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="hero-card text-center">
+                    <div class="hero-content">
+                        <div class="hero-badge mb-4">
+                            <span class="material-icons">pets</span>
+                            <span>FURsvp - Furry Event Organizer</span>
+                        </div>
+                        <p class="hero-description mb-5">
+                            The ultimate platform for furry event organizers and attendees. 
+                            Create events, manage RSVPs, and discover amazing furry gatherings 
+                            in your area. Free, open-source, and built for the community.
+                        </p>
+                        <div class="hero-stats mb-5">
+                            <div class="row justify-content-center">
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="stat-item">
+                                        <div class="stat-number">{{ events_count }}</div>
+                                        <div class="stat-label">Events Created</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="stat-item">
+                                        <div class="stat-number">{{ groups_count }}</div>
+                                        <div class="stat-label">Groups</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="stat-item">
+                                        <div class="stat-number">{{ users_count }}</div>
+                                        <div class="stat-label">Members</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="stat-item">
+                                        <div class="stat-number">{{ rsvps_count }}</div>
+                                        <div class="stat-label">RSVPs</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-actions">
+                            {% if user.is_authenticated and user.group_roles.all %}
+                            <a href="{% url 'create_event' %}" class="btn btn-primary btn-lg me-3">
+                                <span class="material-icons me-2">add_circle</span> Create Event
+                            </a>
+                            {% elif user.is_authenticated %}
+                            <a href="{% url 'groups_list' %}" class="btn btn-primary btn-lg me-3">
+                                <span class="material-icons me-2">group_add</span> Join Groups
+                            </a>
+                            {% else %}
+                            <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-3">
+                                <span class="material-icons me-2">person_add</span> Get Started
+                            </a>
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
+                                <span class="material-icons me-2">login</span> Sign In
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon mb-3">
+                        <span class="material-icons">event_available</span>
+                    </div>
+                    <h3 class="feature-title">Easy Event Management</h3>
+                    <p class="feature-description">
+                        Create and manage events with powerful RSVP tools, 
+                        custom questions, and real-time attendee tracking.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon mb-3">
+                        <span class="material-icons">groups</span>
+                    </div>
+                    <h3 class="feature-title">Community Focused</h3>
+                    <p class="feature-description">
+                        Built specifically for the Furry Fandom with 
+                        features that matter to event organizers and attendees.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon mb-3">
+                        <span class="material-icons">security</span>
+                    </div>
+                    <h3 class="feature-title">Privacy First</h3>
+                    <p class="feature-description">
+                        Your data stays yours. Open-source, transparent, 
+                        and designed with privacy in mind.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Events Section -->
+<section class="events-section">
+    <div class="container">
+        <div class="events-header mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 class="section-title d-flex align-items-center">
+                        <span class="material-icons me-3">event</span> 
+                        Upcoming Events
+                    </h2>
+                </div>
+                <div class="col-md-6 text-md-end">
+                                    <a href="{% url 'event_index' %}" class="btn btn-outline-primary">
+                    <span class="material-icons me-2">event</span> View All Events
+                </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-custom">
+            <div class="card-body p-4">
+                <!-- Search Form -->
+                <div class="search-section mb-4">
+                    <form method="get" id="eventSearchFilterForm">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-end-0">
+                                <span class="material-icons text-muted">search</span>
+                            </span>
+                            <input type="text" id="eventSearchInput" name="search" class="form-control border-start-0" 
+                                   placeholder="Search events by title, description, city, or group..." 
+                                   value="{{ request.GET.search|default:''|escapejs }}">
+                            <input type="hidden" name="sort" value="{{ current_sort|default:''|escapejs }}">
+                            <input type="hidden" name="order" value="{{ current_order|default:''|escapejs }}">
+                            <input type="hidden" name="adult" value="{{ filter_adult|default:''|escapejs }}">
+                            <input type="hidden" name="view" value="{{ view_type|default:''|escapejs }}">
+                            <button type="submit" class="btn btn-primary">
+                                Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="filter-controls mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8 mb-3 mb-lg-0">
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="btn-group" role="group">
+                                    <a href="#" data-sort="date" data-order="{{ current_order|default:'asc'|escapejs }}"
+                                       class="btn {% if current_sort == 'date' %}btn-primary{% else %}btn-outline-primary{% endif %} sort-btn">
+                                        <span class="material-icons me-1">calendar_today</span> Date
+                                    </a>
+                                    <a href="#" data-sort="group" data-order="{{ current_order|default:'asc'|escapejs }}"
+                                       class="btn {% if current_sort == 'group' %}btn-primary{% else %}btn-outline-primary{% endif %} sort-btn">
+                                        <span class="material-icons me-1">group</span> Group
+                                    </a>
+                                    <a href="#" data-sort="title" data-order="{{ current_order|default:'asc'|escapejs }}"
+                                       class="btn {% if current_sort == 'title' %}btn-primary{% else %}btn-outline-primary{% endif %} sort-btn">
+                                        <span class="material-icons me-1">title</span> Title
+                                    </a>
+                                    <a href="#" data-sort="rsvps" data-order="{{ current_order|default:'asc'|escapejs }}"
+                                       class="btn {% if current_sort == 'rsvps' %}btn-primary{% else %}btn-outline-primary{% endif %} sort-btn">
+                                        <span class="material-icons me-1">people</span> RSVPs
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                                <button type="button" id="toggleAdultEvents" class="btn btn-success">
+                                    <span class="material-icons me-1">visibility</span> Show 18+/21+
+                                </button>
+                                <div class="btn-group" role="group">
+                                    <a href="#" id="orderToggleBtn" data-sort="{{ current_sort|default:'date'|escapejs }}" 
+                                       data-order="{% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
+                                       class="btn btn-outline-primary order-toggle-btn" title="Toggle Order">
+                                        <span class="material-icons">{% if current_order == 'desc' %}arrow_downward{% else %}arrow_upward{% endif %}</span>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-primary" id="viewToggle" title="Toggle View">
+                                        <span class="material-icons">grid_view</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events List -->
+                {% include 'events/events_list_partial.html' %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
 <style>
-    .btn-group .btn.btn-outline-primary {
-        border-width: 1px;
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 4rem 0;
+        border-radius: var(--border-radius-xl);
+        margin: 2rem 0;
+        position: relative;
+        overflow: hidden;
     }
-    
-    /* Mobile-friendly styles */
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .hero-card {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius-lg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: white;
+        line-height: 1.2;
+    }
+
+    .hero-description {
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .hero-stats {
+        margin: 3rem 0;
+    }
+
+    .stat-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+    }
+
+    .stat-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        font-weight: 400;
+        margin-top: 0.25rem;
+    }
+
+    .hero-actions {
+        margin-top: 2rem;
+    }
+
+    /* Features Section */
+    .features-section {
+        padding: 2rem 0;
+    }
+
+    .feature-card {
+        background: var(--bg-secondary);
+        padding: 2rem;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .feature-icon .material-icons {
+        font-size: 2.5rem;
+        color: white;
+    }
+
+    .feature-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .feature-description {
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    /* Events Section */
+    .events-section {
+        padding: 2rem 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .search-section .input-group {
+        box-shadow: var(--shadow-sm);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+    }
+
+    .search-section .input-group-text {
+        border: 2px solid #e2e8f0;
+        border-right: none;
+    }
+
+    .search-section .form-control {
+        border: 2px solid #e2e8f0;
+        border-left: none;
+    }
+
+    .filter-controls {
+        background: var(--bg-primary);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Responsive Design */
     @media (max-width: 768px) {
-        .sort-btn {
-            padding: 0.375rem 0.75rem !important;
-            font-size: 0.9rem !important;
-        }
-        .sort-btn .material-icons {
-            font-size: 16px !important;
-        }
-        .btn-group {
-            flex-wrap: wrap;
-            gap: 0.25rem;
-        }
-        .btn-group .btn {
-            border-radius: 0.25rem !important;
-            margin: 0.125rem;
-        }
-        .card-body {
-            padding: 1rem !important;
-        }
-        .display-3 {
+        .hero-title {
             font-size: 2.5rem;
         }
-        .lead {
+        
+        .hero-description {
             font-size: 1.1rem;
         }
-        .modern-search-group {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            border-radius: 0 !important;
-            padding: 0.18rem;
-            gap: 0.5rem;
-            background: linear-gradient(90deg, #b8d0ff 0%, #e0e7ef 100%) !important;
+        
+        .stat-item {
+            padding: 1rem;
         }
-        .modern-search-group > * {
-            margin-bottom: 0 !important;
-            width: 100% !important;
-            min-width: 0 !important;
+        
+        .stat-number {
+            font-size: 1.5rem;
         }
-        .modern-search-input {
-            font-size: 1rem;
-            padding: 0.85rem 1.2rem;
-            border-radius: 1.5rem 1.5rem 0 0 !important;
+        
+        .feature-card {
+            padding: 1.5rem;
         }
-        .modern-search-group {
-            border-radius: 12px !important;
-        }
-        .modern-gradient-btn {
-            width: 100% !important;
-            font-size: 1rem;
-            padding: 0.85rem 1.2rem;
-            margin-left: 0 !important;
-        }
-        #eventSearchFilterForm {
-            margin-bottom: 1.2rem;
-        }
-    }
-    .hero-gradient {
-        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
-        color: #fff;
-        border-radius: 1.5rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
-        padding: 2.5rem 2rem 2rem 2rem;
-        margin-bottom: 2.5rem;
-    }
-    .modern-card {
-        border-radius: 1.25rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
-        background: #f8fafc;
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-    .modern-card-header.events {
-        background: linear-gradient(90deg, #42f56c 0%, #66f43f 100%);
-        color: #fff;
-        font-size: 1.25rem;
-        font-weight: 700;
-        padding: 1.2rem 2rem;
-        border-bottom: none;
-        display: flex;
-        align-items: center;
-    }
-    .modern-card-body {
-        padding: 2rem 2.5rem 1.5rem 2.5rem;
-        background: #f8fafc;
-        color: #222;
-        font-size: 1.08rem;
-    }
-    /* Dark mode improvements for home screen */
-    .dark-mode .modern-card {
-        background: #181a20;
-        color: #f3f4f6;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-    }
-    .dark-mode .modern-card-header.events {
-        background: linear-gradient(90deg, #42f56c 0%, #66f43f 100%);
-        color: #fff;
-    }
-    .dark-mode .modern-card-header {
-        border-bottom: none;
-    }
-    .dark-mode .modern-card-body {
-        background: #181a20;
-        color: #f3f4f6;
-    }
-    .dark-mode .pretty-toggle-btn,
-    .dark-mode .sort-btn,
-    .dark-mode .order-toggle-btn,
-    .dark-mode .btn-group .btn {
-        background: #23272f !important;
-        color: #f3f4f6 !important;
-        border-color: #374151 !important;
-    }
-    .dark-mode .pretty-toggle-btn.active,
-    .dark-mode .sort-btn.active,
-    .dark-mode .order-toggle-btn.active {
-        background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%) !important;
-        color: #fff !important;
-    }
-    .dark-mode .btn-danger {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%) !important;
-        color: #fff !important;
-        border: none !important;
-    }
-    .dark-mode .card,
-    .dark-mode .fancy-post-card,
-    .dark-mode .modern-event-card {
-        background: #23272f !important;
-        color: #f3f4f6 !important;
-        border: none !important;
-    }
-    .dark-mode .card-title,
-    .dark-mode .fw-bold,
-    .dark-mode .display-3,
-    .dark-mode .display-6 {
-        color: #60a5fa !important;
-    }
-    .dark-mode .badge.bg-primary {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%) !important;
-        color: #fff !important;
-    }
-    .dark-mode .badge.bg-danger {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%) !important;
-        color: #fff !important;
-    }
-    .dark-mode .badge.bg-warning {
-        background: linear-gradient(90deg, #f59e42 0%, #fbbf24 100%) !important;
-        color: #92400e !important;
-    }
-    .dark-mode .btn-light {
-        background: #23272f !important;
-        color: #f3f4f6 !important;
-        border-color: #374151 !important;
-    }
-    .dark-mode .btn-outline-primary {
-        color: #60a5fa !important;
-        border-color: #60a5fa !important;
-    }
-    .dark-mode .btn-outline-primary:hover {
-        background: #2563eb !important;
-        color: #fff !important;
-    }
-    .dark-mode .read-more-link,
-    .dark-mode .read-more-link2 {
-        color: #38bdf8 !important;
-    }
-    .dark-mode .read-more-link:hover,
-    .dark-mode .read-more-link2:hover {
-        color: #a5b4fc !important;
-    }
-    .gradient-sort-btn {
-        border: none;
-        border-radius: 2rem;
-        padding: 0.7rem 2.2rem;
-        font-size: 1.13rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
-        color: #fff;
-        box-shadow: 0 2px 12px rgba(59,130,246,0.10);
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-        margin-right: 0.7rem;
-        outline: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .gradient-sort-btn:hover, .gradient-sort-btn.active {
-        background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(59,130,246,0.18);
-        transform: translateY(-2px) scale(1.04);
-    }
-    .outline-sort-btn {
-        border: 2px solid #3b82f6;
-        border-radius: 2rem;
-        padding: 0.7rem 2.2rem;
-        font-size: 1.13rem;
-        font-weight: 700;
-        background: transparent;
-        color: #3b82f6;
-        transition: background 0.18s, color 0.18s, box-shadow 0.18s;
-        margin-right: 0.7rem;
-        outline: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .outline-sort-btn:hover, .outline-sort-btn:focus {
-        background: linear-gradient(90deg, #e0e7ef 0%, #f8fafc 100%);
-        color: #2563eb;
-        box-shadow: 0 4px 18px rgba(59,130,246,0.10);
-    }
-    .gradient-sfw-btn {
-        border: none;
-        border-radius: 2rem;
-        padding: 0.7rem 2.2rem;
-        font-size: 1.13rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #10b981 0%, #22d3ee 100%);
-        color: #fff;
-        box-shadow: 0 2px 12px rgba(16,185,129,0.10);
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-        margin-right: 0.7rem;
-        outline: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 48px;
-        line-height: 48px;
-    }
-    .gradient-sfw-btn:hover, .gradient-sfw-btn:focus {
-        background: linear-gradient(90deg, #22d3ee 0%, #10b981 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(16,185,129,0.18);
-        transform: translateY(-2px) scale(1.04);
-    }
-    .gradient-danger-btn {
-        border: none;
-        border-radius: 2rem;
-        padding: 0.7rem 2.2rem;
-        font-size: 1.13rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-        color: #fff;
-        box-shadow: 0 2px 12px rgba(239,68,68,0.10);
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-        margin: 0.7rem 0;
-        outline: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 48px;
-        line-height: 48px;
-    }
-    .gradient-danger-btn:hover, .gradient-danger-btn:focus {
-        background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(239,68,68,0.18);
-        transform: translateY(-2px) scale(1.04);
-    }
-    .gradient-toggle-btn {
-        border: none;
-        border-radius: 1.5rem;
-        background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
-        color: #fff;
-        font-size: 1.13rem;
-        padding: 0.7rem 1.2rem;
-        margin-left: 0.5rem;
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-        box-shadow: 0 2px 12px rgba(99,102,241,0.10);
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-    }
-    .gradient-toggle-btn:hover, .gradient-toggle-btn.active {
-        background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(99,102,241,0.18);
-        transform: translateY(-2px) scale(1.04);
-    }
-    .order-toggle-btn, .order-toggle-btn .material-icons {
-        text-decoration: none !important;
-    }
-    .sort-btn, .sort-btn .material-icons {
-        text-decoration: none !important;
-    }
-    /* Remove underline from up/down icon */
-    #orderToggleBtn .material-icons {
-        text-decoration: none !important;
-        border-bottom: none !important;
-    }
-    /* Dark mode improvements for breadcrumbs and hero header buttons */
-    .dark-mode .modern-breadcrumbs {
-        background: linear-gradient(90deg, #22335a 0%, #1a233a 100%) !important;
-        color: #e0e7ef !important;
-        border-radius: 2rem;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.13);
-        border: 1.5px solid #374151;
-    }
-    .dark-mode .modern-breadcrumbs .breadcrumb-current,
-    .dark-mode .modern-breadcrumbs .material-icons {
-        color: #60a5fa !important;
-    }
-    .dark-mode .modern-breadcrumbs a {
-        color: #b3d1f7 !important;
-    }
-    .dark-mode .hero-gradient {
-        background: linear-gradient(90deg, #2563eb 0%, #1a233a 100%) !important;
-        box-shadow: 0 8px 32px 0 rgba(59,130,246,0.18);
-        border-radius: 2rem;
-        border: 1.5px solid #374151;
-    }
-    .dark-mode .hero-gradient h1 {
-        text-shadow: 0 2px 16px #1a233a, 0 1px 0 #2563eb;
-    }
-    .dark-mode .hero-gradient .btn {
-        background: linear-gradient(90deg, #22d3ee 0%, #2563eb 100%) !important;
-        color: #fff !important;
-        border: none !important;
-        box-shadow: 0 2px 12px rgba(34,211,238,0.13);
-        border-radius: 1.5rem;
-        font-weight: 700;
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-    }
-    .dark-mode .hero-gradient .btn:hover {
-        background: linear-gradient(90deg, #2563eb 0%, #22d3ee 100%) !important;
-        transform: translateY(-2px) scale(1.04);
-    }
-    .dark-mode .modern-card {
-        background: linear-gradient(135deg, #181c23 0%, #23293a 100%) !important;
-        border: 1.5px solid #23293a !important;
-        box-shadow: 0 8px 32px 0 rgba(59,130,246,0.10);
-        border-radius: 1.5rem;
-    }
-    .dark-mode .modern-card-header.events {
-        background: linear-gradient(90deg, #22d3ee 0%, #2563eb 100%) !important;
-        color: #fff !important;
-        border-radius: 1.2rem 1.2rem 0 0;
-        font-weight: 800;
-        letter-spacing: 0.01em;
-    }
-    .dark-mode .modern-card-body {
-        background: transparent !important;
-        color: #e0e7ef !important;
-    }
-    .dark-mode .gradient-sfw-btn,
-    .dark-mode .gradient-danger-btn {
-        box-shadow: 0 2px 12px rgba(34,211,238,0.10);
-        border-radius: 2rem;
-        font-weight: 700;
-    }
-    .dark-mode .gradient-sfw-btn:hover,
-    .dark-mode .gradient-danger-btn:hover {
-        filter: brightness(1.1);
-        transform: translateY(-2px) scale(1.04);
-    }
-    .modern-search-group {
-        background: linear-gradient(90deg, #b8d0ff 0%, #e0e7ef 100%);
-        border-radius: 2rem;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.07);
-        padding: 0.18rem;
-        gap: 0;
-    }
-    .modern-search-input {
-        border: none;
-        border-radius: 2rem 0 0 2rem !important;
-        background: transparent;
-        font-size: 1.1rem;
-        padding: 0.85rem 1.5rem;
-        font-weight: 500;
-        box-shadow: none;
-        outline: none;
-    }
-    .modern-search-input:focus {
-        background: #f1f5f9;
-        box-shadow: none;
-    }
-    .modern-state-dropdown {
-        border: none;
-        border-radius: 0;
-        background: transparent;
-        font-size: 1.1rem;
-        padding: 0.85rem 1.5rem;
-        font-weight: 500;
-        box-shadow: none;
-        outline: none;
-        min-width: 140px;
-    }
-    .modern-state-dropdown:focus {
-        background: #f1f5f9;
-        box-shadow: none;
-    }
-    .modern-gradient-btn {
-        border-radius: 2rem;
-        font-size: 1.13rem;
-        font-weight: 700;
-        padding: 0.85rem 1.7rem;
-        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
-        color: #fff;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-        border: none;
-        margin-left: 0;
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-    }
-    .modern-gradient-btn:hover, .modern-gradient-btn:focus {
-        background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-        transform: translateY(-2px) scale(1.04);
-    }
-    .modern-search-group > *:not(:last-child) {
-        border-top-right-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
-    }
-    .modern-search-group > *:not(:first-child) {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-    .modern-search-group > * {
-        border: none !important;
-        box-shadow: none !important;
-    }
-    @media (max-width: 768px) {
-        .modern-search-group {
-            flex-direction: column;
-            border-radius: 2rem !important;
-            padding: 0.18rem;
-        }
-        .modern-search-group > * {
-            border-radius: 2rem !important;
-            margin-bottom: 0.5rem;
-        }
-        .modern-gradient-btn {
-            width: 100%;
+        
+        .section-title {
+            font-size: 1.5rem;
         }
     }
 </style>
-<nav aria-label="breadcrumb" class="mb-4">
-    <div class="modern-breadcrumbs">
-        <span class="breadcrumb-current"><i class="material-icons me-1">home</i> Home</span>
-    </div>
-</nav>
-<div class="container">
-    <div class="row justify-content-center mb-5">
-        <div class="col-lg-10">
-            <div class="hero-gradient text-center mb-4">
-                <h1 class="display-3 mb-3 fw-bold">FURsvp Event Manager</h1>
-                <p class="lead mb-4">Dedicated to helping event organizers of all sizes within the furry fandom. A quick-and-dirty solution to get a head count, or as a free and hassle-free alternative to mainstream event services. FURsvp is an open-source project created to serve the furry fandom. We're always looking for feedback and contributions to make the platform better.</p>
-                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-2">
-                    {% if user.is_authenticated and user.group_roles.all %}
-                    <a href="{% url 'create_event' %}" class="btn btn-light btn-lg px-4 gap-3 fw-bold">
-                        <i class="material-icons" style="vertical-align: middle; line-height: 1;">add_circle</i> Create an Event
-                    </a>
-                    {% elif user.is_authenticated%}
-                    {% else %}
-                    <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 gap-3 fw-bold">
-                        <i class="material-icons" style="vertical-align: middle; line-height: 1;">person_add</i> Register
-                    </a>
-                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4 fw-bold">
-                        <i class="material-icons" style="vertical-align: middle; line-height: 1;">login</i> Login
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modern-card mb-4">
-        <div class="modern-card-header events">
-            <i class="material-icons me-2">event</i> Upcoming Events
-        </div>
-        <div class="modern-card-body">
-            <!-- Search and State Filter -->
-            <form method="get" class="mb-4" id="eventSearchFilterForm">
-                <div class="modern-search-group d-flex flex-row align-items-stretch">
-                    <input type="text" id="eventSearchInput" name="search" class="form-control modern-search-input flex-grow-1" placeholder="Search events by title, description, city, or group..." value="{{ request.GET.search|default:''|escapejs }}">
-                                    <input type="hidden" name="sort" value="{{ current_sort|default:''|escapejs }}">
-                <input type="hidden" name="order" value="{{ current_order|default:''|escapejs }}">
-                <input type="hidden" name="adult" value="{{ filter_adult|default:''|escapejs }}">
-                <input type="hidden" name="view" value="{{ view_type|default:''|escapejs }}">
-                    <button type="submit" class="btn modern-gradient-btn d-flex align-items-center justify-content-center">
-                        <i class="material-icons me-1">search</i> Search
-                    </button>
-                </div>
-            </form>
-            <!-- End Search and State Filter -->
-            <!-- Sorting Controls -->
-            <div class="row align-items-center justify-content-between mb-3">
-                <div class="col-12 mb-3">
-                    <div class="d-flex flex-wrap justify-content-center gap-2">
-                        <div class="btn-group" role="group">
-                            <a href="#" data-sort="date" data-order="{{ current_order|default:'asc'|escapejs }}"
-                                class="gradient-sort-btn{% if current_sort == 'date' %} active{% else %} outline-sort-btn{% endif %} d-flex align-items-center justify-content-center sort-btn"
-                                style="padding: .5rem 1rem; font-size: 1.1rem;">
-                                <i class="material-icons me-1 align-middle" style="font-size: 20px;">calendar_today</i> Date
-                            </a>
-                            <a href="#" data-sort="group" data-order="{{ current_order|default:'asc'|escapejs }}"
-                                class="{% if current_sort == 'group' %}gradient-sort-btn active{% else %}outline-sort-btn{% endif %} d-flex align-items-center justify-content-center sort-btn"
-                                style="padding: .5rem 1rem; font-size: 1.1rem;">
-                                <i class="material-icons me-1 align-middle" style="font-size: 20px;">group</i> Group
-                            </a>
-                            <a href="#" data-sort="title" data-order="{{ current_order|default:'asc'|escapejs }}"
-                                class="{% if current_sort == 'title' %}gradient-sort-btn active{% else %}outline-sort-btn{% endif %} d-flex align-items-center justify-content-center sort-btn"
-                                style="padding: .5rem 1rem; font-size: 1.1rem;">
-                                <i class="material-icons me-1 align-middle" style="font-size: 20px;">title</i> Title
-                            </a>
-                            <a href="#" data-sort="rsvps" data-order="{{ current_order|default:'asc'|escapejs }}"
-                                class="{% if current_sort == 'rsvps' %}gradient-sort-btn active{% else %}outline-sort-btn{% endif %} d-flex align-items-center justify-content-center sort-btn"
-                                style="padding: .5rem 1rem; font-size: 1.1rem;">
-                                <i class="material-icons me-1 align-middle" style="font-size: 20px;">people</i> RSVPs
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="d-flex flex-wrap justify-content-center gap-2">
-                        <button type="button" id="toggleAdultEvents" class="gradient-sfw-btn flex-shrink-0"
-                            style="width: 190px; min-width: 190px; max-width: 190px; white-space: nowrap; height: 48px; line-height: 48px; display: flex; align-items: center; justify-content: center; margin-top: 0px;">
-                            Show 18+/21+
-                        </button>
-                        <div class="btn-group" role="group">
-                            <a href="#" id="orderToggleBtn" data-sort="{{ current_sort|default:'date'|escapejs }}" data-order="{% if current_order == 'asc' %}desc{% else %}asc{% endif %}"
-                                class="gradient-toggle-btn d-flex align-items-center justify-content-center order-toggle-btn flex-shrink-0"
-                                style="width: 48px; height: 48px; border-radius: 24px; font-size: 1.15rem; padding: 0; margin-left: 0.5rem;"
-                                title="Toggle Order">
-                                <i class="material-icons" style="font-size: 24px;">{% if current_order == 'desc' %}arrow_downward{% else %}arrow_upward{% endif %}</i>
-                            </a>
-                            <button type="button" class="gradient-toggle-btn d-flex align-items-center justify-content-center flex-shrink-0" id="viewToggle"
-                                style="width: 48px; height: 48px; border-radius: 24px; font-size: 1.15rem; padding: 0; margin-left: 0.5rem;"
-                                title="Toggle View">
-                                <i class="material-icons align-middle" style="font-size: 24px;">grid_view</i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% include 'events/events_list_partial.html' %}
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -568,7 +425,7 @@
 
         // Set initial state
         let isListView = localStorage.getItem('eventViewPreference') === 'list';
-        let showAdult = false; // Start in SFW mode (green)
+        let showAdult = false;
         let currentSort = '{{ current_sort|default:"date"|escapejs }}';
         let currentOrder = '{{ current_order|default:"asc"|escapejs }}';
 
@@ -578,7 +435,7 @@
             tempDiv.innerHTML = eventsHtml;
             const newEventsGrid = tempDiv.querySelector('#eventsGrid');
             const newEventsList = tempDiv.querySelector('#eventsList');
-            const newLoadingSpinner = tempDiv.querySelector('#loadingSpinner'); // Get the new spinner too
+            const newLoadingSpinner = tempDiv.querySelector('#loadingSpinner');
 
             if (newEventsGrid && eventsGrid) {
                 eventsGrid.innerHTML = newEventsGrid.innerHTML;
@@ -596,15 +453,14 @@
                 eventsList.style.display = 'none';
             }
 
-            // Update the loading spinner in case the full response contains it
             if (newLoadingSpinner && loadingSpinner) {
-                loadingSpinner.style.display = newLoadingSpinner.style.display; // Sync display state
+                loadingSpinner.style.display = newLoadingSpinner.style.display;
             }
         }
 
         // Function to fetch and update events
         async function fetchEvents(sort, order, adult, page = 1) {
-            loadingSpinner.style.display = 'block'; // Show spinner
+            loadingSpinner.style.display = 'block';
             try {
                 const url = new URL(window.location.href);
                 url.searchParams.set('sort', sort);
@@ -612,41 +468,35 @@
                 url.searchParams.set('adult', adult);
                 url.searchParams.set('page', page);
 
-                // Update current sort and order for future interactions
                 currentSort = sort;
                 currentOrder = order;
 
-                // Update URL in browser history
                 history.pushState({ sort: sort, order: order, adult: adult, page: page }, '', url.toString());
 
                 const response = await fetch(url.toString());
                 const html = await response.text();
                 
-                // Extract the content of the event sections from the full HTML response
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const newEventsGridHtml = doc.querySelector('#eventsGrid').innerHTML;
                 const newEventsListHtml = doc.querySelector('#eventsList').innerHTML;
                 const newLoadingSpinnerHtml = doc.querySelector('#loadingSpinner').innerHTML;
 
-                // Update the existing elements
                 eventsGrid.innerHTML = newEventsGridHtml;
                 eventsList.innerHTML = newEventsListHtml;
                 loadingSpinner.innerHTML = newLoadingSpinnerHtml;
 
-                // Update pagination if it exists
-                const newPagination = doc.querySelector('.modern-pagination-container');
-                const existingPagination = document.querySelector('.modern-pagination-container');
+                // Update pagination
+                const newPagination = doc.querySelector('.pagination');
+                const existingPagination = document.querySelector('.pagination');
                 if (newPagination && existingPagination) {
                     existingPagination.innerHTML = newPagination.innerHTML;
                 } else if (newPagination && !existingPagination) {
-                    // Add pagination if it didn't exist before
-                    const eventsContainer = document.querySelector('.modern-card-body');
+                    const eventsContainer = document.querySelector('.card-body');
                     if (eventsContainer) {
                         eventsContainer.appendChild(newPagination.cloneNode(true));
                     }
                 } else if (!newPagination && existingPagination) {
-                    // Remove pagination if it no longer exists
                     existingPagination.remove();
                 }
 
@@ -659,36 +509,35 @@
                     eventsList.style.display = 'none';
                 }
 
-                // Update active state for sort buttons (custom classes)
+                // Update active state for sort buttons
                 sortButtons.forEach(button => {
-                    button.classList.remove('gradient-sort-btn', 'outline-sort-btn', 'active');
+                    button.classList.remove('btn-primary', 'btn-outline-primary');
                     if (button.dataset.sort === currentSort) {
-                        button.classList.add('gradient-sort-btn', 'active');
+                        button.classList.add('btn-primary');
                     } else {
-                        button.classList.add('outline-sort-btn');
+                        button.classList.add('btn-outline-primary');
                     }
                 });
 
-                // Update the order toggle button's data-order attribute and icon
+                // Update the order toggle button
                 orderToggleBtn.dataset.order = currentOrder;
                 const orderIcon = orderToggleBtn.querySelector('.material-icons');
                 if (orderIcon) {
                     orderIcon.textContent = currentOrder === 'desc' ? 'arrow_downward' : 'arrow_upward';
                 }
 
-                // Re-attach pagination event listeners
                 attachPaginationListeners();
 
             } catch (error) {
                 console.error('Error fetching events:', error);
             } finally {
-                loadingSpinner.style.display = 'none'; // Hide spinner
+                loadingSpinner.style.display = 'none';
             }
         }
 
         // Function to attach pagination event listeners
         function attachPaginationListeners() {
-            const paginationLinks = document.querySelectorAll('.modern-page-link');
+            const paginationLinks = document.querySelectorAll('.page-link');
             paginationLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -711,9 +560,8 @@
             button.addEventListener('click', function (e) {
                 e.preventDefault();
                 const sortType = this.dataset.sort;
-                // If clicking the currently active sort button, reverse the order
                 const newOrder = (sortType === currentSort) ? (currentOrder === 'asc' ? 'desc' : 'asc') : currentOrder;
-                fetchEvents(sortType, newOrder, showAdult, 1); // Reset to page 1 when sorting
+                fetchEvents(sortType, newOrder, showAdult, 1);
             });
         });
 
@@ -721,9 +569,9 @@
         orderToggleBtn.addEventListener('click', function (e) {
             e.preventDefault();
             const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-            currentOrder = newOrder; // Update currentOrder immediately
-            this.dataset.order = newOrder; // Update dataset.order immediately
-            fetchEvents(currentSort, newOrder, showAdult, 1); // Reset to page 1 when changing order
+            currentOrder = newOrder;
+            this.dataset.order = newOrder;
+            fetchEvents(currentSort, newOrder, showAdult, 1);
         });
 
         // Toggle Adult Events
@@ -732,14 +580,14 @@
             localStorage.setItem('showAdultEvents', showAdult);
             if (showAdult) {
                 toggleAdult.textContent = 'Hide 18+/21+';
-                toggleAdult.classList.remove('gradient-sfw-btn');
-                toggleAdult.classList.add('gradient-danger-btn');
+                toggleAdult.classList.remove('btn-success');
+                toggleAdult.classList.add('btn-danger');
             } else {
                 toggleAdult.textContent = 'Show 18+/21+';
-                toggleAdult.classList.remove('gradient-danger-btn');
-                toggleAdult.classList.add('gradient-sfw-btn');
+                toggleAdult.classList.remove('btn-danger');
+                toggleAdult.classList.add('btn-success');
             }
-            fetchEvents(currentSort, currentOrder, showAdult, 1); // Reset to page 1 when filtering
+            fetchEvents(currentSort, currentOrder, showAdult, 1);
         }
 
         toggleAdult.addEventListener('click', toggleAdultEvents);
@@ -752,12 +600,10 @@
                 eventsGrid.style.display = 'none';
                 eventsList.style.display = 'block';
                 toggleIcon.textContent = 'view_list';
-                viewToggle.classList.add('active');
             } else {
                 eventsGrid.style.display = 'flex';
                 eventsList.style.display = 'none';
                 toggleIcon.textContent = 'grid_view';
-                viewToggle.classList.remove('active');
             }
         }
 
@@ -768,23 +614,21 @@
             eventsGrid.style.display = 'none';
             eventsList.style.display = 'block';
             toggleIcon.textContent = 'view_list';
-            viewToggle.classList.add('active');
         } else {
             eventsGrid.style.display = 'flex';
             eventsList.style.display = 'none';
             toggleIcon.textContent = 'grid_view';
-            viewToggle.classList.remove('active');
         }
 
         // Initial color and text setup
         if (showAdult) {
             toggleAdult.textContent = 'Hide 18+/21+';
-            toggleAdult.classList.remove('gradient-sfw-btn');
-            toggleAdult.classList.add('gradient-danger-btn');
+            toggleAdult.classList.remove('btn-success');
+            toggleAdult.classList.add('btn-danger');
         } else {
             toggleAdult.textContent = 'Show 18+/21+';
-            toggleAdult.classList.remove('gradient-danger-btn');
-            toggleAdult.classList.add('gradient-sfw-btn');
+            toggleAdult.classList.remove('btn-danger');
+            toggleAdult.classList.add('btn-success');
         }
 
         // Handle browser back/forward buttons
@@ -793,12 +637,10 @@
             if (state) {
                 currentSort = state.sort || 'date';
                 currentOrder = state.order || 'asc';
-                showAdult = state.adult !== false; // Default to true
+                showAdult = state.adult !== false;
                 const page = state.page || 1;
-                fetchEvents(currentSort, currentOrder, showAdult, page); // Re-fetch with historical state
+                fetchEvents(currentSort, currentOrder, showAdult, page);
             } else {
-                // If no state, it might be the initial page load or a navigation outside our pushState calls
-                // Reload page or re-fetch with default parameters to ensure consistency
                 fetchEvents('date', 'asc', true, 1);
             }
         });

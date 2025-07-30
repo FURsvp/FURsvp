@@ -4,1295 +4,88 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<style>
-    .card-body img {
-        max-width: 100% !important;
-        height: auto !important;
-        display: block;
-        margin: 1rem auto;
-        box-sizing: border-box;
-    }
-
-    .card-body a,
-    .modern-card-body a {
-        color: #2563eb;
-        text-decoration: underline;
-        transition: color 0.15s ease-in-out;
-    }
-
-    .card-body a:hover,
-    .modern-card-body a:hover {
-        color: #1d4ed8;
-        text-decoration: underline;
-    }
-
-    .dark-mode .card-body a,
-    .dark-mode .modern-card-body a {
-        color: #60a5fa;
-    }
-
-    .dark-mode .card-body a:hover,
-    .dark-mode .modern-card-body a:hover {
-        color: #93c5fd;
-    }
-
-    .organizer-tools-buttons .btn {
-        white-space: nowrap;
-    }
-
-    .dark-mode .list-group-item,
-    .dark-mode .list-group-item a,
-    .dark-mode .list-group-item span {
-        color: #fff !important;
-    }
-
-    .dark-mode .card-body,
-    .dark-mode .card-body span,
-    .dark-mode .card-body .ms-2 {
-        color: #fff !important;
-    }
-
-    .card-text img,
-    .modern-card-body .card-text img,
-    .modern-card-body img {
-        max-width: 100% !important;
-        height: auto !important;
-        display: block;
-        margin: 1rem auto;
-        box-sizing: border-box;
-    }
-
-    .event-hero-gradient {
-        background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
-        color: #fff;
-        border-radius: 1.5rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
-        padding: 2.5rem 2rem 2rem 2rem;
-        margin-bottom: 2.5rem;
-    }
-
-    .modern-card {
-        border-radius: 2rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
-        background: #fff8fa00;
-        margin-bottom: 2rem;
-    }
-
-    .modern-card-header.event-info {
-        background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
-        color: #fff;
-        font-size: 1.25rem;
-        font-weight: 700;
-        padding: 1.2rem 2rem;
-        border-bottom: none;
-        display: flex;
-        align-items: center;
-        border-top-left-radius: 2rem;
-        border-top-right-radius: 2rem;
-    }
-
-    .modern-card-header.attendees {
-        background: linear-gradient(90deg, #42f56c 0%, #66f43f 100%);
-        color: #fff;
-        font-size: 1.25rem;
-        font-weight: 700;
-        padding: 1.2rem 2rem;
-        border-bottom: none;
-        display: flex;
-        align-items: center;
-        border-top-left-radius: 2rem;
-        border-top-right-radius: 2rem;
-    }
-
-    .modern-card-body {
-        padding: 2rem 2.5rem 1.5rem 2.5rem;
-        background: #f8fafc;
-        color: #222;
-        font-size: 1.08rem;
-        margin-bottom: 0.5rem;
-        border-bottom-left-radius: 2rem;
-        border-bottom-right-radius: 2rem;
-    }
-
-    .modern-select {
-        border-radius: 2rem !important;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-        border: 2px solid #e0e7ef;
-        font-size: 1.15rem;
-        padding: 0.85rem 1.5rem;
-        background: linear-gradient(90deg, #f8fafc 0%, #e0e7ef 100%);
-        color: #222;
-        transition: border 0.18s, box-shadow 0.18s;
-        margin-bottom: 1.2rem;
-        width: 100%;
-        font-weight: 500;
-    }
-
-    .modern-select:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 2px #3b82f655;
-        outline: none;
-        background: linear-gradient(90deg, #e0e7ef 0%, #f8fafc 100%);
-    }
-
-    .rsvp-label {
-        font-size: 1.13rem;
-        font-weight: 600;
-        color: #2563eb;
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.7rem;
-        gap: 0.5rem;
-    }
-
-    .rsvp-label .material-icons {
-        font-size: 1.5rem;
-        color: #06b6d4;
-    }
-
-    .rsvp-submit-btn {
-        width: 100%;
-        border-radius: 2rem;
-        font-size: 1.13rem;
-        font-weight: 700;
-        padding: 0.85rem 0;
-        margin-top: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.7rem;
-        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
-        color: #fff;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-        border: none;
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-    }
-
-    .rsvp-submit-btn:hover {
-        background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-        transform: translateY(-2px) scale(1.04);
-    }
-
-    .gradient-btn-primary,
-    .gradient-btn-success,
-    .gradient-btn-danger {
-        width: 100%;
-        border-radius: 2rem;
-        font-size: 1.13rem;
-        font-weight: 700;
-        padding: 0.85rem 0;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.7rem;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-    }
-
-    .gradient-btn-primary {
-        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
-        color: #fff;
-    }
-
-    .gradient-btn-primary:hover {
-        background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-        transform: translateY(-2px) scale(1.04);
-    }
-
-    .gradient-btn-success {
-        background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-        color: #fff;
-    }
-
-    .gradient-btn-success:hover {
-        background: linear-gradient(90deg, #059669 0%, #047857 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(16, 185, 129, 0.18);
-        transform: translateY(-2px) scale(1.04);
-    }
-
-    .gradient-btn-danger {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-        color: #fff;
-    }
-
-    .gradient-btn-danger:hover {
-        background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(239, 68, 68, 0.18);
-        transform: translateY(-2px) scale(1.04);
-    }
-
-    .attendee-counter-badge {
-        display: inline-block;
-        min-width: 2.1rem;
-        padding: 0.25rem 0.9rem;
-        font-size: 1.08rem;
-        font-weight: 700;
-        color: #fff;
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-        border-radius: 1.2rem;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
-        margin-left: 0.7rem;
-        vertical-align: middle;
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-    }
-
-    .attendee-counter-badge:empty {
-        display: none;
-    }
-
-    .gradient-badge-18 {
-        background: linear-gradient(90deg, #f59e42 0%, #fbbf24 100%);
-        color: #92400e;
-        border-radius: 1.2rem;
-        font-size: 1.05rem;
-        font-weight: 600;
-        padding: 0.5rem 1.2rem;
-        display: inline-flex;
-        align-items: center;
-        box-shadow: 0 2px 8px rgba(251, 191, 36, 0.10);
-        margin-left: 0.5rem;
-        vertical-align: middle;
-    }
-
-    .gradient-badge-21 {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-        color: #fff;
-        border-radius: 1.2rem;
-        font-size: 1.05rem;
-        font-weight: 600;
-        padding: 0.5rem 1.2rem;
-        display: inline-flex;
-        align-items: center;
-        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.10);
-        margin-left: 0.5rem;
-        vertical-align: middle;
-    }
-
-    .gradient-alert-success {
-        background: linear-gradient(90deg, #a8ff78 0%, #78ffd6 100%);
-        color: #14532d;
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(34, 197, 94, 0.08);
-        border-left: 6px solid #22c55e;
-        padding: 1.1rem 1.7rem;
-        display: flex;
-        align-items: center;
-        font-size: 1.18rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        margin-top: 1.2rem;
-    }
-
-    .gradient-alert-success .material-icons {
-        font-size: 2rem;
-        margin-right: 1.1rem;
-        color: #22c55e;
-        background: #e0ffe7;
-        border-radius: 50%;
-        padding: 0.25rem;
-    }
-
-    .gradient-alert-waitlist {
-        background: linear-gradient(90deg, #fdfb72 0%, #f8d800 100%);
-        color: #92400e;
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(251, 191, 36, 0.08);
-        border-left: 6px solid #f59e42;
-        padding: 1.1rem 1.7rem;
-        display: flex;
-        align-items: center;
-        font-size: 1.18rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        margin-top: 1.2rem;
-    }
-
-    .gradient-alert-waitlist .material-icons {
-        font-size: 2rem;
-        margin-right: 1.1rem;
-        color: #f59e42;
-        background: #fffbe6;
-        border-radius: 50%;
-        padding: 0.25rem;
-    }
-
-    .gradient-alert-maybe {
-        background: linear-gradient(90deg, #fdfb72 0%, #f8d800 100%);
-        color: #92400e;
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(251, 191, 36, 0.08);
-        border-left: 6px solid #f59e42;
-        padding: 1.1rem 1.7rem;
-        display: flex;
-        align-items: center;
-        font-size: 1.18rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        margin-top: 1.2rem;
-    }
-
-    .gradient-alert-maybe .material-icons {
-        font-size: 2rem;
-        margin-right: 1.1rem;
-        color: #f59e42;
-        background: #fffbe6;
-        border-radius: 50%;
-        padding: 0.25rem;
-    }
-
-    .gradient-alert-notgoing {
-        background: linear-gradient(90deg, #ffbaba 0%, #ff5e62 100%);
-        color: #7f1d1d;
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(239, 68, 68, 0.08);
-        border-left: 6px solid #ef4444;
-        padding: 1.1rem 1.7rem;
-        display: flex;
-        align-items: center;
-        font-size: 1.18rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        margin-top: 1.2rem;
-    }
-
-    .gradient-alert-notgoing .material-icons {
-        font-size: 2rem;
-        margin-right: 1.1rem;
-        color: #ef4444;
-        background: #ffeaea;
-        border-radius: 50%;
-        padding: 0.25rem;
-    }
-
-    .dark-mode .modern-card {
-        background: #181a20;
-        color: #f3f4f6;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-    }
-
-    .dark-mode .modern-card-header.event-info {
-        background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
-        color: #fff;
-    }
-
-    .dark-mode .modern-card-header.attendees {
-        background: linear-gradient(90deg, #42f56c 0%, #66f43f 100%);
-        color: #fff;
-    }
-
-    .dark-mode .modern-card-header {
-        border-bottom: none;
-    }
-
-    .dark-mode .modern-card-body {
-        background: #181a20;
-        color: #f3f4f6;
-    }
-
-    .dark-mode .attendee-counter-badge {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-        color: #fff;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
-    }
-
-    .dark-mode .gradient-alert-success {
-        background: linear-gradient(90deg, #3bb78f 0%, #0bab64 100%);
-        color: #d1fae5;
-        border-left: 6px solid #10b981;
-    }
-
-    .dark-mode .gradient-alert-success .material-icons {
-        color: #10b981;
-        background: #134e4a;
-    }
-
-    .dark-mode .gradient-alert-cancelled {
-        background: linear-gradient(90deg, #ff5e62 0%, #ff9966 100%);
-        color: #fff1f2;
-        border-left: 6px solid #ef4444;
-    }
-
-    .dark-mode .gradient-alert-cancelled .material-icons {
-        color: #ef4444;
-        background: #7f1d1d;
-    }
-
-    .dark-mode .gradient-alert-waitlist {
-        background: linear-gradient(90deg, #f8d800 0%, #fbb034 100%);
-        color: #fffbe6;
-        border-left: 6px solid #f59e42;
-    }
-
-    .dark-mode .gradient-alert-waitlist .material-icons {
-        color: #f59e42;
-        background: #78350f;
-    }
-
-    .dark-mode .gradient-btn-primary {
-        background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
-        color: #fff;
-    }
-
-    .dark-mode .gradient-btn-success {
-        background: linear-gradient(90deg, #059669 0%, #10b981 100%);
-        color: #fff;
-    }
-
-    .dark-mode .gradient-btn-danger {
-        background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
-        color: #fff;
-    }
-
-    .dark-mode .modern-select {
-        background: linear-gradient(90deg, #23272f 0%, #181a20 100%);
-        color: #f3f4f6;
-        border: 2px solid #374151;
-    }
-
-    .dark-mode .modern-select:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 2px #3b82f655;
-        background: linear-gradient(90deg, #181a20 0%, #23272f 100%);
-        color: #fff;
-    }
-
-    .dark-mode .rsvp-label {
-        color: #38bdf8;
-    }
-
-    .dark-mode .rsvp-label .material-icons {
-        color: #38bdf8;
-    }
-
-    .dark-mode .list-group-item {
-        background: #23272f !important;
-        color: #f3f4f6 !important;
-        border-color: #374151 !important;
-    }
-
-    .dark-mode .list-group-item.text-muted {
-        color: #9ca3af !important;
-    }
-
-    .dark-mode .badge.bg-primary {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%) !important;
-        color: #fff !important;
-    }
-
-    .rsvp-group-card {
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.08);
-        margin-bottom: 1.9rem;
-        padding: 1.1rem 1.2rem 0.7rem 1.2rem;
-        background: #fff;
-        transition: background 0.18s, box-shadow 0.18s;
-    }
-
-    .rsvp-group-card:last-child {
-        margin-bottom: 0;
-    }
-
-    .rsvp-group-confirmed {
-        background: linear-gradient(90deg, #d1fae5 0%, #a7f3d0 100%);
-    }
-
-    .rsvp-group-maybe {
-        background: linear-gradient(90deg, #fef9c3 0%, #fde68a 100%);
-    }
-
-    .rsvp-group-notattending {
-        background: linear-gradient(90deg, #fee2e2 0%, #fecaca 100%);
-    }
-
-    .rsvp-group-card .list-group-item {
-        background: transparent !important;
-        border: none !important;
-        color: #222 !important;
-        border-radius: 0.7rem;
-        margin-bottom: 0.3rem;
-        padding: 0.7rem 1rem;
-    }
-
-    .rsvp-group-card .list-group-item.text-muted {
-        color: #6b7280 !important;
-        font-style: italic;
-        background: rgba(255, 255, 255, 0.7) !important;
-        border-radius: 0.7rem;
-    }
-
-    .rsvp-group-card .avatar {
-        border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
-        width: 36px;
-        height: 36px;
-        object-fit: cover;
-        margin-right: 0.7rem;
-    }
-
-    .modern-breadcrumbs {
-        background: #f8fafc;
-        border-radius: 2rem;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
-        padding: 0.7rem 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-        font-size: 1.13rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .modern-breadcrumbs a {
-        color: #64748b;
-        text-decoration: none;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        transition: color 0.15s;
-    }
-
-    .modern-breadcrumbs a:hover {
-        color: #2563eb;
-    }
-
-    .modern-breadcrumbs .breadcrumb-chevron {
-        color: #b0b8c1;
-        font-size: 1.3em;
-        margin: 0 0.5rem;
-        user-select: none;
-    }
-
-    .modern-breadcrumbs .breadcrumb-current {
-        color: #2563eb;
-        font-weight: 700;
-    }
-
-    .modern-breadcrumbs .material-icons {
-        font-size: 1.3em;
-        margin-right: 0.3em;
-        color: #64748b;
-    }
-
-    .gradient-alert-past {
-        background: linear-gradient(90deg, #a1a1aa 0%, #f3f4f6 100%);
-        color: #334155;
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(100, 116, 139, 0.08);
-        border-left: 6px solid #64748b;
-        padding: 1.1rem 1.7rem;
-        display: flex;
-        align-items: center;
-        font-size: 1.18rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        margin-top: 1.2rem;
-    }
-
-    .gradient-alert-past .material-icons {
-        font-size: 2rem;
-        margin-right: 1.1rem;
-        color: #64748b;
-        background: #e5e7eb;
-        border-radius: 50%;
-        padding: 0.25rem;
-    }
-
-    .attendee-restriction-modal {
-        background: linear-gradient(90deg, #e0e7ff 0%, #f0abfc 100%);
-        color: #312e81;
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(139, 92, 246, 0.08);
-        border-left: 6px solid #8b5cf6;
-        padding: 1.2rem 2rem;
-        display: flex;
-        align-items: center;
-        gap: 1.1rem;
-        font-size: 1.18rem;
-        font-weight: 600;
-        margin-bottom: 0;
-        margin-top: 0.2rem;
-    }
-
-    .attendee-restriction-icon {
-        font-size: 2.1rem;
-        color: #8b5cf6;
-        flex-shrink: 0;
-    }
-
-    .attendee-restriction-text {
-        flex: 1;
-    }
-
-    .login-required-modal {
-        background: linear-gradient(90deg, #fef9c3 0%, #fde68a 100%);
-        color: #92400e;
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(251, 191, 36, 0.08);
-        border-left: 6px solid #f59e42;
-        padding: 1.2rem 2rem;
-        display: flex;
-        align-items: center;
-        gap: 1.1rem;
-        font-size: 1.18rem;
-        font-weight: 600;
-        margin-bottom: 0;
-        margin-top: 0.2rem;
-    }
-
-    .login-required-icon {
-        font-size: 2.1rem;
-        color: #f59e42;
-        flex-shrink: 0;
-    }
-
-    .login-required-text {
-        flex: 1;
-    }
-
-    .login-link {
-        color: #2563eb;
-        font-weight: 700;
-        text-decoration: underline;
-    }
-
-    .login-link:hover,
-    .login-link:focus {
-        color: #1d4ed8;
-        text-decoration: underline;
-    }
-
-    #editEventModal .modal-content {
-        border-radius: 1.25rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
-        border: none;
-        overflow: hidden;
-    }
-
-    #editEventModal .modal-header {
-        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
-        color: #fff;
-        border-bottom: none;
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        align-items: center;
-    }
-
-    #editEventModal .modal-title {
-        font-size: 1.7rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    #editEventModal .modal-header .material-icons {
-        font-size: 2.2rem;
-        vertical-align: middle;
-    }
-
-    #editEventModal .modal-header .btn-close {
-        filter: invert(1);
-        opacity: 0.8;
-    }
-
-    #editEventModal .modal-header .btn-close:hover {
-        opacity: 1;
-    }
-
-    #editEventModal .modal-body {
-        padding: 2rem 2.5rem 1.5rem 2.5rem;
-        background: #f8fafc;
-    }
-
-    #editEventModal .modal-footer {
-        background: #f3f4f6;
-        border-top: none;
-        padding: 1.5rem 2.5rem;
-    }
-
-    #editEventModal .btn-primary {
-        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
-        border: none;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
-        transition: background 0.2s, box-shadow 0.2s;
-    }
-
-    #editEventModal .btn-primary:hover,
-    #editEventModal .btn-primary:focus {
-        background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
-        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.18);
-    }
-
-    #editEventModal .btn-cancel {
-        background: #fff;
-        color: #6366f1;
-        border: 2px solid #a5b4fc;
-        border-radius: 0.8rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
-        transition: background 0.18s, color 0.18s, border 0.18s;
-    }
-
-    #editEventModal .btn-cancel:hover,
-    #editEventModal .btn-cancel:focus {
-        background: linear-gradient(90deg, #e0e7ff 0%, #f3e8ff 100%);
-        color: #4f46e5;
-        border-color: #6366f1;
-    }
-
-    #editEventModal label.form-label {
-        font-weight: 500;
-        color: #4f46e5;
-    }
-
-    #editEventModal input.form-control,
-    #editEventModal textarea.form-control {
-        border-radius: 0.75rem;
-        border: 1.5px solid #d1d5db;
-        background: #fff;
-        font-size: 1rem;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    #editEventModal input.form-control:focus,
-    #editEventModal textarea.form-control:focus {
-        border-color: #8b5cf6;
-        box-shadow: 0 0 0 2px #c7d2fe;
-    }
-
-    #editEventModal .form-text {
-        color: #6b7280;
-        font-size: 0.95rem;
-    }
-
-    #editEventModal .input-group .form-control {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-    }
-
-    #editEventModal .input-group .btn {
-        height: 100%;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-
-    #editEventModal #useLocationBtn {
-        border-top-right-radius: 0.95rem;
-        border-bottom-right-radius: 0.95rem;
-        display: flex;
-        align-items: center;
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
-    }
-
-    #editEventModal .custom-select-modern {
-        width: 100%;
-        display: block;
-        border-radius: 0.75rem;
-        border: 1.5px solid #d1d5db;
-        background: #fff;
-        font-size: 1rem;
-        padding: 0.75rem 1.5rem 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-        appearance: none;
-        -webkit-appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='gray' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 1.2em;
-        transition: border-color 0.18s, box-shadow 0.18s;
-    }
-
-    #editEventModal .custom-select-modern:focus {
-        border-color: #8b5cf6;
-        box-shadow: 0 0 0 2px #c7d2fe;
-        outline: none;
-    }
-
-    #editEventModal .form-check {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1.1rem;
-    }
-
-    #editEventModal .form-check-input {
-        width: 1.35em;
-        height: 1.35em;
-        border-radius: 24px;
-        margin-bottom: 4px;
-        border: 2px solid #a5b4fc;
-        background: #fff;
-        margin-right: 0.7em;
-        accent-color: #3b82f6;
-        /* Ensures checkmark is visible and blue */
-        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
-        transition: border-color 0.18s, box-shadow 0.18s;
-        appearance: auto;
-        /* Use browser default for checkmark */
-    }
-
-    #editEventModal .form-check-input:checked {
-        background-color: #3b82f6;
-        border-color: #3b82f6;
-    }
-
-    #editEventModal .form-check-label {
-        font-size: 1.08rem;
-        font-weight: 500;
-        color: #222;
-        cursor: pointer;
-    }
-
-    .btn-location-modern {
-        background: #fff;
-        color: #6366f1;
-        border: 2px solid #a5b4fc;
-        border-radius: 0.8rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
-        transition: background 0.18s, color 0.18s, border 0.18s;
-        padding: 0.45rem 1.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        margin-left: 0.5rem;
-    }
-
-    .btn-location-modern:hover,
-    .btn-location-modern:focus {
-        background: #eef2ff;
-        color: #4f46e5;
-        border-color: #6366f1;
-        text-decoration: none;
-    }
-
-    #editEventModal .input-group {
-        align-items: stretch !important;
-    }
-
-    #editEventModal input.form-control {
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
-    }
-
-    .btn-save-outline {
-        background: #fff;
-        color: #6366f1;
-        border: 2px solid #6366f1;
-        border-radius: 0.8rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
-        transition: background 0.18s, color 0.18s, border 0.18s;
-        padding: 0.85rem 2.2rem;
-        font-size: 1.13rem;
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-    }
-
-    .btn-save-outline:hover,
-    .btn-save-outline:focus {
-        background: linear-gradient(90deg, #e0e7ff 0%, #f3e8ff 100%);
-        color: #4f46e5;
-        border-color: #6366f1;
-        text-decoration: none;
-    }
-
-    .btn-cancel-outline {
-        background: #fff;
-        color: #6366f1;
-        border: 2px solid #a5b4fc;
-        border-radius: 0.8rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
-        transition: background 0.18s, color 0.18s, border 0.18s;
-        padding: 0.45rem 1.1rem;
-        font-size: 1.08rem;
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-    }
-
-    .btn-cancel-outline:hover,
-    .btn-cancel-outline:focus {
-        background: linear-gradient(90deg, #e0e7ff 0%, #f3e8ff 100%);
-        color: #4f46e5;
-        border-color: #6366f1;
-        text-decoration: none;
-    }
-
-    .btn-save-gradient {
-        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
-        color: #fff;
-        border: none;
-        border-radius: 0.8rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
-        transition: background 0.2s, box-shadow 0.2s;
-        padding: 0.85rem 2.2rem;
-        font-size: 1.13rem;
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-    }
-
-    .btn-save-gradient:hover,
-    .btn-save-gradient:focus {
-        background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
-        color: #fff;
-        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.18);
-    }
-
-    .btn-cancel-gradient {
-        background: linear-gradient(90deg, #f59e42 0%, #f43f5e 100%);
-        color: #fff;
-        border: none;
-        border-radius: 0.8rem;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(244, 63, 94, 0.10);
-        transition: background 0.2s, box-shadow 0.2s;
-        padding: 0.85rem 2.2rem;
-        font-size: 1.13rem;
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-    }
-
-    .btn-cancel-gradient:hover,
-    .btn-cancel-gradient:focus {
-        background: linear-gradient(90deg, #f43f5e 0%, #f59e42 100%);
-        color: #fff;
-        box-shadow: 0 4px 16px rgba(244, 63, 94, 0.18);
-    }
-
-    .rsvp-modal-answer-block {
-        background: #f3f6fd;
-        border-radius: 0.7rem;
-        padding: 0.7rem 1.1rem 0.7rem 1.1rem;
-        margin-bottom: 0.7rem;
-        margin-top: 0.7rem;
-        display: block;
-        word-break: break-word;
-    }
-
-    .rsvp-modal-answer-block .rsvp-modal-question {
-        font-weight: 700;
-        color: #2563eb;
-        display: block;
-        margin-bottom: 0.2rem;
-    }
-
-    .rsvp-modal-answer-block .rsvp-modal-answer {
-        font-weight: 400;
-        color: #222;
-        display: block;
-        margin-left: 0;
-        margin-top: 0.2rem;
-        max-height: 7.5em;
-        overflow-y: auto;
-        white-space: pre-line;
-    }
-
-    .rsvp-modal-answer-block .rsvp-modal-answer.muted {
-        color: #888;
-        font-style: italic;
-    }
-
-    .rsvp-modal-answer-block .material-icons {
-        font-size: 1.2em;
-        vertical-align: middle;
-        color: #2563eb;
-        margin-right: 0.2em;
-    }
-
-    .dark-mode .display-5,
-    .dark-mode .fw-bold {
-        color: #f3f4f6 !important;
-    }
-
-    .dark-mode .modern-breadcrumbs {
-        background: linear-gradient(90deg, #22335a 0%, #1a233a 100%) !important;
-        color: #e0e7ef !important;
-        border-radius: 2rem;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.13);
-        border: 1.5px solid #374151;
-    }
-
-    .dark-mode .modern-breadcrumbs .breadcrumb-current,
-    .dark-mode .modern-breadcrumbs .material-icons {
-        color: #60a5fa !important;
-    }
-
-    .dark-mode .modern-breadcrumbs a {
-        color: #b3d1f7 !important;
-    }
-
-    .dark-mode .event-hero-gradient {
-        background: linear-gradient(90deg, #223a5f 0%, #0ea5e9 100%) !important;
-        color: #fff !important;
-        box-shadow: 0 8px 32px 0 rgba(20, 30, 50, 0.18);
-    }
-
-    .dark-mode .modern-card,
-    .dark-mode .modern-card-body {
-        background: #23272b !important;
-        color: #e0e0e0 !important;
-        box-shadow: 0 2px 12px rgba(30, 58, 138, 0.13);
-        border: 1px solid #232b3a !important;
-    }
-
-    .dark-mode .modern-card-header.event-info {
-        background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%) !important;
-        color: #fff !important;
-    }
-
-    .dark-mode .modern-card-header.attendees {
-        background: linear-gradient(90deg, #22d3ee 0%, #22c55e 100%) !important;
-        color: #fff !important;
-    }
-
-    .dark-mode .modern-card-header {
-        border-bottom: none !important;
-    }
-
-    .dark-mode .organizer-tools-buttons .btn {
-        background: linear-gradient(90deg, #ef4444 0%, #f59e42 100%) !important;
-        color: #fff !important;
-        border: none !important;
-    }
-
-    .dark-mode .organizer-tools-buttons .btn-primary {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%) !important;
-        color: #fff !important;
-    }
-
-    .dark-mode .organizer-tools-buttons .btn-danger {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%) !important;
-        color: #fff !important;
-    }
-
-    .dark-mode .attendee-counter-badge {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%) !important;
-        color: #fff !important;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
-    }
-
-    .dark-mode .gradient-badge-18 {
-        background: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%) !important;
-        color: #fff !important;
-    }
-
-    .dark-mode .gradient-badge-21 {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%) !important;
-        color: #fff !important;
-    }
-
-    .dark-mode .gradient-alert-success {
-        background: linear-gradient(90deg, #3bb78f 0%, #0bab64 100%) !important;
-        color: #d1fae5 !important;
-        border-left: 6px solid #10b981 !important;
-    }
-
-    .dark-mode .gradient-alert-success .material-icons {
-        color: #10b981 !important;
-        background: #134e4a !important;
-    }
-
-    .dark-mode .gradient-alert-waitlist,
-    .dark-mode .gradient-alert-maybe {
-        background: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%) !important;
-        color: #fff !important;
-        border-left: 6px solid #f59e42 !important;
-    }
-
-    .dark-mode .gradient-alert-waitlist .material-icons,
-    .dark-mode .gradient-alert-maybe .material-icons {
-        color: #f59e42 !important;
-        background: #7c4700 !important;
-    }
-
-    .dark-mode .gradient-alert-notgoing {
-        background: linear-gradient(90deg, #ff5e62 0%, #ffbaba 100%) !important;
-        color: #fff !important;
-        border-left: 6px solid #ef4444 !important;
-    }
-
-    .dark-mode .gradient-alert-notgoing .material-icons {
-        color: #ef4444 !important;
-        background: #7f1d1d !important;
-    }
-
-    .dark-mode .gradient-alert-cancelled {
-        background: linear-gradient(90deg, #ff5e62 0%, #ff9966 100%) !important;
-        color: #fff1f2 !important;
-        border-left: 6px solid #ef4444 !important;
-    }
-
-    .dark-mode .gradient-alert-cancelled .material-icons {
-        color: #ef4444 !important;
-        background: #7f1d1d !important;
-    }
-
-    .dark-mode .rsvp-label {
-        color: #38bdf8 !important;
-    }
-
-    .dark-mode .rsvp-label .material-icons {
-        color: #38bdf8 !important;
-    }
-
-    .dark-mode .list-group-item {
-        background: #23272f !important;
-        color: #f3f4f6 !important;
-        border-color: #374151 !important;
-    }
-
-    .dark-mode .list-group-item.text-muted {
-        color: #9ca3af !important;
-    }
-
-    .dark-mode .badge.bg-primary {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%) !important;
-        color: #fff !important;
-    }
-
-    .dark-mode .rsvp-group-card {
-        background: #23272b !important;
-        color: #e0e0e0 !important;
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(30, 58, 138, 0.13);
-        border: 1.5px solid #232b3a !important;
-        margin-bottom: 1.9rem;
-        padding: 1.1rem 1.2rem 0.7rem 1.2rem;
-    }
-
-    .dark-mode .rsvp-group-card:last-child {
-        margin-bottom: 0;
-    }
-
-    .dark-mode .rsvp-group-confirmed {
-        border-top: 6px solid #34d399 !important;
-        background: #23272b !important;
-    }
-
-    .dark-mode .rsvp-group-maybe {
-        border-top: 6px solid #fde68a !important;
-        background: #23272b !important;
-    }
-
-    .dark-mode .rsvp-group-notattending {
-        border-top: 6px solid #fca5a5 !important;
-        background: #23272b !important;
-    }
-
-    .dark-mode .rsvp-group-card .list-group-item {
-        border: none !important;
-        color: #e0e0e0 !important;
-        border-radius: 0.7rem;
-        margin-bottom: 0.3rem;
-        padding: 0.7rem 1rem;
-    }
-
-    .dark-mode .rsvp-group-card .list-group-item.text-muted {
-        color: #b0b8c1 !important;
-        font-style: italic;
-        background: #23272b !important;
-        border-radius: 0.7rem;
-    }
-</style>
 <div class="container">
+    <!-- Status Alerts -->
     {% if event.status == 'cancelled' %}
-    <div class="gradient-alert-cancelled">
-        <i class="material-icons">event_busy</i>
+    <div class="alert alert-danger mb-4">
+        <span class="material-icons me-2">event_busy</span>
         This event has been cancelled.
     </div>
     {% elif user_rsvp and event.status != 'cancelled' %}
-    {% if user_rsvp.status == 'confirmed' %}
-    <div class="gradient-alert-success">
-        <i class="material-icons">check_circle</i>
-        You are currently Confirmed for this event.
-    </div>
-    {% elif user_rsvp.status == 'maybe' %}
-    <div class="gradient-alert-maybe">
-        <i class="material-icons">help</i>
-        You are currently a Maybe for this event.
-    </div>
-    {% elif user_rsvp.status == 'not_attending' %}
-    <div class="gradient-alert-notgoing">
-        <i class="material-icons">cancel</i>
-        You are Not Going to this event.
-    </div>
-    {% elif user_rsvp.status == 'waitlisted' %}
-    <div class="gradient-alert-waitlist">
-        <i class="material-icons">hourglass_empty</i>
-        You are currently Waitlisted for this event. You will be notified if a spot opens up.
-    </div>
-    {% endif %}
-    {% endif %}
-    <!-- Breadcrumbs in separate section -->
-    <div class="row mb-3">
-        <div class="col-12">
-            <nav aria-label="breadcrumb">
-                <div class="modern-breadcrumbs">
-                    <a href="/" class="d-flex align-items-center">
-                        <i class="material-icons">home</i> Events
-                    </a>
-                    <span class="breadcrumb-chevron">›</span>
-                    <span class="breadcrumb-current">{{ event.title }}</span>
-                </div>
-            </nav>
+        {% if user_rsvp.status == 'confirmed' %}
+        <div class="alert alert-success mb-4">
+            <span class="material-icons me-2">check_circle</span>
+            You are currently Confirmed for this event.
         </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="event-hero-gradient mb-4">
-                <h1 class="display-5 mb-0 fw-bold">{{ event.title }}</h1>
-                {% if event.age_restriction == 'mature' %}
-                <span class="badge gradient-badge-21 ms-2">
-                    <i class="material-icons me-1 align-middle" style="font-size: 16px;">warning</i> 21+
-                </span>
-                {% elif event.age_restriction == 'adult' %}
-                <span class="badge gradient-badge-18 ms-2">
-                    <i class="material-icons me-1 align-middle" style="font-size: 16px;">warning</i> 18+
-                </span>
-                {% endif %}
-            </div>
+        {% elif user_rsvp.status == 'maybe' %}
+        <div class="alert alert-warning mb-4">
+            <span class="material-icons me-2">help</span>
+            You are currently a Maybe for this event.
+        </div>
+        {% elif user_rsvp.status == 'not_attending' %}
+        <div class="alert alert-danger mb-4">
+            <span class="material-icons me-2">cancel</span>
+            You are Not Going to this event.
+        </div>
+        {% elif user_rsvp.status == 'waitlisted' %}
+        <div class="alert alert-warning mb-4">
+            <span class="material-icons me-2">hourglass_empty</span>
+            You are currently Waitlisted for this event. You will be notified if a spot opens up.
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/" class="d-flex align-items-center">
+                    <span class="material-icons me-1">home</span> Events
+                </a>
+            </li>
+            <li class="breadcrumb-item active">{{ event.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Event Header -->
+    <div class="card bg-gradient-primary text-white mb-4">
+        <div class="card-body p-4">
+            <h1 class="display-5 mb-2 fw-bold">{{ event.title }}</h1>
+            {% if event.age_restriction == 'mature' %}
+            <span class="badge bg-warning text-dark">
+                <span class="material-icons me-1">warning</span> 21+
+            </span>
+            {% elif event.age_restriction == 'adult' %}
+            <span class="badge bg-warning text-dark">
+                <span class="material-icons me-1">warning</span> 18+
+            </span>
+            {% endif %}
         </div>
     </div>
 
     {% if event_has_passed %}
-    <div class="gradient-alert-past">
-        <i class="material-icons">info</i>
+    <div class="alert alert-secondary mb-4">
+        <span class="material-icons me-2">info</span>
         This event has passed.
     </div>
     {% endif %}
 
-    <!-- Main Event Info and RSVP Section -->
-    <div class="row mb-4 align-items-stretch">
+    <!-- Main Content -->
+    <div class="row">
         <!-- Event Details (Left) -->
-        <div class="col-lg-8 d-flex flex-column">
-            <div class="modern-card mb-4 h-100">
-                <div class="modern-card-header event-info">
-                    <i class="material-icons me-2">info</i> Event Information
+        <div class="col-lg-8">
+            <!-- Event Information -->
+            <div class="card shadow-custom mb-4">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h2 class="mb-0 d-flex align-items-center">
+                        <span class="material-icons me-2">info</span> Event Information
+                    </h2>
                 </div>
-                <div class="modern-card-body">
+                <div class="card-body p-4">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="material-icons text-primary me-2" style="font-size: 24px;">group</i>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="material-icons text-primary me-2">group</span>
                                 <strong class="text-primary">Group:</strong>
                                 <span class="ms-2">
                                     <a href="{% url 'group_detail' event.group.id %}" class="text-decoration-none">
@@ -1302,15 +95,15 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="material-icons text-primary me-2" style="font-size: 24px;">calendar_today</i>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="material-icons text-primary me-2">calendar_today</span>
                                 <strong class="text-primary">Date:</strong>
                                 <span class="ms-2">{{ event.date }}</span>
                             </div>
                         </div>
                         <div class="col-md-{% if event.capacity %}6{% else %}12{% endif %}">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="material-icons text-primary me-2" style="font-size: 24px;">schedule</i>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="material-icons text-primary me-2">schedule</span>
                                 <strong class="text-primary">Time:</strong>
                                 <span class="ms-2">
                                     {{ event.start_time|time:"g:i A" }}
@@ -1322,71 +115,72 @@
                         </div>
                         {% if event.capacity %}
                         <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="material-icons text-primary me-2" style="font-size: 24px;">group</i>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="material-icons text-primary me-2">group</span>
                                 <strong class="text-primary">Capacity:</strong>
                                 <span class="ms-2">{{ confirmed_rsvps_count }} / {{ event.capacity }} Confirmed</span>
                                 {% if waitlisted_rsvps_count %}
-                                <span class="ms-2 text-warning">(<i class="material-icons align-middle"
-                                        style="font-size: 1rem;">queue</i> {{ waitlisted_rsvps_count }}
-                                    Waitlisted)</span>
+                                <span class="ms-2 text-warning">
+                                    <span class="material-icons align-middle">queue</span> {{ waitlisted_rsvps_count }} Waitlisted
+                                </span>
                                 {% endif %}
                             </div>
                         </div>
                         {% endif %}
-                        <div class="col-12{% if event.capacity %} mt-4{% endif %}">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="material-icons text-primary me-2" style="font-size: 24px;">location_on</i>
+                        <div class="col-12">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="material-icons text-primary me-2">location_on</span>
                                 <strong class="text-primary">Location:</strong>
-                                <span class="ms-2">
-                                    {# TODO: Only show state if it's a valid US state. For now, show as before. #}
-                                    {{ location_display_string }}
-                                </span>
+                                <span class="ms-2">{{ location_display_string }}</span>
                             </div>
                         </div>
                         <div class="col-12 mt-4">
-                            <div class="mb-3 d-flex align-items-center text-primary">
-                                <i class="material-icons text-primary me-2" style="font-size: 24px;">info</i>
-                                <strong class="text-primary">Description:</strong>
-                                <br>
+                            <div class="mb-3">
+                                <strong class="text-primary d-flex align-items-center">
+                                    <span class="material-icons me-2">info</span> Description:
+                                </strong>
                             </div>
                             <div>{{ event.description|safe }}</div>
                             {% if event.accessibility_details %}
-                            <span class="material-icons text-primary"
-                                style="font-size: 1.3em; margin-right: 0.3em;">accessible</span><strong
-                                class="text-primary">Accessibility:</strong><br>
-                            <span>{{ event.accessibility_details|linebreaksbr }}</span>
+                            <div class="mt-3">
+                                <strong class="text-primary d-flex align-items-center">
+                                    <span class="material-icons me-2">accessible</span> Accessibility:
+                                </strong>
+                                <span>{{ event.accessibility_details|linebreaksbr }}</span>
+                            </div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Attendees Section moved here, in line with bottom of description -->
+
+            <!-- Attendees Section -->
             {% if can_view_attendee_list or rsvp_groups.confirmed|length > 0 or rsvp_groups.waitlisted|length > 0 or rsvp_groups.maybe|length > 0 or rsvp_groups.not_attending|length > 0 %}
-            <div class="modern-card mb-4">
-                <div class="modern-card-header attendees">
-                    <i class="material-icons me-2">groups</i> <span class="fw-bold">Attendees</span>
-                    <span class="attendee-counter-badge">{{ confirmed_rsvps_count }}</span>
+            <div class="card shadow-custom mb-4">
+                <div class="card-header bg-gradient-success text-white">
+                    <h2 class="mb-0 d-flex align-items-center">
+                        <span class="material-icons me-2">groups</span> Attendees
+                        <span class="badge bg-light text-dark ms-2">{{ confirmed_rsvps_count }}</span>
+                    </h2>
                 </div>
-                <div class="modern-card-body attendees">
+                <div class="card-body p-4">
                     {% if not can_view_attendee_list %}
-                    <div class="alert alert-info mb-3"
-                        style="background: linear-gradient(90deg, #e0e7ff 0%, #f0abfc 100%); color: #312e81; border-radius: 0.8rem; font-weight: 600;">
+                    <div class="alert alert-info mb-3">
                         The attendee list is hidden. You can only see your own RSVP.
                     </div>
                     {% endif %}
-                    <!-- RSVP Status Groups in Attendees card -->
-                    <div class="rsvp-group-card rsvp-group-confirmed">
-                        <h4 class="h6 text-success mb-2 d-flex align-items-center">
-                            <i class="material-icons align-middle me-1">check_circle</i> Confirmed
-                            ({{ confirmed_rsvps_count }})
+
+                    <!-- Confirmed RSVPs -->
+                    <div class="mb-4">
+                        <h4 class="h6 text-success mb-3 d-flex align-items-center">
+                            <span class="material-icons me-1">check_circle</span> Confirmed ({{ confirmed_rsvps_count }})
                         </h4>
-                        <div class="list-group list-group-flush">
+                        <div class="list-group">
                             {% for rsvp_data in rsvp_groups.confirmed %}
                             {% with rsvp=rsvp_data.rsvp %}
-                            <div class="list-group-item d-flex align-items-center py-2">
+                            <div class="list-group-item d-flex align-items-center">
                                 {% if rsvp.user %}
-                                <div class="me-2">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
+                                <div class="me-3">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
                                 {% if can_view_contact_info %}
                                 <a href="#" class="text-body js-open-contact-modal" data-bs-toggle="modal"
                                     data-bs-target="#contactInfoModal"
@@ -1400,26 +194,28 @@
                                 {{ rsvp.user.profile.get_display_name }}
                                 {% endif %}
                                 {% else %}
-                                <div class="me-2"><i class="material-icons text-muted">person</i></div>
+                                <span class="material-icons text-muted me-3">person</span>
                                 <span class="text-body">{{ rsvp.name }}</span>
                                 {% endif %}
                             </div>
                             {% endwith %}
                             {% empty %}
-                            <div class="list-group-item text-muted py-2">No confirmed RSVPs yet</div>
+                            <div class="list-group-item text-muted">No confirmed RSVPs yet</div>
                             {% endfor %}
                         </div>
                     </div>
-                    <div class="rsvp-group-card rsvp-group-maybe">
-                        <h4 class="h6 text-warning mb-2 d-flex align-items-center">
-                            <i class="material-icons align-middle me-1">help</i> Maybe ({{ rsvp_groups.maybe|length }})
+
+                    <!-- Maybe RSVPs -->
+                    <div class="mb-4">
+                        <h4 class="h6 text-warning mb-3 d-flex align-items-center">
+                            <span class="material-icons me-1">help</span> Maybe ({{ rsvp_groups.maybe|length }})
                         </h4>
-                        <div class="list-group list-group-flush">
+                        <div class="list-group">
                             {% for rsvp_data in rsvp_groups.maybe %}
                             {% with rsvp=rsvp_data.rsvp %}
-                            <div class="list-group-item d-flex align-items-center py-2">
+                            <div class="list-group-item d-flex align-items-center">
                                 {% if rsvp.user %}
-                                <div class="me-2">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
+                                <div class="me-3">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
                                 {% if can_view_contact_info %}
                                 <a href="#" class="text-body js-open-contact-modal" data-bs-toggle="modal"
                                     data-bs-target="#contactInfoModal"
@@ -1433,27 +229,28 @@
                                 {{ rsvp.user.profile.get_display_name }}
                                 {% endif %}
                                 {% else %}
-                                <div class="me-2"><i class="material-icons text-muted">person</i></div>
+                                <span class="material-icons text-muted me-3">person</span>
                                 <span class="text-body">{{ rsvp.name }}</span>
                                 {% endif %}
                             </div>
                             {% endwith %}
                             {% empty %}
-                            <div class="list-group-item text-muted py-2">No maybes yet</div>
+                            <div class="list-group-item text-muted">No maybes yet</div>
                             {% endfor %}
                         </div>
                     </div>
-                    <div class="rsvp-group-card rsvp-group-notattending">
-                        <h4 class="h6 text-danger mb-2 d-flex align-items-center">
-                            <i class="material-icons align-middle me-1">cancel</i> Not Attending
-                            ({{ rsvp_groups.not_attending|length }})
+
+                    <!-- Not Attending -->
+                    <div class="mb-4">
+                        <h4 class="h6 text-danger mb-3 d-flex align-items-center">
+                            <span class="material-icons me-1">cancel</span> Not Attending ({{ rsvp_groups.not_attending|length }})
                         </h4>
-                        <div class="list-group list-group-flush">
+                        <div class="list-group">
                             {% for rsvp_data in rsvp_groups.not_attending %}
                             {% with rsvp=rsvp_data.rsvp %}
-                            <div class="list-group-item d-flex align-items-center py-2">
+                            <div class="list-group-item d-flex align-items-center">
                                 {% if rsvp.user %}
-                                <div class="me-2">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
+                                <div class="me-3">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
                                 {% if can_view_contact_info %}
                                 <a href="#" class="text-body js-open-contact-modal" data-bs-toggle="modal"
                                     data-bs-target="#contactInfoModal"
@@ -1467,31 +264,30 @@
                                 {{ rsvp.user.profile.get_display_name }}
                                 {% endif %}
                                 {% else %}
-                                <div class="me-2"><i class="material-icons text-muted">person</i></div>
+                                <span class="material-icons text-muted me-3">person</span>
                                 <span class="text-body">{{ rsvp.name }}</span>
                                 {% endif %}
                             </div>
                             {% endwith %}
                             {% empty %}
-                            <div class="list-group-item text-muted py-2">No one has declined yet</div>
+                            <div class="list-group-item text-muted">No one has declined yet</div>
                             {% endfor %}
                         </div>
                     </div>
 
                     <!-- Waitlisted -->
                     {% if event.waitlist_enabled %}
-                    <div class="rsvp-group-card rsvp-group-waitlist">
-                        <h4 class="h6 text-warning mb-2 d-flex align-items-center">
-                            <i class="material-icons align-middle me-1">queue</i> Waitlisted
-                            ({{ waitlisted_rsvps_count }})
+                    <div class="mb-4">
+                        <h4 class="h6 text-warning mb-3 d-flex align-items-center">
+                            <span class="material-icons me-1">queue</span> Waitlisted ({{ waitlisted_rsvps_count }})
                         </h4>
-                        <div class="list-group list-group-flush">
+                        <div class="list-group">
                             {% for rsvp_data in rsvp_groups.waitlisted %}
                             {% with rsvp=rsvp_data.rsvp %}
                             {% if rsvp.status == 'waitlisted' %}
-                            <div class="list-group-item d-flex align-items-center py-2">
+                            <div class="list-group-item d-flex align-items-center">
                                 {% if rsvp.user %}
-                                <div class="me-2">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
+                                <div class="me-3">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
                                 {% if can_view_contact_info %}
                                 <a href="#" class="text-body js-open-contact-modal" data-bs-toggle="modal"
                                     data-bs-target="#contactInfoModal"
@@ -1505,14 +301,14 @@
                                 {{ rsvp.user.profile.get_display_name }}
                                 {% endif %}
                                 {% else %}
-                                <div class="me-2"><i class="material-icons text-muted">person</i></div>
+                                <span class="material-icons text-muted me-3">person</span>
                                 <span class="text-body">{{ rsvp.name }}</span>
                                 {% endif %}
                             </div>
                             {% endif %}
                             {% endwith %}
                             {% empty %}
-                            <div class="list-group-item text-muted py-2">No one on waitlist yet</div>
+                            <div class="list-group-item text-muted">No one on waitlist yet</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -1520,15 +316,16 @@
                 </div>
             </div>
             {% else %}
-            <div class="modern-card mb-4">
-                <div class="modern-card-header attendees">
-                    <i class="material-icons me-2">groups</i> <span class="fw-bold">Attendees</span>
+            <div class="card shadow-custom mb-4">
+                <div class="card-header bg-gradient-success text-white">
+                    <h2 class="mb-0 d-flex align-items-center">
+                        <span class="material-icons me-2">groups</span> Attendees
+                    </h2>
                 </div>
-                <div class="modern-card-body">
-                    <div class="attendee-restriction-modal">
-                        <i class="material-icons attendee-restriction-icon">lock</i>
-                        <span class="attendee-restriction-text">The attendee list is only visible to group leaders for
-                            this event.</span>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-0">
+                        <span class="material-icons me-2">lock</span>
+                        The attendee list is only visible to group leaders for this event.
                     </div>
                 </div>
             </div>
@@ -1536,660 +333,390 @@
         </div>
 
         <!-- RSVP/Organizer Tools (Right) -->
-        <div class="col-lg-4 d-flex flex-column h-100">
-            <div class="modern-card mb-4 h-100 d-flex flex-column justify-content-between">
-                {% if is_organizer or is_site_admin or is_delegated_assistant %}
-                <!-- Organizer Tools -->
-                <div class="modern-card mb-4">
-                    <div class="modern-card-header event-info"
-                        style="background: linear-gradient(90deg, #f59e42 0%, #f43f5e 100%);">
-                        <i class="material-icons me-2">settings</i> Organizer Tools
-                    </div>
-                    <div class="modern-card-body">
-                        <button type="button" class="btn gradient-btn-primary mb-2" data-bs-toggle="modal"
-                            data-bs-target="#editEventModal">
-                            <i class="material-icons">edit</i> Edit Event
+        <div class="col-lg-4">
+            {% if is_organizer or is_site_admin or is_delegated_assistant %}
+            <!-- Organizer Tools -->
+            <div class="card shadow-custom mb-4">
+                <div class="card-header bg-gradient-warning text-white">
+                    <h3 class="mb-0 d-flex align-items-center">
+                        <span class="material-icons me-2">settings</span> Organizer Tools
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <button type="button" class="btn btn-primary w-100 mb-3" data-bs-toggle="modal"
+                        data-bs-target="#editEventModal">
+                        <span class="material-icons me-2">edit</span> Edit Event
+                    </button>
+                    {% if event.status == 'cancelled' %}
+                    <form method="post" action="{% url 'uncancel_event' event.id %}" class="d-block mb-3"
+                        onsubmit="return confirm('Are you sure you want to uncancel this event? This will notify all attendees.');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success w-100 mb-3">
+                            <span class="material-icons me-2">restore</span> Uncancel Event
                         </button>
-                        {% if event.status == 'cancelled' %}
-                        <form method="post" action="{% url 'uncancel_event' event.id %}" class="d-block mb-2"
-                            onsubmit="return confirm('Are you sure you want to uncancel this event? This will notify all attendees.');">
-                            {% csrf_token %}
-                            <button type="submit" class="btn gradient-btn-success mb-2">
-                                <i class="material-icons">restore</i> Uncancel Event
-                            </button>
-                        </form>
-                        {% else %}
-                        <form method="post" class="d-block mb-2"
-                            onsubmit="return confirm('Are you sure you want to cancel this event? This will notify all attendees.');">
-                            {% csrf_token %}
-                            <button type="submit" name="cancel_event" class="btn gradient-btn-danger mb-2">
-                                <i class="material-icons">cancel</i> Cancel Event
-                            </button>
-                        </form>
-                        {% endif %}
-                        <form method="post" class="d-block mb-2"
-                            onsubmit="return confirm('Are you sure you want to delete this event? This action cannot be undone.');">
-                            {% csrf_token %}
-                            <input type="hidden" name="delete_event" value="1">
-                            <button type="submit" class="btn gradient-btn-danger btn-sm">
-                                <i class="material-icons me-1">delete</i> Delete Event
-                            </button>
-                        </form>
-                    </div>
+                    </form>
+                    {% else %}
+                    <form method="post" class="d-block mb-3"
+                        onsubmit="return confirm('Are you sure you want to cancel this event? This will notify all attendees.');">
+                        {% csrf_token %}
+                        <button type="submit" name="cancel_event" class="btn btn-danger w-100 mb-3">
+                            <span class="material-icons me-2">cancel</span> Cancel Event
+                        </button>
+                    </form>
+                    {% endif %}
+                    <form method="post" class="d-block"
+                        onsubmit="return confirm('Are you sure you want to delete this event? This action cannot be undone.');">
+                        {% csrf_token %}
+                        <input type="hidden" name="delete_event" value="1">
+                        <button type="submit" class="btn btn-danger btn-sm w-100">
+                            <span class="material-icons me-1">delete</span> Delete Event
+                        </button>
+                    </form>
                 </div>
-                <!-- Edit Event Modal -->
-                <div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content"
-                            style="border-radius: 1.25rem; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25); border: none; overflow: hidden;">
-                            <div class="modal-header"
-                                style="background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%); color: #fff; border-bottom: none; padding-top: 2rem; padding-bottom: 2rem; align-items: center;">
-                                <h5 class="modal-title d-flex align-items-center" id="editEventModalLabel"
-                                    style="font-size: 1.7rem; font-weight: 600; gap: 0.5rem;">
-                                    <i class="material-icons me-2"
-                                        style="font-size: 2.2rem; vertical-align: middle;">edit</i> Edit Event
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                                    style="filter: invert(1); opacity: 0.8;"></button>
-                            </div>
-                            <form method="post" action="{% url 'edit_event' event.id %}" enctype="multipart/form-data"
-                                id="editEventForm">
-                                {% csrf_token %}
-                                <div class="modal-body"
-                                    style="padding: 2rem 2.5rem 1.5rem 2.5rem; background: #f8fafc;">
-                                    <!-- Title Field -->
-                                    <div class="mb-4 event-form-group">
-                                        <label for="{{ event_form.title.id_for_label }}"
-                                            class="form-label d-flex align-items-center"
-                                            style="font-weight: 500; color: #4f46e5;">
-                                            <i class="material-icons me-2" style="font-size: 1.3em;">event</i>
-                                            Event Title
-                                        </label>
-                                        {% render_field event_form.title class="form-control" %}
-                                        {% if event_form.title.errors %}
-                                        <div class="invalid-feedback d-block">{{ event_form.title.errors }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <!-- Group Field -->
-                                    <div class="mb-4 event-form-group">
-                                        <label for="{{ event_form.group.id_for_label }}"
-                                            class="form-label d-flex align-items-center"
-                                            style="font-weight: 500; color: #4f46e5;">
-                                            <i class="material-icons me-2" style="font-size: 1.3em;">groups</i>
-                                            Group
-                                        </label>
-                                        {% render_field event_form.group class="form-control" %}
-                                        {% if event_form.group.errors %}
-                                        <div class="invalid-feedback d-block">{{ event_form.group.errors }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <!-- Date/Time Fields -->
-                                    <div class="mb-4 event-form-group">
-                                        <label class="form-label d-flex align-items-center"
-                                            style="font-weight: 500; color: #4f46e5;">
-                                            <i class="material-icons me-2" style="font-size: 1.3em;">calendar_today</i>
-                                            Date and Time
-                                        </label>
-                                        <div class="row">
-                                            <div class="col-md-4 mb-2 mb-md-0">
-                                                {% render_field event_form.date class="form-control flatpickr" placeholder="MM/DD/YYYY" %}
-                                                {% if event_form.date.errors %}
-                                                <div class="invalid-feedback d-block">{{ event_form.date.errors }}</div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-md-4 mb-2 mb-md-0">
-                                                <label for="{{ event_form.start_time.id_for_label }}"
-                                                    class="form-label visually-hidden">Start Time</label>
-                                                {% render_field event_form.start_time class="form-control flatpickr" placeholder="Start time" required='required' %}
-                                                {% if event_form.start_time.errors %}
-                                                <div class="invalid-feedback d-block">{{ event_form.start_time.errors }}
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="{{ event_form.end_time.id_for_label }}"
-                                                    class="form-label visually-hidden">End Time</label>
-                                                {% render_field event_form.end_time class="form-control flatpickr" placeholder="End time" required='required' %}
-                                                {% if event_form.end_time.errors %}
-                                                <div class="invalid-feedback d-block">{{ event_form.end_time.errors }}
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Location Details Fields -->
-                                    <div class="mb-4 event-form-group">
-                                        <label for="{{ event_form.address.id_for_label }}"
-                                            class="form-label d-flex align-items-center">
-                                            <i class="material-icons me-2" style="font-size: 1.3em;">location_on</i>
-                                            Street Address
-                                        </label>
-                                        <div class="input-group mb-2" style="align-items: center;">
-                                            {% render_field event_form.address class="form-control" placeholder="Enter street address" %}
-                                            <button type="button" class="btn btn-location-modern" id="useLocationBtn"
-                                                title="Use My Location">
-                                                <i class="material-icons" style="font-size: 1.2em;">my_location</i>
-                                            </button>
-                                        </div>
-                                        {% if event_form.address.errors %}
-                                        <div class="invalid-feedback d-block">{{ event_form.address.errors }}</div>
-                                        {% endif %}
-                                        <div class="row mt-3">
-                                            <div class="col-md-6 mb-3 mb-md-0">
-                                                <label for="{{ event_form.city.id_for_label }}"
-                                                    class="form-label d-flex align-items-center">
-                                                    <i class="material-icons me-2"
-                                                        style="font-size: 1.3em;">location_city</i>
-                                                    City
-                                                </label>
-                                                {% render_field event_form.city class="form-control" placeholder="Enter city" %}
-                                                {% if event_form.city.errors %}
-                                                <div class="invalid-feedback d-block">{{ event_form.city.errors }}</div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="{{ event_form.state.id_for_label }}"
-                                                    class="form-label d-flex align-items-center">
-                                                    <i class="material-icons me-2" style="font-size: 1.3em;">map</i>
-                                                    State
-                                                </label>
-                                                {% render_field event_form.state class="custom-select-modern" %}
-                                                {% if event_form.state.errors %}
-                                                <div class="invalid-feedback d-block">{{ event_form.state.errors }}
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Age Restriction Field -->
-                                    <div class="mb-4 event-form-group">
-                                        <label for="{{ event_form.age_restriction.id_for_label }}"
-                                            class="form-label d-flex align-items-center"
-                                            style="font-weight: 500; color: #4f46e5;">
-                                            <i class="material-icons me-2" style="font-size: 1.3em;">warning</i>
-                                            Age Restriction
-                                        </label>
-                                        {% render_field event_form.age_restriction class="custom-select-modern" %}
-                                        {% if event_form.age_restriction.errors %}
-                                        <div class="invalid-feedback d-block">{{ event_form.age_restriction.errors }}
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                    <!-- Description Field (TinyMCE) -->
-                                    <div class="mb-4 event-form-group">
-                                        <label for="{{ event_form.description.id_for_label }}"
-                                            class="form-label d-flex align-items-center"
-                                            style="font-weight: 500; color: #4f46e5;">
-                                            <i class="material-icons me-2" style="font-size: 1.3em;">description</i>
-                                            Description
-                                        </label>
-                                        {% render_field event_form.description class="form-control" %}
-                                        {% if event_form.description.errors %}
-                                        <div class="invalid-feedback d-block">{{ event_form.description.errors }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <!-- Event Capacity Field -->
-                                    <div class="mb-4 event-form-group">
-                                        <label for="{{ event_form.capacity.id_for_label }}"
-                                            class="form-label d-flex align-items-center"
-                                            style="font-weight: 500; color: #4f46e5;">
-                                            <i class="material-icons me-2" style="font-size: 1.3em;">people</i>
-                                            Event Capacity
-                                        </label>
-                                        {% render_field event_form.capacity class="form-control" %}
-                                        {% if event_form.capacity.errors %}
-                                        <div class="invalid-feedback d-block">{{ event_form.capacity.errors }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <!-- Waitlist Enabled Field -->
-                                    <div class="mb-4 event-form-group">
-                                        <div class="form-check">
-                                            {% render_field event_form.waitlist_enabled class="form-check-input" %}
-                                            <label class="form-check-label d-flex align-items-center"
-                                                for="{{ event_form.waitlist_enabled.id_for_label }}">
-                                                <i class="material-icons me-2"
-                                                    style="font-size: 1.3em;">hourglass_empty</i>
-                                                Enable Waitlist
-                                            </label>
-                                        </div>
-                                        {% if event_form.waitlist_enabled.errors %}
-                                        <div class="invalid-feedback d-block">{{ event_form.waitlist_enabled.errors }}
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                    <!-- Attendee List Public Field -->
-                                    <div class="mb-4 event-form-group">
-                                        <div class="form-check">
-                                            {% render_field event_form.attendee_list_public class="form-check-input" %}
-                                            <label class="form-check-label d-flex align-items-center"
-                                                for="{{ event_form.attendee_list_public.id_for_label }}">
-                                                <i class="material-icons me-2" style="font-size: 1.3em;">visibility</i>
-                                                Make attendee list public
-                                            </label>
-                                        </div>
-                                        {% if event_form.attendee_list_public.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            {{ event_form.attendee_list_public.errors }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <!-- Accessibility Details Field -->
-                                    <div class="mb-4 event-form-group">
-                                        <label for="{{ event_form.accessibility_details.id_for_label }}"
-                                            class="form-label d-flex align-items-center"
-                                            style="font-weight: 500; color: #4f46e5;">
-                                            <i class="material-icons me-2" style="font-size: 1.3em;">accessible</i>
-                                            Accessibility Details
-                                        </label>
-                                        {% render_field event_form.accessibility_details class="form-control" %}
-                                        <small class="form-text text-muted">Leave blank if not accessible.</small>
-                                        {% if event_form.accessibility_details.errors %}
-                                        <div class="invalid-feedback d-block">
-                                            {{ event_form.accessibility_details.errors }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <!-- RSVP Questions Fields -->
-                                    <div class="mb-3">
-                                        <label for="{{ event_form.question1_text.id_for_label }}" class="form-label"><i
-                                                class="material-icons align-middle me-1"
-                                                style="color: #2563eb;">quiz</i> RSVP Question 1</label>
-                                        {% render_field event_form.question1_text class="form-control" placeholder="RSVP Question 1 (leave blank to disable)" %}
-                                        <div class="form-text">Leave blank to disable this question.</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="{{ event_form.question2_text.id_for_label }}" class="form-label"><i
-                                                class="material-icons align-middle me-1"
-                                                style="color: #2563eb;">quiz</i> RSVP Question 2</label>
-                                        {% render_field event_form.question2_text class="form-control" placeholder="RSVP Question 2 (leave blank to disable)" %}
-                                        <div class="form-text">Leave blank to disable this question.</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="{{ event_form.question3_text.id_for_label }}" class="form-label"><i
-                                                class="material-icons align-middle me-1"
-                                                style="color: #2563eb;">quiz</i> RSVP Question 3</label>
-                                        {% render_field event_form.question3_text class="form-control" placeholder="RSVP Question 3 (leave blank to disable)" %}
-                                        <div class="form-text">Leave blank to disable this question.</div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer"
-                                    style="background: #f3f4f6; border-top: none; padding: 1.5rem 2.5rem;">
-                                    <button type="button" class="btn btn-cancel-gradient"
-                                        data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-save-gradient">
-                                        <i class="material-icons me-1">save</i> Save Changes
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <style>
-                    #editEventModal .modal-dialog {
-                        min-width: 600px;
-                        max-width: 900px;
-                    }
-                </style>
-                <script src="https://cdn.jsdelivr.net/npm/tinymce@7.9.1/tinymce.min.js" referrerpolicy="origin">
-                </script>
-                <script>
-                    function initTinyMCEEventModal() {
-                        const isDark = document.body.classList.contains('dark-mode');
-                        tinymce.init({
-                selector: '#{{ event_form.description.id_for_label }}',
-                height: 300,
-                width: '100%',
-                menubar: false,
-                                                    plugins: 'advlist autolink lists image charmap anchor searchreplace visualblocks code insertdatetime table help wordcount textcolor backcolor link',
-                        toolbar: 'bold italic strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | image code | removeformat',
-                branding: false,
-                promotion: false,
-                        license_key: 'gpl',
-                automatic_uploads: true,
-                file_picker_types: 'image',
-                images_reuse_filename: true,
-                        statusbar: false,
-                        resize: false,
-                        menubar: false,
-                        skin: isDark ? 'oxide-dark' : 'oxide',
-                        content_css: isDark ? '/static/tinymce-dark-content.css' : '',
-                        toolbar_mode: 'wrap',
-                        toolbar_sticky: true,
-                        toolbar_sticky_offset: 0,
-                                                    content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; } img { max-width: 100%; height: auto; display: block; margin: 1em auto; } .tox-statusbar { display: none !important; }',
-                            auto_link: true,
-                            link_default_target: '_blank',
-                            link_default_rel: 'noopener noreferrer',
-                        document_base_url: '{{ request.scheme }}://{{ request.get_host }}/',
-                            setup: function (editor) {
-                                editor.on('init', function () {
-                                    editor.getContainer().style.transition =
-                                        'border-color 0.15s ease-in-out';
-                                });
-                                
+            </div>
+            {% endif %}
 
-                            },
-                            file_picker_callback: function (callback, value, meta) {
-                                if (meta.filetype === 'image') {
-                                    var input = document.createElement('input');
-                                    input.setAttribute('type', 'file');
-                                    input.setAttribute('accept', 'image/*');
-                                    input.onchange = function () {
-                                        var file = this.files[0];
-                                        var reader = new FileReader();
-                                        reader.onload = function () {
-                                            // For production, upload the file to your server and use the returned URL
-                                            callback(reader.result, { title: file.name });
-                                        };
-                                        reader.readAsDataURL(file);
-                                    };
-                                    input.click();
-                                }
-                            }
-                        });
-                    }
-                    document.addEventListener('DOMContentLoaded', function () {
-                        var editEventModal = document.getElementById('editEventModal');
-                        if (editEventModal) {
-                            editEventModal.addEventListener('shown.bs.modal', function () {
-                                var editor = tinymce.get('{{ event_form.description.id_for_label }}');
-                                if (editor) {
-                                    editor.destroy();
-                                }
-                                setTimeout(initTinyMCEEventModal, 750);
-                            });
-                        }
-                    });
-                </script>
-                <!-- Flatpickr CSS/JS -->
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        flatpickr('.flatpickr[name="date"]', {
-                            dateFormat: 'm/d/Y',
-                            allowInput: true,
-                        });
-                        flatpickr('.flatpickr[name="start_time"]', {
-                            enableTime: true,
-                            noCalendar: true,
-                            dateFormat: 'h:i K',
-                            time_24hr: false,
-                            allowInput: true,
-                        });
-                        flatpickr('.flatpickr[name="end_time"]', {
-                            enableTime: true,
-                            noCalendar: true,
-                            dateFormat: 'h:i K',
-                            time_24hr: false,
-                            allowInput: true,
-                        });
-                    });
-                </script>
-                {% endif %}
-                {% if not event_has_passed and event.status == 'active' %}
-                <!-- RSVP Panel -->
-                <div class="modern-card mb-4">
-                    <div class="modern-card-header event-info"
-                        style="background: linear-gradient(90deg, #06b6d4 0%, #6366f1 100%);">
-                        <i class="material-icons me-2">event_available</i> RSVP
-                    </div>
-                    <div class="modern-card-body">
-                        {% if user.is_authenticated %}
+            {% if not event_has_passed and event.status == 'active' %}
+            <!-- RSVP Panel -->
+            <div class="card shadow-custom">
+                <div class="card-header bg-gradient-accent text-white">
+                    <h3 class="mb-0 d-flex align-items-center">
+                        <span class="material-icons me-2">event_available</span> RSVP
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    {% if user.is_authenticated %}
                         {% if is_event_full and can_join_waitlist %}
                         <div class="alert alert-info mb-3">Event is full, but you can join the waitlist.</div>
                         {% endif %}
                         <form method="post">
                             {% csrf_token %}
-                            <label for="{{ form.status.id_for_label }}" class="rsvp-label">
-                                <i class="material-icons">event_available</i> Status:
+                            <label for="{{ form.status.id_for_label }}" class="form-label fw-bold">
+                                <span class="material-icons me-2">event_available</span> Status:
                             </label>
-                            <select name="status" id="{{ form.status.id_for_label }}" class="modern-select">
-                                <option value="" disabled {% if not form.status.value %}selected{% endif %}>--- Select
-                                    RSVP Status ---</option>
+                            <select name="status" id="{{ form.status.id_for_label }}" class="form-select mb-3">
+                                <option value="" disabled {% if not form.status.value %}selected{% endif %}>--- Select RSVP Status ---</option>
                                 {% with choices=form.status.field.choices %}
                                 {# Confirmed first #}
                                 {% for option in choices %}
                                 {% if option.0 == 'confirmed' %}
-                                <option value="{{ option.0 }}"
-                                    {% if form.status.value == option.0 %}selected{% endif %}>{{ option.1 }}</option>
+                                <option value="{{ option.0 }}" {% if form.status.value == option.0 %}selected{% endif %}>{{ option.1 }}</option>
                                 {% endif %}
                                 {% endfor %}
                                 {# Waitlisted second #}
                                 {% for option in choices %}
                                 {% if option.0 == 'waitlisted' %}
-                                <option value="{{ option.0 }}"
-                                    {% if form.status.value == option.0 %}selected{% endif %}>{{ option.1 }}</option>
+                                <option value="{{ option.0 }}" {% if form.status.value == option.0 %}selected{% endif %}>{{ option.1 }}</option>
                                 {% endif %}
                                 {% endfor %}
                                 {# All others except confirmed and waitlisted #}
                                 {% for option in choices %}
                                 {% if option.0 != 'confirmed' and option.0 != 'waitlisted' %}
-                                <option value="{{ option.0 }}"
-                                    {% if form.status.value == option.0 %}selected{% endif %}>{{ option.1 }}</option>
+                                <option value="{{ option.0 }}" {% if form.status.value == option.0 %}selected{% endif %}>{{ option.1 }}</option>
                                 {% endif %}
                                 {% endfor %}
                                 {% endwith %}
                             </select>
-                            <!-- RSVP Questions: Only show if event.questionX_text is set -->
+
+                            <!-- RSVP Questions -->
                             {% if event.question1_text %}
                             <div class="mb-3">
-                                <label for="{{ form.question1.id_for_label }}"
-                                    class="form-label">{{ event.question1_text }}</label>
+                                <label for="{{ form.question1.id_for_label }}" class="form-label">{{ event.question1_text }}</label>
                                 {{ form.question1 }}
-                                {% if form.question1.help_text %}<div class="form-text">{{ form.question1.help_text }}
-                                </div>{% endif %}
-                                {% if form.question1.errors %}<div class="invalid-feedback d-block">
-                                    {{ form.question1.errors }}</div>{% endif %}
+                                {% if form.question1.help_text %}<div class="form-text">{{ form.question1.help_text }}</div>{% endif %}
+                                {% if form.question1.errors %}<div class="invalid-feedback d-block">{{ form.question1.errors }}</div>{% endif %}
                             </div>
                             {% endif %}
                             {% if event.question2_text %}
                             <div class="mb-3">
-                                <label for="{{ form.question2.id_for_label }}"
-                                    class="form-label">{{ event.question2_text }}</label>
+                                <label for="{{ form.question2.id_for_label }}" class="form-label">{{ event.question2_text }}</label>
                                 {{ form.question2 }}
-                                {% if form.question2.help_text %}<div class="form-text">{{ form.question2.help_text }}
-                                </div>{% endif %}
-                                {% if form.question2.errors %}<div class="invalid-feedback d-block">
-                                    {{ form.question2.errors }}</div>{% endif %}
+                                {% if form.question2.help_text %}<div class="form-text">{{ form.question2.help_text }}</div>{% endif %}
+                                {% if form.question2.errors %}<div class="invalid-feedback d-block">{{ form.question2.errors }}</div>{% endif %}
                             </div>
                             {% endif %}
                             {% if event.question3_text %}
                             <div class="mb-3">
-                                <label for="{{ form.question3.id_for_label }}"
-                                    class="form-label">{{ event.question3_text }}</label>
+                                <label for="{{ form.question3.id_for_label }}" class="form-label">{{ event.question3_text }}</label>
                                 {{ form.question3 }}
-                                {% if form.question3.help_text %}<div class="form-text">{{ form.question3.help_text }}
-                                </div>{% endif %}
-                                {% if form.question3.errors %}<div class="invalid-feedback d-block">
-                                    {{ form.question3.errors }}</div>{% endif %}
+                                {% if form.question3.help_text %}<div class="form-text">{{ form.question3.help_text }}</div>{% endif %}
+                                {% if form.question3.errors %}<div class="invalid-feedback d-block">{{ form.question3.errors }}</div>{% endif %}
                             </div>
                             {% endif %}
-                            <button type="submit" class="rsvp-submit-btn"><i class="material-icons">event</i> Submit
-                                RSVP</button>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <span class="material-icons me-2">event</span> Submit RSVP
+                            </button>
                         </form>
                         {% if user_rsvp %}
                         <form method="post" class="mt-3"
                             onsubmit="return confirm('Are you sure you want to remove your RSVP?');">
                             {% csrf_token %}
-                            <button type="submit" name="remove_rsvp" class="gradient-btn-danger">
-                                <i class="material-icons">cancel</i> Remove RSVP
+                            <button type="submit" name="remove_rsvp" class="btn btn-danger w-100">
+                                <span class="material-icons me-2">cancel</span> Remove RSVP
                             </button>
                         </form>
                         {% endif %}
-                        {% else %}
-                        <div class="login-required-modal">
-                            <i class="material-icons login-required-icon">login</i>
-                            <span class="login-required-text">Please <a href="{% url 'login' %}" class="login-link">log
-                                    in</a> to RSVP.</span>
+                    {% else %}
+                        <div class="alert alert-warning mb-0">
+                            <span class="material-icons me-2">login</span>
+                            Please <a href="{% url 'login' %}" class="alert-link">log in</a> to RSVP.
                         </div>
-                        {% endif %}
-                    </div>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
 
+<!-- Edit Event Modal -->
+{% if is_organizer or is_site_admin or is_delegated_assistant %}
+<div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title d-flex align-items-center" id="editEventModalLabel">
+                    <span class="material-icons me-2">edit</span> Edit Event
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'edit_event' event.id %}" enctype="multipart/form-data" id="editEventForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <!-- Title Field -->
+                    <div class="mb-3">
+                        <label for="{{ event_form.title.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">event</span> Event Title
+                        </label>
+                        {% render_field event_form.title class="form-control" %}
+                        {% if event_form.title.errors %}
+                        <div class="invalid-feedback d-block">{{ event_form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Group Field -->
+                    <div class="mb-3">
+                        <label for="{{ event_form.group.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">groups</span> Group
+                        </label>
+                        {% render_field event_form.group class="form-control" %}
+                        {% if event_form.group.errors %}
+                        <div class="invalid-feedback d-block">{{ event_form.group.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Date/Time Fields -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <span class="material-icons me-2">calendar_today</span> Date and Time
+                        </label>
+                        <div class="row">
+                            <div class="col-md-4 mb-2 mb-md-0">
+                                {% render_field event_form.date class="form-control" placeholder="MM/DD/YYYY" %}
+                                {% if event_form.date.errors %}
+                                <div class="invalid-feedback d-block">{{ event_form.date.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-2 mb-md-0">
+                                <label for="{{ event_form.start_time.id_for_label }}" class="form-label visually-hidden">Start Time</label>
+                                {% render_field event_form.start_time class="form-control" placeholder="Start time" required='required' %}
+                                {% if event_form.start_time.errors %}
+                                <div class="invalid-feedback d-block">{{ event_form.start_time.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ event_form.end_time.id_for_label }}" class="form-label visually-hidden">End Time</label>
+                                {% render_field event_form.end_time class="form-control" placeholder="End time" required='required' %}
+                                {% if event_form.end_time.errors %}
+                                <div class="invalid-feedback d-block">{{ event_form.end_time.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Fields -->
+                    <div class="mb-3">
+                        <label for="{{ event_form.address.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">location_on</span> Street Address
+                        </label>
+                        <div class="input-group mb-2">
+                            {% render_field event_form.address class="form-control" placeholder="Enter street address" %}
+                            <button type="button" class="btn btn-outline-primary" id="useLocationBtn" title="Use My Location">
+                                <span class="material-icons">my_location</span>
+                            </button>
+                        </div>
+                        {% if event_form.address.errors %}
+                        <div class="invalid-feedback d-block">{{ event_form.address.errors }}</div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="{{ event_form.city.id_for_label }}" class="form-label">
+                                    <span class="material-icons me-2">location_city</span> City
+                                </label>
+                                {% render_field event_form.city class="form-control" placeholder="Enter city" %}
+                                {% if event_form.city.errors %}
+                                <div class="invalid-feedback d-block">{{ event_form.city.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ event_form.state.id_for_label }}" class="form-label">
+                                    <span class="material-icons me-2">map</span> State
+                                </label>
+                                {% render_field event_form.state class="form-select" %}
+                                {% if event_form.state.errors %}
+                                <div class="invalid-feedback d-block">{{ event_form.state.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Age Restriction Field -->
+                    <div class="mb-3">
+                        <label for="{{ event_form.age_restriction.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">warning</span> Age Restriction
+                        </label>
+                        {% render_field event_form.age_restriction class="form-select" %}
+                        {% if event_form.age_restriction.errors %}
+                        <div class="invalid-feedback d-block">{{ event_form.age_restriction.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="mb-3">
+                        <label for="{{ event_form.description.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">description</span> Description
+                        </label>
+                        {% render_field event_form.description class="form-control" %}
+                        {% if event_form.description.errors %}
+                        <div class="invalid-feedback d-block">{{ event_form.description.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Event Capacity Field -->
+                    <div class="mb-3">
+                        <label for="{{ event_form.capacity.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">people</span> Event Capacity
+                        </label>
+                        {% render_field event_form.capacity class="form-control" %}
+                        {% if event_form.capacity.errors %}
+                        <div class="invalid-feedback d-block">{{ event_form.capacity.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {% render_field event_form.waitlist_enabled class="form-check-input" %}
+                            <label class="form-check-label d-flex align-items-center" for="{{ event_form.waitlist_enabled.id_for_label }}">
+                                <span class="material-icons me-2">hourglass_empty</span> Enable Waitlist
+                            </label>
+                        </div>
+                        {% if event_form.waitlist_enabled.errors %}
+                        <div class="invalid-feedback d-block">{{ event_form.waitlist_enabled.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {% render_field event_form.attendee_list_public class="form-check-input" %}
+                            <label class="form-check-label d-flex align-items-center" for="{{ event_form.attendee_list_public.id_for_label }}">
+                                <span class="material-icons me-2">visibility</span> Make attendee list public
+                            </label>
+                        </div>
+                        {% if event_form.attendee_list_public.errors %}
+                        <div class="invalid-feedback d-block">{{ event_form.attendee_list_public.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Accessibility Details Field -->
+                    <div class="mb-3">
+                        <label for="{{ event_form.accessibility_details.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">accessible</span> Accessibility Details
+                        </label>
+                        {% render_field event_form.accessibility_details class="form-control" %}
+                        <small class="form-text text-muted">Leave blank if not accessible.</small>
+                        {% if event_form.accessibility_details.errors %}
+                        <div class="invalid-feedback d-block">{{ event_form.accessibility_details.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- RSVP Questions -->
+                    <div class="mb-3">
+                        <label for="{{ event_form.question1_text.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">quiz</span> RSVP Question 1
+                        </label>
+                        {% render_field event_form.question1_text class="form-control" placeholder="RSVP Question 1 (leave blank to disable)" %}
+                        <div class="form-text">Leave blank to disable this question.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ event_form.question2_text.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">quiz</span> RSVP Question 2
+                        </label>
+                        {% render_field event_form.question2_text class="form-control" placeholder="RSVP Question 2 (leave blank to disable)" %}
+                        <div class="form-text">Leave blank to disable this question.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ event_form.question3_text.id_for_label }}" class="form-label">
+                            <span class="material-icons me-2">quiz</span> RSVP Question 3
+                        </label>
+                        {% render_field event_form.question3_text class="form-control" placeholder="RSVP Question 3 (leave blank to disable)" %}
+                        <div class="form-text">Leave blank to disable this question.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="material-icons me-1">save</span> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- Contact Info Modal -->
 <div class="modal fade" id="contactInfoModal" tabindex="-1" aria-labelledby="contactInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modern-glass-modal">
-            <div class="modal-header modern-glass-header">
-                <h5 class="modal-title d-flex align-items-center gap-2" id="contactInfoModalLabel">
-                    <i class="material-icons me-2">contact_mail</i> Attendee Info
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title d-flex align-items-center" id="contactInfoModalLabel">
+                    <span class="material-icons me-2">contact_mail</span> Attendee Info
                 </h5>
-                <button type="button" class="btn-close btn-close-white modern-close-btn" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body py-4 px-4 modern-glass-body">
-                <div class="rsvp-modal-answer-block mb-2">
-                    <span class="rsvp-modal-question">Display Name:</span>
-                    <span class="rsvp-modal-answer" id="modalContactDisplayName"></span>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <strong>Display Name:</strong>
+                    <span id="modalContactDisplayName"></span>
                 </div>
-                <div class="rsvp-modal-answer-block mb-2">
-                    <span class="rsvp-modal-question"><i class="material-icons align-middle me-1"
-                            style="color: #5865F2;">chat</i>Discord:</span>
-                    <span class="rsvp-modal-answer" id="modalContactDiscord"></span>
+                <div class="mb-3">
+                    <strong>Discord:</strong>
+                    <span id="modalContactDiscord"></span>
                 </div>
-                <div class="rsvp-modal-answer-block mb-2">
-                    <span class="rsvp-modal-question"><i class="material-icons align-middle me-1"
-                            style="color: #229ED9;">send</i>Telegram:</span>
-                    <span class="rsvp-modal-answer" id="modalContactTelegram"></span>
+                <div class="mb-3">
+                    <strong>Telegram:</strong>
+                    <span id="modalContactTelegram"></span>
                 </div>
-                <hr style="border-top: 1.5px solid #e0e7ef; margin: 1.1rem 0 1.2rem 0;" />
+                <hr>
                 <div id="modalRsvpAnswers"></div>
-                {% if is_organizer or is_site_admin or is_delegated_assistant %}
-                {% if modal_rsvp %}
-                {% if event.question1_text and modal_rsvp.question1 %}
-                <div class="mb-2">
-                    <span class="fw-bold" style="color: #2563eb;"><i class="material-icons align-middle me-1"
-                            style="font-size: 1.2em; vertical-align: middle;">quiz</i>{{ event.question1_text }}:</span>
-                    <span class="ms-2">{{ modal_rsvp.question1 }}</span>
-                </div>
-                {% endif %}
-                {% if event.question2_text and modal_rsvp.question2 %}
-                <div class="mb-2">
-                    <span class="fw-bold" style="color: #2563eb;"><i class="material-icons align-middle me-1"
-                            style="font-size: 1.2em; vertical-align: middle;">quiz</i>{{ event.question2_text }}:</span>
-                    <span class="ms-2">{{ modal_rsvp.question2 }}</span>
-                </div>
-                {% endif %}
-                {% if event.question3_text and modal_rsvp.question3 %}
-                <div class="mb-2">
-                    <span class="fw-bold" style="color: #2563eb;"><i class="material-icons align-middle me-1"
-                            style="font-size: 1.2em; vertical-align: middle;">quiz</i>{{ event.question3_text }}:</span>
-                    <span class="ms-2">{{ modal_rsvp.question3 }}</span>
-                </div>
-                {% endif %}
-                {% endif %}
-                {% endif %}
                 {% if can_ban_user %}
                 <form id="banUserForm" method="post" class="mt-3">
                     {% csrf_token %}
                     <input type="hidden" name="group_id" value="{{ event.group.id }}">
                     <input type="hidden" name="event_id" value="{{ event.id }}">
-                    <button type="submit" class="btn btn-danger btn-sm gradient-btn-danger modern-ban-btn">
-                        <i class="material-icons me-1">gavel</i> Ban User from Group
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <span class="material-icons me-1">gavel</span> Ban User from Group
                     </button>
                 </form>
                 {% endif %}
             </div>
-            <div class="modal-footer modern-glass-footer">
-                <button type="button" class="btn btn-secondary modern-close-btn" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-<style>
-    /* Modern Glassmorphism Modal Styles */
-    .modern-glass-modal {
-        border-radius: 1.5rem;
-        background: rgba(255, 255, 255, 0.85);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-        backdrop-filter: blur(16px) saturate(180%);
-        border: 1.5px solid rgba(59, 130, 246, 0.13);
-        overflow: hidden;
-        animation: fadeInGlass 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    @keyframes fadeInGlass {
-        from {
-            opacity: 0;
-            transform: translateY(24px) scale(0.98);
-        }
-
-        to {
-            opacity: 1;
-            transform: none;
-        }
-    }
-
-    .modern-glass-header {
-        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
-        color: #fff;
-        border-bottom: none;
-        border-top-left-radius: 1.5rem;
-        border-top-right-radius: 1.5rem;
-        padding: 1.5rem 2rem 1.2rem 2rem;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.08);
-    }
-
-    .modern-glass-body {
-        background: rgba(248, 250, 252, 0.95);
-        color: #222;
-        font-size: 1.08rem;
-        padding: 2rem 2.5rem 1.5rem 2.5rem;
-    }
-
-    .modern-glass-footer {
-        background: rgba(243, 244, 246, 0.95);
-        border-top: none;
-        border-bottom-left-radius: 1.5rem;
-        border-bottom-right-radius: 1.5rem;
-        padding: 1.2rem 2rem;
-        box-shadow: 0 -2px 12px rgba(59, 130, 246, 0.05);
-    }
-
-    .modern-close-btn {
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.7);
-        color: #6366f1;
-        border: none;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
-        transition: background 0.18s, color 0.18s;
-    }
-
-    .modern-close-btn:hover,
-    .modern-close-btn:focus {
-        background: #e0e7ef;
-        color: #4f46e5;
-    }
-
-    .modern-ban-btn {
-        border-radius: 2rem;
-        font-weight: 600;
-        font-size: 1.08rem;
-        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.10);
-        padding: 0.5rem 1.5rem;
-        margin-top: 0.5rem;
-    }
-
-    @media (max-width: 600px) {
-        .modern-glass-modal {
-            border-radius: 1rem;
-        }
-
-        .modern-glass-header,
-        .modern-glass-footer {
-            padding: 1rem;
-        }
-
-        .modern-glass-body {
-            padding: 1rem;
-        }
-    }
-</style>
 
 {% endblock %}
 
@@ -2209,14 +736,17 @@
                 var eventId = {{ event.id|default:'null' }};
                 var isOrganizer = {% if is_organizer or is_site_admin %}true{% else %}false{% endif %};
                 var canBanUser = {% if can_ban_user %}true{% else %}false{% endif %};
+                
                 var modalDisplayName = contactInfoModal.querySelector('#modalContactDisplayName');
                 var modalDiscord = contactInfoModal.querySelector('#modalContactDiscord');
                 var modalTelegram = contactInfoModal.querySelector('#modalContactTelegram');
                 var answersDiv = contactInfoModal.querySelector('#modalRsvpAnswers');
+                
                 if (modalDisplayName) modalDisplayName.textContent = displayName || 'Not provided';
                 if (modalDiscord) modalDiscord.textContent = discord || 'Not provided';
                 if (modalTelegram) modalTelegram.textContent = telegram || 'Not provided';
                 if (answersDiv) answersDiv.innerHTML = '';
+                
                 if (isOrganizer && userId) {
                     fetch(`/event/${eventId}/rsvp_answers/${userId}/`)
                         .then(response => response.json())
@@ -2240,53 +770,34 @@
                             function nl2br(text) {
                                 return escapeHtml(text).replace(/(?:\r\n|\r|\n)/g, '<br>');
                             }
+                            
                             if (data.question1_text) {
-                                html +=
-                                    `<div class=\"rsvp-modal-answer-block\"><span class=\"rsvp-modal-question\"><i class=\"material-icons align-middle me-1\">quiz</i>${escapeHtml(data.question1_text)}</span><span class=\"rsvp-modal-answer${data.question1 ? '' : ' muted'}\">${data.question1 ? nl2br(data.question1) : 'Not answered'}</span></div>`;
+                                html += `<div class="mb-2"><strong>${escapeHtml(data.question1_text)}:</strong><br>${data.question1 ? nl2br(data.question1) : 'Not answered'}</div>`;
                             }
                             if (data.question2_text) {
-                                html +=
-                                    `<div class=\"rsvp-modal-answer-block\"><span class=\"rsvp-modal-question\"><i class=\"material-icons align-middle me-1\">quiz</i>${escapeHtml(data.question2_text)}</span><span class="rsvp-modal-answer${data.question2 ? '' : ' muted'}\">${data.question2 ? nl2br(data.question2) : 'Not answered'}</span></div>`;
+                                html += `<div class="mb-2"><strong>${escapeHtml(data.question2_text)}:</strong><br>${data.question2 ? nl2br(data.question2) : 'Not answered'}</div>`;
                             }
                             if (data.question3_text) {
-                                html +=
-                                    `<div class=\"rsvp-modal-answer-block\"><span class=\"rsvp-modal-question\"><i class=\"material-icons align-middle me-1\">quiz</i>${escapeHtml(data.question3_text)}</span><span class="rsvp-modal-answer${data.question3 ? '' : ' muted'}\">${data.question3 ? nl2br(data.question3) : 'Not answered'}</span></div>`;
+                                html += `<div class="mb-2"><strong>${escapeHtml(data.question3_text)}:</strong><br>${data.question3 ? nl2br(data.question3) : 'Not answered'}</div>`;
                             }
                             if (answersDiv) answersDiv.innerHTML = html;
                         });
                 }
+                
                 if (canBanUser) {
                     var banForm = contactInfoModal.querySelector('#banUserForm');
                     if (banForm) {
                         var banUrl = `/users/${userId}/ban/`;
                         banForm.action = banUrl;
                         banForm.onsubmit = function () {
-                            return confirm(
-                                `Are you sure you want to ban ${displayName} from this group?`);
+                            return confirm(`Are you sure you want to ban ${displayName} from this group?`);
                         };
                     }
                 }
             });
         }
-        // Prevent Enter from submitting RSVP form if status is already selected
-        var rsvpForm = document.querySelector('.modern-card-body form');
-        if (rsvpForm) {
-            var statusSelect = rsvpForm.querySelector('select[name="status"]');
-            var questionInputs = rsvpForm.querySelectorAll(
-                'input[name^="question"], textarea[name^="question"]');
-            questionInputs.forEach(function (input) {
-                input.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter') {
-                        // Prevent form submit if status is not selected
-                        if (!statusSelect || !statusSelect.value) {
-                            e.preventDefault();
-                        }
-                    }
-                });
-            });
-        }
 
-        // Auto-open the edit modal if ?edit=1 is in the URL or if there are edit errors
+        // Auto-open the edit modal if ?edit=1 is in the URL
         function getUrlParam(name) {
             const url = new URL(window.location.href);
             return url.searchParams.get(name);
@@ -2300,164 +811,26 @@
 
         // Geolocation and address autocomplete
         var useLocationBtn = document.getElementById('useLocationBtn');
-        var cityField = document.getElementById('id_city');
-        var stateField = document.getElementById('id_state');
-        var addressField = document.getElementById('id_address');
-
-        if (addressField) {
-            var autocompleteContainer = document.createElement('div');
-            autocompleteContainer.className = 'autocomplete-container';
-            autocompleteContainer.style.cssText = `
-            position: absolute;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 1000;
-            display: none;
-            margin-top: 4px;
-            top: 100%;
-        `;
-            addressField.parentElement.style.position = 'relative';
-            addressField.parentElement.appendChild(autocompleteContainer);
-
-            function fetchAddressSuggestions(query, city, state) {
-                if (!query || !city || !state || query.length < 3) {
-                    autocompleteContainer.style.display = 'none';
-                    return;
-                }
-                fetch(
-                        `https://nominatim.openstreetmap.org/search?street=${encodeURIComponent(query)}&city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&country=USA&format=json&addressdetails=1&limit=10`
-                    )
-                    .then(response => response.json())
-                    .then(data => {
-                        autocompleteContainer.innerHTML = '';
-                        if (!data || data.length === 0) {
-                            autocompleteContainer.style.display = 'none';
-                            return;
-                        }
-                        data.forEach(result => {
-                            let addressLine = '';
-                            if (result.address.house_number && result.address.road) {
-                                addressLine = result.address.house_number + ' ' + result.address
-                                    .road;
-                            } else if (result.address.road) {
-                                addressLine = result.address.road;
-                            } else {
-                                addressLine = result.display_name;
-                            }
-                            const suggestion = document.createElement('div');
-                            suggestion.className = 'autocomplete-suggestion';
-                            suggestion.style.cssText = `
-                            padding: 8px 12px;
-                            cursor: pointer;
-                            border-bottom: 1px solid #eee;
-                        `;
-                            suggestion.textContent = addressLine;
-                            suggestion.addEventListener('click', function () {
-                                addressField.value = addressLine;
-                                autocompleteContainer.style.display = 'none';
-                            });
-                            suggestion.addEventListener('mouseover', function () {
-                                suggestion.style.backgroundColor = '#f5f5f5';
-                            });
-                            suggestion.addEventListener('mouseout', function () {
-                                suggestion.style.backgroundColor = 'white';
-                            });
-                            autocompleteContainer.appendChild(suggestion);
-                        });
-                        autocompleteContainer.style.display = 'block';
-                    });
-            }
-
-            addressField.addEventListener('input', function () {
-                fetchAddressSuggestions(addressField.value, cityField.value, stateField.value);
-            });
-
-            // Hide suggestions when clicking outside
-            document.addEventListener('click', function (e) {
-                if (addressField && !addressField.contains(e.target) && !autocompleteContainer.contains(
-                        e.target)) {
-                    autocompleteContainer.style.display = 'none';
-                }
-            });
-        }
-
         if (useLocationBtn) {
-            useLocationBtn.addEventListener('click', function () {
-                if (!navigator.geolocation) {
-                    alert('Geolocation is not supported by your browser.');
-                    return;
+            useLocationBtn.addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var lat = position.coords.latitude;
+                        var lng = position.coords.longitude;
+                        
+                        // Use reverse geocoding to get address
+                        fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=YOUR_API_KEY`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.results && data.results[0]) {
+                                    var address = data.results[0].formatted_address;
+                                    document.getElementById('{{ event_form.address.id_for_label }}').value = address;
+                                }
+                            });
+                    });
                 }
-                useLocationBtn.disabled = true;
-                useLocationBtn.innerHTML = '<i class="material-icons spin">my_location</i>';
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    var lat = position.coords.latitude;
-                    var lon = position.coords.longitude;
-                    fetch(
-                            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
-                        )
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.address) {
-                                if (cityField) cityField.value = data.address.city || data
-                                    .address.town || data.address.village || '';
-                                if (stateField) stateField.value = data.address.state || '';
-                            }
-                            useLocationBtn.disabled = false;
-                            useLocationBtn.innerHTML =
-                                '<i class="material-icons">my_location</i>';
-                        })
-                        .catch(function () {
-                            alert('Could not retrieve address from location.');
-                            useLocationBtn.disabled = false;
-                            useLocationBtn.innerHTML =
-                                '<i class="material-icons">my_location</i>';
-                        });
-                }, function (error) {
-                    alert('Unable to retrieve your location. Please allow location access.');
-                    useLocationBtn.disabled = false;
-                    useLocationBtn.innerHTML = '<i class="material-icons">my_location</i>';
-                });
-            });
-        }
-
-        // RSVP form: prevent Enter from submitting when in question fields
-        var rsvpForm = document.querySelector('.modern-card-body form');
-        if (rsvpForm) {
-            var questionInputs = rsvpForm.querySelectorAll(
-                'input[name^="question"], textarea[name^="question"]');
-            questionInputs.forEach(function (input) {
-                input.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                    }
-                });
             });
         }
     });
 </script>
-<style>
-    .material-icons.spin {
-        animation: spin 1s linear infinite;
-    }
-
-    .autocomplete-container {
-        font-size: 1rem;
-    }
-
-    .autocomplete-suggestion.active,
-    .autocomplete-suggestion:hover {
-        background: #f5f5f5;
-    }
-
-    @keyframes spin {
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-</style>
 {% endblock %}

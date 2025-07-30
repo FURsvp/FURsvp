@@ -5,3152 +5,901 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}FURsvp{% endblock %}</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>{% block title %}FURsvp - Furry Event Planning{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Icons -->
+    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Custom CSS -->
+    <!-- Google Fonts: Modern & Playful -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@300;400;500;600;700&family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary-color: #2a3faa;
-            --secondary-color: #b3d1f7;
-            --background-color: #f8f9fa;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #4facfe;
+            --success-color: #43e97b;
+            --warning-color: #fa709a;
+            --danger-color: #ff9a9e;
+            
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-dark: #1a202c;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --text-light: #a0aec0;
+            
+            --border-radius: 20px;
+            --border-radius-lg: 30px;
+            --border-radius-xl: 40px;
+            --shadow-sm: 0 2.5px 10px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 5px 25px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--background-color);
-            font-family: 'Rubik', sans-serif;
+            font-family: 'Baloo 2';
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-
-        /* Add margin when banner is present */
-        body.has-banner {
-            margin-top: 4rem;
-        }
-
-        .top-bar {
-            background: var(--secondary-color);
-            padding: 0.5rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand {
-            margin-right: 0.5rem;
-        }
-
-        .navbar-brand img {
-            height: 70px;
-            display: block;
-            margin: 0 auto;
-            max-width: 100%;
-        }
-
-        .nav-link {
-            color: var(--primary-color) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-            padding: 0.3rem 0.8rem !important;
-        }
-
-        .nav-link:hover {
-            color: #1a2f9a !important;
-            transform: translateY(-1px);
-        }
-
-        .nav-link i.material-icons {
-            font-size: 24px !important;
-            vertical-align: middle;
-            line-height: 1;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 2rem 0;
-        }
-
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            padding: 0.5rem 1.5rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #1a2f9a;
-            border-color: #1a2f9a;
-            transform: translateY(-2px);
-        }
-
-        .table {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .table thead th {
-            background-color: var(--secondary-color);
-            border: none;
-            color: var(--primary-color);
-        }
-
-        .footer-btn-modern {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5em;
-            padding: 0.7em 1.4em;
-            border-radius: 1.2em;
-            border: none;
-            background: #e0edff;
-            color: #2563eb;
-            font-weight: 600;
-            font-size: 1.08rem;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
-            transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.12s;
-            margin: 0.3em 0.4em 0.3em 0;
-            outline: none;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .footer-btn-modern:hover,
-        .footer-btn-modern.active {
-            background: linear-gradient(90deg, #2563eb 0%, #6366f1 100%);
-            color: #fff;
-            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.13);
-            transform: translateY(-2px) scale(1.04);
-            text-decoration: none;
-        }
-
-        .footer-btn-modern i,
-        .footer-btn-modern .material-icons {
-            font-size: 1.25em;
-            vertical-align: middle;
-        }
-
-        .footer {
-            background-color: var(--secondary-color);
-            padding: 3.5rem 0;
-            margin-top: auto;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-
-        .footer h5 {
-            font-weight: 600;
-            font-size: 1.2rem;
-        }
-
-        .footer .text-muted {
-            color: #6c757d !important;
-        }
-
-        .footer a.text-muted:hover {
-            color: var(--primary-color) !important;
-        }
-
-        .footer .btn-outline-primary {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .footer .btn-outline-primary:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .form-control {
-            border-radius: 5px;
-            border: 1px solid #dee2e6;
-            padding: 0.75rem;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(42, 63, 170, 0.25);
-        }
-
-
-        .breadcrumb {
-            font-size: 1.1rem;
-        }
-
-        .breadcrumb-item+.breadcrumb-item::before {
-            content: "›";
-            font-size: 1.5rem;
-            line-height: 1;
-            color: #6c757d;
-        }
-
-        .breadcrumb-item a {
-            color: #6c757d;
-            transition: color 0.2s ease-in-out;
-        }
-
-        .breadcrumb-item a:hover {
-            color: var(--primary-color);
-        }
-
-        .breadcrumb-item.active {
-            color: var(--primary-color);
-        }
-
-        /* Modern Breadcrumbs */
-        .modern-breadcrumbs {
-            background: #f8fafc;
-            border-radius: 2rem;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
-            padding: 0.7rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            font-size: 1.13rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .modern-breadcrumbs a {
-            color: #64748b;
-            text-decoration: none;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            transition: color 0.15s;
-        }
-
-        .modern-breadcrumbs a:hover {
-            color: #2563eb;
-        }
-
-        .modern-breadcrumbs .breadcrumb-chevron {
-            color: #b0b8c1;
-            font-size: 1.3em;
-            margin: 0 0.5rem;
-            user-select: none;
-        }
-
-        .modern-breadcrumbs .breadcrumb-current {
-            color: #2563eb;
-            font-weight: 700;
-        }
-
-        .modern-breadcrumbs .material-icons {
-            font-size: 1.3em;
-            margin-right: 0.3em;
-            color: #64748b;
-        }
-
-        .footer-logo {
-            height: 50px;
-            width: auto;
-            display: block;
-            margin: 0 auto 1rem auto;
-        }
-
-        .footer-links a {
-            transition: all 0.2s ease;
-        }
-
-        .footer-links a:hover {
-            transform: translateX(5px);
-        }
-
-        .footer .btn {
-            transition: all 0.2s ease;
-        }
-
-        .footer .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .quick-link:hover {
-            color: var(--primary-color) !important;
-            text-decoration: underline;
-        }
-
-        .footer-btn:hover {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .unread-notifications-badge {
-            position: absolute;
-            top: -7px;
-            right: -7px;
-            background: linear-gradient(135deg, #dc3545 0%, #ff6f6f 100%);
-            color: #fff;
-            border: 2px solid #fff;
-            font-size: 1rem;
-            font-weight: 700;
-            padding: .32em .7em;
-            border-radius: 2em;
-            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.13);
-            z-index: 2;
-            min-width: 1.7em;
-            text-align: center;
-        }
-
-        .notification-item {
-            display: flex;
-            flex-direction: column;
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            white-space: normal;
-        }
-
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-
-        .notification-item:hover {
-            background-color: #f8f9fa;
-            cursor: pointer;
-        }
-
-        .notification-item-text {
-            font-size: 0.95rem;
-            color: #333;
-            margin-top: 3px;
-            margin-bottom: 3px;
-        }
-
-        .notification-item-date {
-            font-size: 0.8rem;
-            color: #777;
-            align-self: flex-end;
-        }
-
-        .notification-header {
-            font-weight: 600;
-            color: var(--primary-color);
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            font-size: 1.1rem;
-        }
-
-        .notification-footer {
-            padding: 10px 15px;
-            text-align: center;
-        }
-
-        .dropdown-menu.notifications-dropdown {
-            background: #fff;
-            border-radius: 1.2rem;
-            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.13);
-            padding: 0.5rem 0 0.5rem 0;
-            min-width: 340px;
-            max-width: 380px;
-            border: none;
-            margin-top: 1.1rem !important;
-        }
-
-        .notification-header {
-            font-weight: 800;
-            color: #2563eb;
-            font-size: 1.18rem;
-            padding: 1rem 1.5rem 0.5rem 1.5rem;
-            background: none;
-            border: none;
-            letter-spacing: 0.01em;
-        }
-
-        .dropdown-divider {
-            margin: 0.2rem 0 0.2rem 0;
-            border-color: #e0e7ef;
-        }
-
-        #no-notifications-message-item {
-            padding: 1.2rem 1.5rem 1.2rem 1.5rem;
-            text-align: center;
-        }
-
-        #no-notifications-message {
-            color: #64748b;
-            font-size: 1.08rem;
-            font-weight: 500;
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: default;
-        }
-
-        .dropdown-menu.notifications-dropdown .notification-item {
-            background: #f8fafc;
-            border-radius: 0.8rem;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
-            margin: 0.7rem 1.1rem 0.7rem 1.1rem;
-            padding: 1rem 1.2rem 0.7rem 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-            border-left: 5px solid transparent;
-            transition: box-shadow 0.18s, border-color 0.18s, background 0.18s;
-            cursor: pointer;
-        }
-
-        .dropdown-menu.notifications-dropdown .notification-item.unread {
-            border-left: 5px solid #2563eb;
-            background: #e0e7ff;
-        }
-
-        .dropdown-menu.notifications-dropdown .notification-item:hover {
-            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.13);
-            background: #f1f5fd;
-            border-left: 5px solid #06b6d4;
-        }
-
-        .dropdown-menu.notifications-dropdown .notification-item-text {
-            font-size: 1.05rem;
-            color: #223b7b;
-            font-weight: 500;
-            margin-bottom: 0.2rem;
-            word-break: break-word;
-        }
-
-        .dropdown-menu.notifications-dropdown .notification-item-date {
-            font-size: 0.93rem;
-            color: #64748b;
-            font-weight: 400;
-            align-self: flex-end;
-            margin-top: 0.1rem;
-        }
-
-        .notification-footer {
-            padding: 0.7rem 1.5rem 1.1rem 1.5rem;
-            background: none;
-            border: none;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        #clear-notifications-btn {
-            width: 100%;
-            background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-            color: #fff !important;
-            font-weight: 700;
-            border: none;
-            border-radius: 2em;
-            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-            padding: 0.7em 0;
-            font-size: 1.08rem;
-            transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
-            margin-top: 0.2rem;
-        }
-
-        #clear-notifications-btn:hover,
-        #clear-notifications-btn:focus {
-            background: linear-gradient(90deg, #1a2f9a 0%, #0e7490 100%);
-            color: #fff !important;
-            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-            transform: scale(1.03);
-        }
-
-        @media (max-width: 600px) {
-            .dropdown-menu.notifications-dropdown {
-                min-width: 95vw;
-                max-width: 98vw;
-                padding: 0.2rem 0;
-            }
-
-            .notification-header,
-            .notification-footer {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-
-            #no-notifications-message-item {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-
-            .dropdown-menu.notifications-dropdown .notification-item {
-                margin-left: 0.5rem;
-                margin-right: 0.5rem;
-                padding-left: 0.7rem;
-                padding-right: 0.7rem;
-            }
-        }
-
-        /* Mobile Bottom Navigation */
-        @media (max-width: 768px) {
-            .mobile-bottom-nav {
-                display: flex;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: white;
-                box-shadow: 0 -6px 15px rgba(0, 0, 0, 0.15);
-                z-index: 1000;
-                padding: 0.4rem 0.1rem;
-                justify-content: space-around;
-                align-items: center;
-                border-top-left-radius: 15px;
-                border-top-right-radius: 15px;
-                flex-wrap: nowrap;
-                overflow: hidden;
-            }
-
-            .mobile-bottom-nav .nav-link {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                color: var(--primary-color);
-                font-size: 0.6rem;
-                flex: 1;
-                margin: 0 0.05rem;
-                text-align: center;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                min-width: 0;
-                padding: 0.15rem 0.05rem;
-            }
-
-            .mobile-bottom-nav .nav-link:hover,
-            .mobile-bottom-nav .nav-link.active {
-                color: var(--primary-color);
-                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-            }
-
-            .mobile-bottom-nav .nav-link:hover .material-icons,
-            .mobile-bottom-nav .nav-link.active .material-icons {
-                filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5));
-                transform: scale(1.25);
-            }
-
-            .mobile-bottom-nav .material-icons {
-                font-size: 1.2rem;
-                margin-bottom: 0.05rem;
-                color: var(--primary-color);
-                transition: all 0.3s ease;
-            }
-
-            .mobile-bottom-nav .nav-link span {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 100%;
-                line-height: 1.1;
-            }
-
-            .main-content {
-                padding-bottom: 5.5rem;
-            }
-
-            .navbar {
-                display: none;
-            }
-
-            .mobile-header {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 0.75rem;
-                background: white;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 1.25rem;
+            transform: scale(0.5);
+            transform-origin: top left;
+            width: 200%;
+            height: 200%;
+        }
+
+        /* Header Styles */
+        .main-header {
+            background: var(--primary-gradient);
+            padding: 1rem 0;
+            box-shadow: var(--shadow-md);
                 position: sticky;
                 top: 0;
                 z-index: 1000;
             }
 
-            .mobile-header .navbar-brand {
-                margin: 0;
-            }
-
-            .mobile-header .navbar-brand img {
-                height: 2.5rem;
-            }
-
-            .footer {
-                padding: 2.5rem 0 1.5rem 0;
-                margin-top: 0;
-                background-color: var(--secondary-color);
-                margin-bottom: 4.5rem;
-                position: relative;
-                z-index: 1;
-            }
-
-            .footer-logo {
-                height: 2.5rem;
-                margin-bottom: 0.75rem;
-                margin-top: 0;
-            }
-
-            .footer .row {
-                margin-bottom: 1rem;
-            }
-
-            .footer h5 {
-                font-size: 1rem;
-                margin-bottom: 0.75rem;
-            }
-
-            .footer p,
-            .footer a {
-                font-size: 0.85rem;
-            }
-
-            .footer .btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.85rem;
-            }
-        }
-
-        @media (min-width: 769px) {
-
-            .mobile-bottom-nav,
-            .mobile-header {
-                display: none;
-            }
-        }
-
-        .flash-icon {
-            animation: icon-flash 1s infinite alternate;
-        }
-
-        @keyframes icon-flash {
-            0% {
-                color: #dc3545;
-            }
-
-            100% {
-                color: #ff6f6f;
-            }
-        }
-
-        .notification-bell-icon .material-icons.flash-icon,
-        .mobile-bottom-nav .material-icons.flash-icon {
-            color: #dc3545 !important;
-            animation: icon-flash 1s infinite alternate;
-        }
-
-        .dark-mode .notification-bell-icon .material-icons.flash-icon,
-        .dark-mode .mobile-bottom-nav .material-icons.flash-icon {
-            color: #ff4c4c !important;
-            animation: icon-flash 1s infinite alternate;
-        }
-
-        .dark-mode {
-            background-color: #181a1b !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .card,
-        .dark-mode .navbar,
-        .dark-mode .footer,
-        .dark-mode .dropdown-menu,
-        .dark-mode .modal-content {
-            background-color: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #222 !important;
-        }
-
-        .dark-mode .btn,
-        .dark-mode .btn-outline-primary {
-            background-color: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .btn-primary,
-        .dark-mode .btn-outline-primary:hover {
-            background-color: #2a3faa !important;
-            color: #fff !important;
-            border-color: #2a3faa !important;
-        }
-
-        .dark-mode .form-control,
-        .dark-mode input,
-        .dark-mode textarea,
-        .dark-mode select {
-            background-color: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .breadcrumb,
-        .dark-mode .breadcrumb-item a,
-        .dark-mode .breadcrumb-item.active {
-            color: #b3d1f7 !important;
-        }
-
-        .dark-mode .alert {
-            background-color: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .accordion-item {
-            background: #23272b !important;
-            border-color: #222 !important;
-        }
-
-        .dark-mode .accordion-body {
-            background: #262a2e !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .accordion-button.collapsed {
-            background: #2a3faa !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .accordion-button:not(.collapsed) {
-            background: #2a3faa !important;
-            color: #fff !important;
-        }
-
-        .dark-mode .accordion-button:focus {
-            box-shadow: 0 0 0 2px #2a3faa !important;
-            border-color: #2a3faa !important;
-        }
-
-        .dark-mode .dropdown-menu {
-            background-color: #23272b !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .modal-content {
-            background-color: #23272b !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .btn-danger {
-            background-color: #dc3545 !important;
-            color: #fff !important;
-            border-color: #dc3545 !important;
-        }
-
-        .dark-mode .btn-success {
-            background-color: #198754 !important;
-            color: #fff !important;
-            border-color: #198754 !important;
-        }
-
-        .dark-mode .footer-meta,
-        .dark-mode .footer-meta * {
-            color: #fff !important;
-        }
-
-        .dark-mode .top-bar,
-        .dark-mode .navbar,
-        .dark-mode .top-bar *,
-        .dark-mode .navbar * {
-            color: #fff !important;
-        }
-
-        .dark-mode .nav-link,
-        .dark-mode .nav-tabs .nav-link,
-        .dark-mode .nav-tabs .nav-link.active,
-        .dark-mode .nav-tabs .nav-item.show .nav-link,
-        .dark-mode .nav-tabs .material-icons,
-        .dark-mode .nav-link .material-icons {
-            color: #fff !important;
-        }
-
-        .dark-mode .nav-tabs .nav-link.active,
-        .dark-mode .nav-tabs .nav-item.show .nav-link {
-            color: #222 !important;
-            background-color: #fff !important;
-        }
-
-        .dark-mode .nav-tabs .nav-link.active .material-icons,
-        .dark-mode .nav-tabs .nav-item.show .nav-link .material-icons {
-            color: #2a3faa !important;
-        }
-
-        .dark-mode .helptext,
-        .dark-mode .invalid-feedback,
-        .dark-mode .errorlist,
-        .dark-mode .form-text,
-        .dark-mode .alert-danger,
-        .dark-mode .alert-warning {
-            color: #fff !important;
-        }
-
-        .dark-mode ::placeholder {
-            color: #888 !important;
-            opacity: 1 !important;
-        }
-
-        .dark-mode input,
-        .dark-mode textarea,
-        .dark-mode select {
-            color: #222 !important;
-        }
-
-        .dark-mode .ts-dropdown,
-        .dark-mode .ts-dropdown .no-results,
-        .dark-mode .ts-dropdown .option,
-        .dark-mode .ts-dropdown .active {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .ts-dropdown {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-            border-radius: 8px;
-            border: 1px solid #444;
-        }
-
-        .dark-mode .ts-dropdown .no-results {
-            color: #bbb !important;
-            padding: 0.75rem 1rem;
-            font-style: italic;
-        }
-
-        .dark-mode .ts-dropdown .option {
-            padding: 0.75rem 1rem;
-            border-radius: 4px;
-        }
-
-        .dark-mode .ts-dropdown .active {
-            background: #2a3faa !important;
-            color: #fff !important;
-        }
-
-        .dark-mode input,
-        .dark-mode .ts-control,
-        .dark-mode .ts-dropdown,
-        .dark-mode .ts-dropdown .option,
-        .dark-mode .ts-dropdown .no-results {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode input::placeholder,
-        .dark-mode .ts-control input::placeholder {
-            color: #bbb !important;
-            opacity: 1 !important;
-        }
-
-        .dark-mode .input-group-text,
-        .dark-mode .icon-bg,
-        .dark-mode .form-icon-bg {
-            background: #23272b !important;
-            color: #2a3faa !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode input[type="checkbox"],
-        .dark-mode .form-check-input {
-            accent-color: #2a3faa !important;
-            background-color: #23272b !important;
-            border: 1.5px solid #888 !important;
-        }
-
-        .dark-mode input[type="checkbox"]:checked,
-        .dark-mode .form-check-input:checked {
-            background-color: #2a3faa !important;
-            border-color: #2a3faa !important;
-        }
-
-        .dark-mode .tox,
-        .dark-mode .tox-editor-container,
-        .dark-mode .tox-edit-area,
-        .dark-mode .tox-toolbar,
-        .dark-mode .tox-toolbar__primary,
-        .dark-mode .tox-toolbar__overflow,
-        .dark-mode .tox-statusbar,
-        .dark-mode .tox .tox-edit-area__iframe,
-        .dark-mode iframe.tox-edit-area__iframe {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .tox .tox-toolbar__primary,
-        .dark-mode .tox .tox-toolbar__overflow,
-        .dark-mode .tox .tox-toolbar {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .tox .tox-edit-area__iframe {
-            background: #23272b !important;
-        }
-
-        .dark-mode .tox .tox-statusbar {
-            background: #23272b !important;
-            color: #bbb !important;
-        }
-
-        .dark-mode iframe.tox-edit-area__iframe {
-            background: #23272b !important;
-            color-scheme: dark;
-        }
-
-        .dark-mode .tox .tox-toolbar__primary button,
-        .dark-mode .tox .tox-toolbar__primary .tox-tbtn,
-        .dark-mode .tox .tox-toolbar__overflow button,
-        .dark-mode .tox .tox-toolbar__overflow .tox-tbtn {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border: 1px solid #444 !important;
-        }
-
-        .dark-mode .tox .tox-toolbar__primary button:hover,
-        .dark-mode .tox .tox-toolbar__primary .tox-tbtn:hover,
-        .dark-mode .tox .tox-toolbar__overflow button:hover,
-        .dark-mode .tox .tox-toolbar__overflow .tox-tbtn:hover {
-            background: #2a3faa !important;
-            color: #fff !important;
-            border-color: #2a3faa !important;
-        }
-
-        /* Editor content area (iframe) */
-        .dark-mode .tox-edit-area__iframe,
-        .dark-mode iframe.tox-edit-area__iframe {
-            background: #23272b !important;
-            color-scheme: dark;
-        }
-
-        /* If you can inject CSS into the editor's content: */
-        .dark-mode .tox .tox-edit-area__iframe body,
-        .dark-mode iframe.tox-edit-area__iframe body {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-        }
-
-        /* Dark mode table styles */
-        .dark-mode table {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode thead,
-        .dark-mode th {
-            background: #222b3a !important;
-            color: #fff !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode thead tr {
-            background: #222b3a !important;
-        }
-
-        .dark-mode tbody tr {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode td {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode tr {
-            border-color: #444 !important;
-        }
-
-        .dark-mode table.table-striped>tbody>tr:nth-of-type(odd) {
-            background-color: #222b3a !important;
-        }
-
-        .dark-mode table.table-hover>tbody>tr:hover {
-            background-color: #2a3faa !important;
-            color: #fff !important;
-        }
-
-        .dark-mode .flatpickr-input {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        /* Dark mode notification dropdown */
-        .dark-mode .dropdown-menu,
-        .dark-mode .notifications-dropdown,
-        .dark-mode .notification-item,
-        .dark-mode .notification-item-date {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .dropdown-menu .dropdown-item,
-        .dark-mode .dropdown-menu .dropdown-header {
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .dropdown-menu .dropdown-divider {
-            border-top: 1px solid #444 !important;
-        }
-
-        .dark-mode .dropdown-menu .dropdown-item:active,
-        .dark-mode .dropdown-menu .dropdown-item:hover {
-            background: #2a3faa !important;
-            color: #fff !important;
-        }
-
-        .dark-mode .dropdown-menu .dropdown-item.disabled,
-        .dark-mode .dropdown-menu .dropdown-item:disabled {
-            color: #888 !important;
-        }
-
-        /* TomSelect dark mode */
-        .dark-mode .ts-wrapper,
-        .dark-mode .ts-control,
-        .dark-mode .ts-dropdown,
-        .dark-mode .ts-dropdown .option,
-        .dark-mode .ts-dropdown .active,
-        .dark-mode .ts-dropdown .selected {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .ts-control {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border: 1.5px solid #444 !important;
-        }
-
-        .dark-mode .ts-dropdown .option:hover,
-        .dark-mode .ts-dropdown .active {
-            background: #2a3faa !important;
-            color: #fff !important;
-        }
-
-        .dark-mode .ts-wrapper.multi .ts-control>.item {
-            background: #444 !important;
-            color: #fff !important;
-            border-color: #2a3faa !important;
-        }
-
-        .dark-mode .ts-dropdown .option.selected {
-            background: #2a3faa !important;
-            color: #fff !important;
-        }
-
-        /* Flatpickr dark mode fixes */
-        .dark-mode .flatpickr-calendar,
-        .dark-mode .flatpickr-days,
-        .dark-mode .flatpickr-months,
-        .dark-mode .flatpickr-weekdays,
-        .dark-mode .flatpickr-day,
-        .dark-mode .flatpickr-current-month,
-        .dark-mode .flatpickr-monthDropdown-months,
-        .dark-mode .flatpickr-month,
-        .dark-mode .flatpickr-innerContainer,
-        .dark-mode .flatpickr-rContainer {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .flatpickr-day {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border: 1px solid #444 !important;
-        }
-
-        .dark-mode .flatpickr-day.selected,
-        .dark-mode .flatpickr-day.startRange,
-        .dark-mode .flatpickr-day.endRange,
-        .dark-mode .flatpickr-day.inRange {
-            background: #2a3faa !important;
-            color: #fff !important;
-            border-color: #2a3faa !important;
-        }
-
-        .dark-mode .flatpickr-day.today {
-            border-color: #2a3faa !important;
-        }
-
-        .dark-mode .flatpickr-months .flatpickr-prev-month,
-        .dark-mode .flatpickr-months .flatpickr-next-month {
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .flatpickr-weekdays {
-            background: #23272b !important;
-            color: #fff !important;
-            border-bottom: 1px solid #444 !important;
-        }
-
-        .dark-mode .flatpickr-weekday {
+        .navbar {
             background: transparent !important;
-            color: #fff !important;
+            padding: 0;
         }
 
-        .dark-mode .flatpickr-monthDropdown-months,
-        .dark-mode .flatpickr-current-month input.cur-month {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border: none !important;
-        }
-
-        .dark-mode .flatpickr-time {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .flatpickr-time input,
-        .dark-mode .flatpickr-time .flatpickr-am-pm {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border: 1px solid #444 !important;
-        }
-
-        /* Autocomplete suggestion dropdown dark mode fix */
-        .dark-mode .autocomplete-container {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border: 1px solid #444 !important;
-        }
-
-        .dark-mode .autocomplete-suggestion {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .autocomplete-suggestion.active,
-        .dark-mode .autocomplete-suggestion:hover {
-            background: #2a3faa !important;
-            color: #fff !important;
-        }
-
-        .dark-mode .card,
-        .dark-mode .card-body {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #222 !important;
-            border-radius: 8px;
-        }
-
-        .dark-mode .card .text-primary,
-        .dark-mode .card-body .text-primary {
-            color: #b3d1f7 !important;
-        }
-
-        .dark-mode .card .text-muted,
-        .dark-mode .card-body .text-muted {
-            color: #b0b8c1 !important;
-        }
-
-        .dark-mode .card .badge.bg-warning.text-dark {
-            background: #f7c948 !important;
-            color: #23272b !important;
-        }
-
-        .dark-mode .card .badge.bg-danger,
-        .dark-mode .card .badge.bg-primary {
-            color: #fff !important;
-        }
-
-        /* Dark mode list group and list form fixes */
-        .dark-mode .list-group,
-        .dark-mode .list-group-item {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #222 !important;
-        }
-
-        .dark-mode .form-control,
-        .dark-mode input,
-        .dark-mode textarea,
-        .dark-mode select {
-            background-color: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .list-group-item,
-        .dark-mode .form-control,
-        .dark-mode input,
-        .dark-mode textarea,
-        .dark-mode select {
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .text-primary {
-            color: #b3d1f7 !important;
-        }
-
-        .dark-mode .text-muted {
-            color: #b0b8c1 !important;
-        }
-
-        .dark-mode .navbar,
-        .dark-mode .footer,
-        .dark-mode .mobile-bottom-nav {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #222 !important;
-        }
-
-        .dark-mode .mobile-bottom-nav .nav-link,
-        .dark-mode .mobile-bottom-nav .material-icons {
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .footer .footer-meta,
-        .dark-mode .footer .footer-btn {
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .mobile-header,
-        .dark-mode .mobile-header *,
-        .dark-mode .mobile-header.bg-white,
-        .dark-mode .mobile-header.bg-light {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #222 !important;
-        }
-
-        .dark-mode .mobile-header .material-icons,
-        .dark-mode .mobile-header .nav-link {
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .mobile-bottom-nav {
-            background: #23272b !important;
-            color: #e0e0e0 !important;
-            border-color: #222 !important;
-        }
-
-        .dark-mode .mobile-bottom-nav .nav-link,
-        .dark-mode .mobile-bottom-nav .material-icons {
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .mobile-bottom-nav .nav-link.active,
-        .dark-mode .mobile-bottom-nav .nav-link:active {
-            color: #b3d1f7 !important;
-        }
-
-        /* Modern Header Styles */
-        .main-header {
-            background: linear-gradient(90deg, #b4d8fa 0%, #a7c7f9 100%);
-            padding: 1rem 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-actions {
+        .navbar-brand {
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 2.25rem;
+            color: white !important;
+            text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 1.2rem;
+            gap: 0.625rem;
         }
 
-        .notification-container {
-            position: relative;
+        .navbar-brand img {
+            height: 100px;
+            width: auto;
         }
 
-        .notification-bell-icon,
-        .user-profile-icon,
-        .logout-btn,
-        .group-access-icon {
-            background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 100%);
-            color: #223b7b !important;
-            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.10);
-            width: 54px;
-            height: 54px;
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.95rem 1.55rem !important;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+            margin: 0 0.3rem;
+            font-size: 1.25rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            transition: box-shadow 0.18s, transform 0.18s, background 0.18s, color 0.18s;
-            font-size: 28px;
-            position: relative;
-            border: 2px solid #e0e7ef;
-            text-decoration: none;
-        }
-
-        .notification-bell-icon.has-unread {
-            background: linear-gradient(135deg, #2563eb 0%, #6366f1 100%);
-            color: #fff !important;
-        }
-
-        .notification-bell-icon:hover,
-        .user-profile-icon:hover,
-        .logout-btn:hover,
-        .group-access-icon:hover {
-            background: linear-gradient(135deg, #2563eb 0%, #6366f1 100%);
-            color: #fff !important;
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
-            transform: scale(1.07);
-            border-color: #2563eb;
-        }
-
-        .notification-bell-icon:active,
-        .user-profile-icon:active,
-        .logout-btn:active,
-        .group-access-icon:active {
-            transform: scale(0.97);
-        }
-
-        .notification-bell-icon .material-icons,
-        .user-profile-icon .material-icons,
-        .logout-btn .material-icons {
-            font-size: 2.1rem;
-        }
-
-        .unread-notifications-badge {
-            position: absolute;
-            top: -7px;
-            right: -7px;
-            background: linear-gradient(135deg, #dc3545 0%, #ff6f6f 100%);
-            color: #fff;
-            border: 2px solid #fff;
-            font-size: 1rem;
-            font-weight: 700;
-            padding: .32em .7em;
-            border-radius: 2em;
-            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.13);
-            z-index: 2;
-            min-width: 1.7em;
+            gap: 0.5rem;
             text-align: center;
         }
 
-        .user-profile-icon {
-            background: linear-gradient(135deg, #fff 0%, #e0e7ff 100%);
-            color: #2563eb !important;
-        }
-
-        .user-profile-icon:hover {
-            background: linear-gradient(135deg, #2563eb 0%, #6366f1 100%);
-            color: #fff !important;
-            border-color: #2563eb;
-        }
-
-        .logout-btn {
-            background: linear-gradient(135deg, #fff 0%, #ffe0e0 100%);
-            color: #dc3545 !important;
-        }
-
-        .logout-btn:hover {
-            background: linear-gradient(135deg, #dc3545 0%, #ff6f6f 100%);
-            color: #fff !important;
-            border-color: #dc3545;
-        }
-
-        @media (max-width: 600px) {
-
-            .notification-bell-icon,
-            .user-profile-icon,
-            .logout-btn,
-            .group-access-icon {
-                width: 44px;
-                height: 44px;
-                font-size: 22px;
-            }
-
-            .notification-bell-icon .material-icons,
-            .user-profile-icon .material-icons,
-            .logout-btn .material-icons,
-            .group-access-icon .material-icons {
-                font-size: 1.5rem;
-            }
-        }
-
-        .auth-actions {
+        .navbar-nav .nav-link .material-icons {
+            font-size: 1.5rem;
             display: flex;
-            gap: 1.1rem;
             align-items: center;
-            margin-top: 0.5rem;
+                justify-content: center;
         }
 
-        .auth-btn {
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white !important;
+        }
+
+        /* Profile Picture Styles */
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .dropdown-toggle {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-toggle::after {
+                margin-left: 0.5rem;
+        }
+
+                /* Modern Dropdown Styles */
+        .dropdown-menu {
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            min-width: 220px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-item {
+                display: flex;
+                align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            border-radius: var(--border-radius);
+                transition: all 0.3s ease;
+            margin: 0.125rem 0;
+        }
+
+        .dropdown-item:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .dropdown-item .material-icons {
+            font-size: 1.25rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover .material-icons {
+            transform: scale(1.1);
+        }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Profile Header in Dropdown */
+        .profile-dropdown-header {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-dropdown-header .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .profile-dropdown-header .profile-picture {
+            width: 48px;
+            height: 48px;
+            margin-right: 0;
+        }
+
+        .profile-dropdown-header .user-details {
+            flex: 1;
+        }
+
+        .profile-dropdown-header .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-dropdown-header .user-role {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Special styling for logout */
+        .dropdown-item.logout-item {
+            color: #dc3545;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+        }
+
+        .dropdown-item.logout-item:hover {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1.875rem;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .card-body {
+            padding: 2.5rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            padding: 0.95rem 1.875rem;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 0.6em;
-            font-size: 1.13rem;
-            font-weight: 700;
-            border-radius: 2em;
-            padding: 0.7em 2.1em;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
-            border: 2px solid #2563eb;
-            transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.13s;
-            outline: none;
-            text-decoration: none;
+            gap: 0.625rem;
             cursor: pointer;
-            position: relative;
-            background: #fff;
-            color: #2563eb;
+            font-size: 1.25rem;
         }
 
-        .login-btn {
-            background: #fff;
-            color: #2563eb;
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
         }
 
-        .login-btn:hover,
-        .login-btn:focus {
-            background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-            color: #fff;
-            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.13);
-            transform: translateY(-2px) scale(1.04);
-            border-color: #2563eb;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            color: white;
         }
 
-        .register-btn {
-            background: linear-gradient(90deg, #2563eb 0%, #223b7b 100%);
-            color: #fff;
-            border: 2px solid #2563eb;
+        .btn-secondary {
+            background: var(--secondary-gradient);
+            color: white;
         }
 
-        .register-btn:hover,
-        .register-btn:focus {
-            background: linear-gradient(90deg, #06b6d4 0%, #2563eb 100%);
-            color: #fff;
-            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.13);
-            transform: translateY(-2px) scale(1.04);
-            border-color: #06b6d4;
+        .btn-success {
+            background: var(--success-gradient);
+            color: white;
         }
 
-        .auth-btn .material-icons {
-            font-size: 1.35em;
-            vertical-align: middle;
-            margin-right: 0.3em;
+        .btn-warning {
+            background: var(--warning-gradient);
+            color: white;
         }
 
-        @media (max-width: 600px) {
-            .auth-actions {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .auth-btn {
-                width: 100%;
-                justify-content: center;
-                padding: 0.7em 0;
-                font-size: 0.98rem;
-            }
+        .btn-danger {
+            background: var(--danger-gradient);
+            color: white;
         }
 
-        .navigation-subheader {
-            background: var(--secondary-color);
-            padding: 0.25rem 0;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        .btn-outline-primary {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
         }
 
-        .nav-content {
-            display: flex;
-            justify-content: center;
+        .btn-outline-primary:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
         }
 
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            gap: 2rem;
-        }
-
-        .nav-menu .nav-item {
-            margin: 0;
-        }
-
-        .nav-menu .nav-link {
-            color: var(--primary-color) !important;
-            font-weight: 500;
+        /* Form Styles */
+        .form-control, .form-select {
+            border-radius: var(--border-radius);
+            border: 2px solid #e2e8f0;
+            padding: 0.95rem 1.25rem;
+            font-size: 1.25rem;
             transition: all 0.3s ease;
-            font-size: 1rem;
-            padding: 0.5rem 1rem !important;
-            border-radius: 20px;
-            text-decoration: none;
+            background: var(--bg-secondary);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.625rem;
+            font-size: 1.25rem;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border-radius: var(--border-radius);
+            border: none;
+            padding: 1.25rem 1.875rem;
+            font-weight: 500;
+            font-size: 1.25rem;
+        }
+
+        .alert-success {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .alert-warning {
+            background: var(--warning-gradient);
+            color: white;
+        }
+
+        .alert-danger {
+            background: var(--danger-gradient);
+            color: white;
+        }
+
+        .alert-info {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        /* Badge Styles */
+        .badge {
+            border-radius: var(--border-radius);
+            padding: 0.625rem 1.25rem;
+            font-weight: 500;
+                font-size: 1.25rem;
+            }
+
+        .badge-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .badge-success {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning-gradient);
+            color: white;
+        }
+
+        .badge-danger {
+            background: var(--danger-gradient);
+            color: white;
+        }
+
+        /* Table Styles */
+        .table {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table thead th {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        /* Footer */
+        .gradient-footer {
+            background: var(--secondary-gradient);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        /* Modern Footer Styles */
+        .modern-footer {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-brand {
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
             display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-brand-text {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+                justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-link:hover {
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .footer-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links-list li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links-list a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .nav-menu .nav-link:hover {
-            color: #1a2f9a !important;
-            background-color: rgba(42, 63, 170, 0.08);
-            transform: translateY(-1px);
-            text-decoration: underline;
+        .footer-links-list a:hover {
+            color: white;
+            transform: translateX(5px);
         }
 
-        .nav-menu .nav-link i.material-icons {
-            font-size: 20px !important;
-            vertical-align: middle;
-            line-height: 1;
-        }
-
-        /* Mobile responsive adjustments */
-        @media (max-width: 768px) {
-
-            .main-header,
-            .navigation-subheader,
-            .modern-topnav {
-                display: none !important;
-            }
-
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .user-actions {
-                gap: 0.75rem;
-            }
-
-            .notification-bell-icon,
-            .user-profile-icon,
-            .logout-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 22px;
-            }
-
-            .user-profile-icon {
-                font-size: 26px;
-            }
-
-            .auth-actions {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .auth-btn {
-                padding: 0.6rem 1rem;
-                font-size: 1.4rem;
-            }
-
-            .nav-menu {
-                flex-direction: column;
-                gap: 0.5rem;
-                align-items: center;
-            }
-
-            .nav-menu .nav-link {
-                padding: 0.75rem 1.5rem !important;
-                font-size: 0.95rem;
-            }
-        }
-
-        /* Dark mode for new header elements */
-        .dark-mode .main-header {
-            background: linear-gradient(90deg, #22335a 0%, #1a233a 100%) !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .navigation-subheader {
-            background-color: #23272b !important;
-        }
-
-        .dark-mode .user-profile-icon {
-            background-color: #23272b !important;
-            color: #b3d1f7 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .user-profile-icon:hover {
-            background-color: #2a3faa !important;
-            color: white !important;
-            border-color: #2a3faa !important;
-        }
-
-
-        .dark-mode .notification-bell-icon {
-            background-color: #23272b !important;
-            color: #198754 !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .logout-btn {
-            background-color: #23272b !important;
-            color: #ff6b6b !important;
-            border-color: #444 !important;
-        }
-
-        .dark-mode .logout-btn:hover {
-            background-color: #dc3545 !important;
-            color: white !important;
-            border-color: #dc3545 !important;
-        }
-
-        .dark-mode .login-btn {
-            background-color: transparent !important;
-            color: #b3d1f7 !important;
-            border-color: #b3d1f7 !important;
-        }
-
-        .dark-mode .login-btn:hover {
-            background-color: #2a3faa !important;
-            color: white !important;
-            border-color: #2a3faa !important;
-        }
-
-        .dark-mode .register-btn {
-            background-color: #2a3faa !important;
-            color: white !important;
-            border-color: #2a3faa !important;
-        }
-
-        .dark-mode .register-btn:hover {
-            background-color: #1a2f9a !important;
-            border-color: #1a2f9a !important;
-        }
-
-        .dark-mode .nav-menu .nav-link {
-            color: #b3d1f7 !important;
-        }
-
-        .dark-mode .nav-menu .nav-link:hover {
-            color: white !important;
-            background-color: rgba(179, 209, 247, 0.1) !important;
-        }
-
-        .dark-mode .bullet-point {
-            color: #fff !important;
-        }
-
-        .dark-mode .list-group-item,
-        .dark-mode .list-group-item a,
-        .dark-mode .list-group-item span {
-            color: #fff !important;
-        }
-
-        .dark-mode .card-body .ms-2 {
-            color: #fff !important;
-        }
-
-        /* Gradient Footer */
-        .gradient-footer {
-            background: linear-gradient(90deg, #a7c7f9 0%, #b4e0fa 100%);
-            border-top-left-radius: 1.5rem;
-            border-top-right-radius: 1.5rem;
-            box-shadow: 0 -4px 24px 0 rgba(31, 38, 135, 0.10);
-            padding: 2.5rem 1.5rem 1.5rem 1.5rem;
-            margin-top: 3rem;
-            color: #234;
-        }
-
-        @media (max-width: 768px) {
-            .gradient-footer {
-                border-radius: 0;
-                padding: 1.5rem 0.5rem 1rem 0.5rem;
-            }
-        }
-
-        .footer-meta {
-            color: #29486d !important;
-            font-size: 1.13rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 0.2em;
-            letter-spacing: 0.01em;
-        }
-
-        .footer-meta .footer-copyright {
-            font-weight: 600;
-            font-size: 1.09em;
-            color: #29486d;
-            margin-bottom: 0.2em;
-            display: block;
-        }
-
-        .footer-meta .footer-madeby {
-            font-weight: 400;
-            font-size: 1.04em;
-            color: #355b8c;
-            margin-top: 0.2em;
-            letter-spacing: 0.01em;
-            display: block;
-        }
-
-        .footer-meta .footer-heart {
-            color: #355b8c;
-            font-size: 1.2em;
-            vertical-align: middle;
-            margin: 0 0.18em;
-        }
-
-        /* --- Enhanced Notifications Dropdown --- */
-        .notifications-dropdown {
-            background: #fff;
-            border-radius: 1.2rem;
-            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.13);
-            padding: 0.5rem 0 0.5rem 0;
-            min-width: 340px;
-            max-width: 380px;
-            border: none;
-            margin-top: 1.1rem !important;
-        }
-
-        .notification-header {
-            font-weight: 800;
-            color: #2563eb;
-            font-size: 1.18rem;
-            padding: 1rem 1.5rem 0.5rem 1.5rem;
-            background: none;
-            border: none;
-            letter-spacing: 0.01em;
-        }
-
-        .dropdown-divider {
-            margin: 0.2rem 0 0.2rem 0;
-            border-color: #e0e7ef;
-        }
-
-        #no-notifications-message-item {
-            padding: 1.2rem 1.5rem 1.2rem 1.5rem;
-            text-align: center;
-        }
-
-        #no-notifications-message {
-            color: #64748b;
-            font-size: 1.08rem;
-            font-weight: 500;
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: default;
-        }
-
-        .notification-footer {
-            padding: 0.7rem 1.5rem 1.1rem 1.5rem;
-            background: none;
-            border: none;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        #clear-notifications-btn {
-            width: 100%;
-            background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-            color: #fff !important;
-            font-weight: 700;
-            border: none;
-            border-radius: 2em;
-            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-            padding: 0.7em 0;
-            font-size: 1.08rem;
-            transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
-            margin-top: 0.2rem;
-        }
-
-        #clear-notifications-btn:hover,
-        #clear-notifications-btn:focus {
-            background: linear-gradient(90deg, #1a2f9a 0%, #0e7490 100%);
-            color: #fff !important;
-            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-            transform: scale(1.03);
-        }
-
-        @media (max-width: 600px) {
-            .notifications-dropdown {
-                min-width: 95vw;
-                max-width: 98vw;
-                padding: 0.2rem 0;
-            }
 
-            .notification-header,
-            .notification-footer {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-
-            #no-notifications-message-item {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-        }
-
-        /* --- Enhanced Modern Topnav --- */
-        .modern-topnav {
-            background: linear-gradient(90deg, #b4d8fa 0%, #a7c7f9 100%);
-            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.07);
-            padding: 1.1rem 0 1.1rem 0;
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            border-bottom-left-radius: 1.5rem;
-            border-bottom-right-radius: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: none;
-        }
-
-        .modern-topnav .nav-content {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        .modern-topnav .nav-menu {
-            display: flex;
-            gap: 2.2rem;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .modern-topnav .nav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5em;
-            font-size: 1.13rem;
-            font-weight: 700;
-            color: #223b7b;
-            background: linear-gradient(90deg, #e0e7ff 0%, #f0f9ff 100%);
-            border: none;
-            border-radius: 2em;
-            padding: 0.7em 1.7em;
-            transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.12s;
-            text-decoration: none;
-            outline: none;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
-            position: relative;
-        }
-
-        .modern-topnav .nav-link:hover,
-        .modern-topnav .nav-link.active {
-            background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-            color: #fff;
-            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.13);
-            transform: translateY(-2px) scale(1.04);
-            text-decoration: none;
-        }
-
-        .modern-topnav .nav-link .material-icons {
-            font-size: 1.25em;
-            vertical-align: middle;
-            margin-right: 0.4em;
-        }
-
-        @media (max-width: 900px) {
-            .modern-topnav .nav-menu {
-                gap: 1.1rem;
-            }
-
-            .modern-topnav .nav-link {
-                padding: 0.6em 1.1em;
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .modern-topnav {
-                flex-direction: column;
-                gap: 0.5rem;
-                padding: 0.7rem 0;
-                border-radius: 0;
-            }
-
-            .modern-topnav .nav-link {
-                width: 100%;
-                justify-content: center;
-                padding: 0.7em 0;
-                font-size: 0.98rem;
-            }
-
-            .modern-topnav .nav-menu {
-                width: 100%;
-                gap: 0.5rem;
-            }
-        }
-
-        /* Dark mode for modern-topnav navigation buttons */
-        .dark-mode .modern-topnav {
-            background: linear-gradient(90deg, #22335a 0%, #1a233a 100%) !important;
-            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.13);
-        }
-
-        .dark-mode .modern-topnav .nav-link {
-            background: #23293a !important;
-            color: #e0e7ef !important;
-            border: 1.5px solid #374151 !important;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
-        }
-
-        .dark-mode .modern-topnav .nav-link .material-icons {
-            color: #e0e7ef !important;
-        }
-
-        .dark-mode .modern-topnav .nav-link:hover,
-        .dark-mode .modern-topnav .nav-link.active {
-            background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%) !important;
-            color: #fff !important;
-            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-            border-color: #2563eb !important;
-        }
-
-        .dark-mode .modern-topnav .nav-link:hover .material-icons,
-        .dark-mode .modern-topnav .nav-link.active .material-icons {
-            color: #fff !important;
-        }
-
-        /* Modern Group Selector Modal Styles */
-        .modern-modal-dialog {
-            max-width: 500px;
-        }
-
-        .modern-modal-content {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border: none;
-            border-radius: 2rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-        }
-
-        .modern-modal-header {
-            background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
-            color: #fff;
-            border: none;
-            padding: 1.5rem 2rem;
-            position: relative;
-        }
-
-        .modern-modal-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
-            pointer-events: none;
-        }
-
-        .modern-modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .modern-modal-title .material-icons {
-            font-size: 1.8rem;
-            margin-right: 0.75rem;
-        }
-
-        .modern-btn-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            transition: all 0.2s ease;
-            position: relative;
-            z-index: 1;
-        }
-
-        .modern-btn-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        .modern-btn-close .material-icons {
-            font-size: 1.2rem;
-        }
-
-        .modern-modal-body {
-            padding: 2rem;
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        }
-
-        .group-section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .group-section-title .material-icons {
-            font-size: 1.3rem;
-            color: #2563eb;
-        }
-
-        .modern-group-item {
-            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            border: 2px solid #e2e8f0;
-            border-radius: 1.5rem;
-            transition: all 0.3s ease;
-            color: #374151;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 1rem;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .modern-group-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 0;
-        }
-
-        .modern-group-item:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.2);
-            border-color: #2563eb;
-            color: #fff;
-            text-decoration: none;
-        }
-
-        .modern-group-item:hover::before {
-            opacity: 1;
-        }
-
-        .group-item-content {
-            display: flex;
-            align-items: center;
-            padding: 1.25rem 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .group-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2563eb;
-            margin-right: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-        }
-
-        .modern-group-item:hover .group-icon {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            transform: scale(1.1);
-        }
-
-        .group-icon .material-icons {
-            font-size: 1.5rem;
-        }
-
-        .group-info {
-            flex: 1;
-        }
-
-        .group-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin: 0 0 0.25rem 0;
-            color: inherit;
-        }
 
-        .group-role {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #6b7280;
-            display: block;
-            transition: color 0.3s ease;
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 2rem;
         }
 
-        .modern-group-item:hover .group-role {
+        .footer-copyright {
             color: rgba(255, 255, 255, 0.8);
+            margin: 0;
         }
 
-        .group-arrow {
-            color: #9ca3af;
-            transition: all 0.3s ease;
+        .footer-copyright .heart {
+            color: #ff6b6b;
+            animation: heartbeat 2s infinite;
         }
 
-        .modern-group-item:hover .group-arrow {
-            color: #fff;
-            transform: translateX(4px);
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
-        .group-arrow .material-icons {
-            font-size: 1.2rem;
+        .footer-stats {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: flex-end;
         }
 
-        /* Dark mode for modern group selector */
-        .dark-mode .modern-modal-content {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        .footer-stats .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
         }
 
-        .dark-mode .modern-modal-header {
-            background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%);
-        }
-
-        .dark-mode .modern-modal-body {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        }
-
-        .dark-mode .group-section-title {
-            color: #e2e8f0;
-            border-bottom-color: #475569;
-        }
-
-        .dark-mode .group-section-title .material-icons {
-            color: #60a5fa;
-        }
-
-        .dark-mode .modern-group-item {
-            background: linear-gradient(135deg, #334155 0%, #475569 100%);
-            border-color: #475569;
-            color: #e2e8f0;
-        }
-
-        .dark-mode .group-icon {
-            background: linear-gradient(135deg, #334155 0%, #475569 100%);
-            color: #60a5fa;
-        }
-
-        .dark-mode .group-role {
-            color: #9ca3af;
-        }
-
-        .dark-mode .group-arrow {
-            color: #6b7280;
-        }
-
-        /* Mobile responsive */
-        @media (max-width: 600px) {
-            .modern-modal-dialog {
-                margin: 1rem;
-                max-width: calc(100vw - 2rem);
-            }
-
-            .modern-modal-header {
-                padding: 1.25rem 1.5rem;
-            }
-
-            .modern-modal-title {
-                font-size: 1.25rem;
-            }
-
-            .modern-modal-body {
-                padding: 1.5rem;
-            }
-
-            .group-item-content {
-                padding: 1rem 1.25rem;
-            }
-
-            .group-icon {
-                width: 48px;
-                height: 48px;
-            }
-
-            .group-icon .material-icons {
-                font-size: 1.25rem;
-            }
-
-            .group-name {
+        .footer-stats .stat-item .material-icons {
                 font-size: 1rem;
-            }
-        }
-
-        .dark-mode .gradient-footer {
-            background: linear-gradient(90deg, #22335a 0%, #1a233a 100%) !important;
-            color: #e0e7ef !important;
-        }
-
-        .dark-mode .notification-bell-icon,
-        .dark-mode .user-profile-icon,
-        .dark-mode .logout-btn,
-        .dark-mode .group-access-icon {
-            background: linear-gradient(135deg, #2563eb 0%, #22335a 100%) !important;
-            color: #e0e7ef !important;
-            border: 2px solid #22335a !important;
-            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.18);
-            transition: box-shadow 0.18s, border-color 0.18s, background 0.18s;
-        }
-
-        .dark-mode .notification-bell-icon.has-unread {
-            border-color: #2563eb !important;
-        }
-
-        .dark-mode .notification-bell-icon .material-icons,
-        .dark-mode .user-profile-icon .material-icons,
-        .dark-mode .group-access-icon .material-icons {
-            color: #fff !important;
-            font-size: 2.3rem !important;
-            text-shadow: 0 2px 8px rgba(59, 130, 246, 0.18);
-        }
-
-        .dark-mode .logout-btn .material-icons {
-            color: #ff6b6b !important;
-            font-size: 2.3rem !important;
-            text-shadow: 0 2px 8px rgba(220, 53, 69, 0.18);
-        }
-
-        .dark-mode .unread-notifications-badge {
-            background: linear-gradient(135deg, #dc3545 0%, #ff6f6f 100%) !important;
-            color: #fff !important;
-            border: 2px solid #fff !important;
-            font-weight: 700;
-        }
-
-        /* Site Banner Styles */
-        .site-banner {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            font-weight: 600;
-            font-size: 1.1rem;
-            border: none;
-            border-radius: 0;
-            padding: 1rem 0;
-        }
-
-        .site-banner .btn-close {
-            width: 1.5rem;
-            height: 1.5rem;
-            min-width: 1.5rem;
-            min-height: 1.5rem;
-            padding: 0;
-            background: none;
-            border: none;
-            border-radius: 0;
-            opacity: 0.7;
-            box-shadow: none;
-            filter: none;
-        }
-        .site-banner .btn-close:hover {
-            opacity: 1;
-            background: none;
-        }
-
-        .site-banner.alert-info {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            border-bottom: 3px solid #5a67d8;
-        }
-
-        .site-banner.alert-warning {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            color: #fff;
-            border-bottom: 3px solid #d69e2e;
-        }
-
-        .site-banner.alert-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: #fff;
-            border-bottom: 3px solid #38a169;
-        }
-
-        .site-banner.alert-danger {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: #fff;
-            border-bottom: 3px solid #e53e3e;
-        }
-
-        .site-banner .material-icons {
-            font-size: 1.4rem;
-            margin-right: 0.75rem;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
-
-        .site-banner span {
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            letter-spacing: 0.02em;
-        }
-
-        /* Dark mode banner styles */
-        .dark-mode .site-banner.alert-info {
-            background: linear-gradient(135deg, #4c51bf 0%, #667eea 100%) !important;
-            color: #fff !important;
-            border-bottom: 3px solid #5a67d8 !important;
-        }
-
-        .dark-mode .site-banner.alert-warning {
-            background: linear-gradient(135deg, #d69e2e 0%, #ffecd2 100%) !important;
-            color: #fff !important;
-            border-bottom: 3px solid #d69e2e !important;
-        }
-
-        .dark-mode .site-banner.alert-success {
-            background: linear-gradient(135deg, #38a169 0%, #11998e 100%) !important;
-            color: #fff !important;
-            border-bottom: 3px solid #38a169 !important;
-        }
-
-        .dark-mode .site-banner.alert-danger {
-            background: linear-gradient(135deg, #e53e3e 0%, #fa709a 100%) !important;
-            color: #fff !important;
-            border-bottom: 3px solid #c53030 !important;
         }
 
         @media (max-width: 768px) {
-            .site-banner {
-                font-size: 0.9rem;
-                padding: 0.5rem 0;
+            .footer-stats {
+                justify-content: center;
+                margin-top: 1rem;
             }
             
-            .site-banner .material-icons {
-                font-size: 1rem;
-                margin-right: 0.3rem;
-            }
-            
-            .site-banner .banner-text {
-                font-size: 0.9rem;
-                font-weight: 500;
-            }
-            
-            .site-banner .container {
-                min-height: 1.8rem !important;
+            .footer-copyright {
+                text-align: center;
             }
         }
 
-        .banner-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 4rem;
-            z-index: 1050;
-            background: var(--secondary-color);
+        /* Utility Classes */
+        .text-gradient {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .site-banner .banner-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .site-banner .banner-icon.left {
-            margin-right: 0.5rem;
-        }
-        .site-banner .banner-icon.right {
-            margin-left: 0.5rem;
-        }
-        .site-banner .banner-close {
-            height: 2.5rem;
-            width: 2.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .site-banner .banner-text {
-            flex: 1;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-        .site-banner .banner-icon.right {
-            margin: 0 1.3rem;
-        }
-        .site-banner .btn-close {
-            height: 1.5rem;
-            width: 1.5rem;
-            min-width: 1.5rem;
-            min-height: 1.5rem;
-            padding: 0;
-            background: none;
-            border: none;
-            box-shadow: none;
+        .bg-gradient-primary {
+            background: var(--primary-gradient);
         }
 
-        /* Mobile footer button adjustments */
+        .bg-gradient-secondary {
+            background: var(--secondary-gradient);
+        }
+
+        .bg-gradient-accent {
+            background: var(--accent-gradient);
+        }
+
+        .rounded-xl {
+            border-radius: var(--border-radius-xl);
+        }
+
+        .shadow-custom {
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .footer-btn-modern {
-                padding: 0.4em 0.8em;
-                font-size: 0.8rem;
-                margin: 0.2em 0.2em 0.2em 0;
-                gap: 0.3em;
+            .navbar-brand {
+                font-size: 1.875rem;
             }
             
-            .footer-btn-modern i,
-            .footer-btn-modern .material-icons {
-                font-size: 1em;
+            .card-body {
+                padding: 1.875rem;
             }
             
-            .footer .d-flex.gap-2 {
-                gap: 0.3rem !important;
+            .btn {
+                padding: 0.8rem 1.55rem;
             }
             
-            .footer .btn-sm {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.75rem;
+            .footer-links {
+                flex-direction: column;
+                gap: 1.25rem;
             }
         }
-    </style>
-    <!-- TomSelect CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/light.css" rel="sty lesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
-    <link id="flatpickr-dark-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css"
-        disabled>
-    <!-- Google Fonts: Baloo 2 & Gloria Hallelujah -->
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        html,
-        body {
-            font-family: 'Baloo 2', Arial, sans-serif !important;
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
+
+    {% block extra_css %}{% endblock %}
 </head>
-
 <body>
-    <!-- Site Banner -->
-    {% if banner_enabled and banner_text %}
-    <div id="siteBanner" class="site-banner alert alert-{{ banner_type }} mb-0" role="alert" style="border-radius: 0; border: none;">
-        <div class="container d-flex align-items-center" style="min-height: 2.5rem;">
-            <div class="d-flex align-items-center mx-auto">
-                <span class="banner-icon d-flex align-items-center justify-content-center">
-                    <i class="material-icons">
-                        {% if banner_type == 'info' %}info
-                        {% elif banner_type == 'warning' %}warning
-                        {% elif banner_type == 'success' %}check_circle
-                        {% elif banner_type == 'danger' %}error
-                        {% else %}info{% endif %}
-                    </i>
-                </span>
-                <span class="banner-text text-center mx-2" style="font-weight: 600;">{{ banner_text }}</span>
-                <span class="banner-icon d-flex align-items-center justify-content-center ms-2">
-                    <i class="material-icons">
-                        {% if banner_type == 'info' %}info
-                        {% elif banner_type == 'warning' %}warning
-                        {% elif banner_type == 'success' %}check_circle
-                        {% elif banner_type == 'danger' %}error
-                        {% else %}info{% endif %}
-                    </i>
-                </span>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Mobile Header -->
-    <div class="mobile-header">
-        <a class="navbar-brand" href="{% url 'home' %}">
-            {% if request.get_host == 'nj.fursvp.org' %}
-            <img src="{% static 'fursvp-nj.png' %}" alt="FURsvp Logo">
-            {% else %}
-            <img src="{% static 'fursvp-logo2025.png' %}" alt="FURsvp Logo">
-            {% endif %}
-        </a>
-    </div>  
-
     <!-- Main Header -->
-    <header class="main-header {% if banner_enabled and banner_text %}has-banner{% endif %} gradient-bg">
+    <header class="main-header">
+        <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <div class="header-content">
-                <!-- Logo -->
                 <a class="navbar-brand" href="{% url 'home' %}">
-                    {% if request.get_host == 'nj.fursvp.org' %}
-                    <img src="{% static 'fursvp-nj.png' %}" alt="FURsvp Logo">
-                    {% else %}
                     <img src="{% static 'fursvp-logo2025.png' %}" alt="FURsvp Logo">
-                    {% endif %}
                 </a>
 
-                <!-- User Actions -->
-                <div class="user-actions">
-                    {% if user.is_authenticated %}
-                    <!-- Notifications -->
-                    <div class="notification-container">
-                        <a class="notification-bell-icon" href="#" id="notificationsDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="material-icons">notifications</i>
-                            <span class="badge rounded-pill unread-notifications-badge"
-                                id="unread-notifications-badge">0</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 notifications-dropdown"
-                            aria-labelledby="notificationsDropdown" id="notifications-list">
-                            <li>
-                                <h6 class="dropdown-header notification-header">Notifications</h6>
-                            </li>
-                            <li id="no-notifications-message-item"><a class="dropdown-item text-center text-muted"
-                                    href="#" id="no-notifications-message" style="padding: 15px;">No new
-                                    notifications</a></li>
-                            <li>
-                                <hr class="dropdown-divider my-0">
-                            </li>
-                            <li><button class="dropdown-item text-center text-primary notification-footer"
-                                    id="clear-notifications-btn">Clear All Notifications</button></li>
-                        </ul>
-                    </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                        </button>
 
-                    <!-- Group Access -->
-                    {% if user.group_roles.all or user.delegated_groups_as_delegate.exists %}
-                    <div class="group-access-container">
-                        {% if user.group_roles.count == 1 and user.delegated_groups_as_delegate.count == 0 %}
-                            <!-- Single group - direct link -->
-                            {% with user.group_roles.first as group_role %}
-                            <a class="group-access-icon" href="{% url 'group_detail' group_role.group.id %}" title="{{ group_role.group.name }}">
-                                <i class="material-icons">groups</i>
-                            </a>
-                            {% endwith %}
-                        {% elif user.delegated_groups_as_delegate.count == 1 and user.group_roles.count == 0 %}
-                            <!-- Single delegated group - direct link -->
-                            {% with user.delegated_groups_as_delegate.first as delegation %}
-                            <a class="group-access-icon" href="{% url 'group_detail' delegation.group.id %}" title="{{ delegation.group.name }}">
-                                <i class="material-icons">groups</i>
-                            </a>
-                            {% endwith %}
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'event_index' %}active{% endif %}" href="{% url 'event_index' %}">
+                                <span class="material-icons">calendar_today</span>
+                                Events
+                        </a>
+                            </li>
+                    <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'groups_list' %}active{% endif %}" href="{% url 'groups_list' %}">
+                                <span class="material-icons">groups</span>
+                                Groups
+                        </a>
+                            </li>
+                    <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'blog' %}active{% endif %}" href="{% url 'blog' %}">
+                                <span class="material-icons">article</span>
+                                Blog
+                        </a>
+                    </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <div class="profile-picture" {% if not user.profile.profile_picture_base64 %}style="background-color: {{ user.profile.get_avatar_color }};"{% endif %}>
+                                        {% if user.profile.profile_picture_base64 %}
+                                            <img src="{{ user.profile.profile_picture_base64 }}" alt="{{ user.profile.get_display_name }}">
                         {% else %}
-                            <!-- Multiple groups - show modal trigger -->
-                            <a class="group-access-icon" href="#" id="groupSelectorTrigger" title="My Groups">
-                                <i class="material-icons">groups</i>
-                            </a>
+                                            {{ user.profile.get_initials }}
                         {% endif %}
                     </div>
-                    {% endif %}
-
-                    <!-- User Profile -->
-                    <div class="user-profile-container">
-                        <a class="user-profile-icon" href="{% url 'profile' %}" title="Profile">
-                            <i class="material-icons">account_circle</i>
-                        </a>
-                    </div>
-
-                    <!-- Logout -->
-                    <form action="{% url 'logout' %}" method="post" class="d-inline logout-form">
-                        {% csrf_token %}
-                        <button type="submit" class="logout-btn" title="Logout">
-                            <i class="material-icons">logout</i>
-                        </button>
-                    </form>
+                                    {{ user.profile.get_display_name }}
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <!-- Profile Header -->
+                                    <li class="profile-dropdown-header">
+                                        <div class="profile-info">
+                                            <div class="profile-picture" {% if not user.profile.profile_picture_base64 %}style="background-color: {{ user.profile.get_avatar_color }};"{% endif %}>
+                                                {% if user.profile.profile_picture_base64 %}
+                                                    <img src="{{ user.profile.profile_picture_base64 }}" alt="{{ user.profile.get_display_name }}">
                     {% else %}
-                    <!-- Login/Register for non-authenticated users -->
-                    <div class="auth-actions">
-                        <a href="{% url 'login' %}" class="auth-btn login-btn">
-                            <i class="material-icons">login</i>
-                            <span>Login</span>
-                        </a>
-                        <a href="{% url 'register' %}" class="auth-btn register-btn">
-                            <i class="material-icons">person_add</i>
-                            <span>Register</span>
-                        </a>
+                                                    {{ user.profile.get_initials }}
+                                                {% endif %}
                     </div>
+                                            <div class="user-details">
+                                                <div class="user-name">{{ user.profile.get_display_name }}</div>
+                                                <div class="user-role">
+                                                    {% if user.profile.is_organizer %}
+                                                        Organizer
+                                                    {% else %}
+                                                        Member
                     {% endif %}
                 </div>
             </div>
         </div>
-    </header>
-
-    <!-- Navigation Subheader -->
-    <nav class="navigation-subheader modern-topnav">
-        <div class="container">
-            <div class="nav-content">
-                <ul class="nav-menu">
+                                    </li>
+                                    
+                                    <!-- Menu Items -->
+                                    <li><a class="dropdown-item" href="{% url 'profile' %}">
+                                        <span class="material-icons">person</span>
+                                        My Profile
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'notifications_page' %}">
+                                        <span class="material-icons">notifications</span>
+                                        Notifications
+                                    </a></li>
+                                    {% if user.profile.is_organizer %}
+                                    <li><a class="dropdown-item" href="{% url 'event_create' %}">
+                                        <span class="material-icons">add_circle</span>
+                                        Create Event
+                                    </a></li>
+                                    {% endif %}
+                                    <li><a class="dropdown-item" href="{% url 'groups_list' %}">
+                                        <span class="material-icons">groups</span>
+                                        My Groups
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item logout-item" href="{% url 'logout' %}">
+                                        <span class="material-icons">logout</span>
+                                        Sign Out
+                                    </a></li>
+                                </ul>
+                    </li>
+                        {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">
-                            <i class="material-icons">home</i> Home
+                                <a class="nav-link" href="{% url 'login' %}">
+                                    <span class="material-icons">login</span>
+                                    Login
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'event_calendar' %}">
-                            <i class="material-icons">calendar_month</i> Calendar
+                                <a class="nav-link btn btn-outline-primary" href="{% url 'register' %}">
+                                    <span class="material-icons">person_add</span>
+                                    Sign Up
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'groups_list' %}">
-                            <i class="material-icons">groups</i> Groups
-                        </a>
-                    </li>
-                    {% if user.is_authenticated %}
-                    {% if user.is_superuser %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'administration' %}">
-                            <i class="material-icons">admin_panel_settings</i> Administration
-                        </a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'blog' %}">
-                            <i class="material-icons">announcement</i> Blog
-                        </a>
-                    </li>
-                    {% if user.group_roles.all or user.delegated_groups_as_delegate.exists %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'create_event' %}">
-                            <i class="material-icons">add_circle</i> Create Event
-                        </a>
-                    </li>
-                    {% endif %}
                     {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
+    </header>
 
-    <!-- Group Selector Modal -->
-    <div class="modal fade" id="groupSelectorModal" tabindex="-1" aria-labelledby="groupSelectorModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modern-modal-dialog">
-            <div class="modal-content modern-modal-content">
-                <div class="modal-header modern-modal-header">
-                    <h5 class="modal-title modern-modal-title" id="groupSelectorModalLabel">
-                        <i class="material-icons me-2">groups</i>
-                        My Groups
-                    </h5>
-                    <button type="button" class="btn-close modern-btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="material-icons">close</i>
-                    </button>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            {% if messages %}
+                <div class="messages mb-4">
+                {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} fade-in" role="alert">
+                    {{ message }}
                 </div>
-                <div class="modal-body modern-modal-body">
-                    <div class="group-list">
-                        {% if user.group_roles.all %}
-                        <div class="group-section mb-4">
-                            <h6 class="group-section-title">
-                                <i class="material-icons me-2">admin_panel_settings</i>
-                                Groups I Lead
-                            </h6>
-                            {% for group_role in user.group_roles.all %}
-                            <a href="{% url 'group_detail' group_role.group.id %}" class="group-item modern-group-item">
-                                <div class="group-item-content">
-                                    <div class="group-icon">
-                                        <i class="material-icons">groups</i>
-                                    </div>
-                                    <div class="group-info">
-                                        <h6 class="group-name">{{ group_role.group.name }}</h6>
-                                        <span class="group-role">{{ group_role.custom_label|default:"Leader" }}</span>
-                                    </div>
-                                    <div class="group-arrow">
-                                        <i class="material-icons">arrow_forward</i>
-                                    </div>
-                                </div>
-                            </a>
                             {% endfor %}
                         </div>
                         {% endif %}
                         
-                        {% if user.delegated_groups_as_delegate.exists %}
-                        <div class="group-section">
-                            <h6 class="group-section-title">
-                                <i class="material-icons me-2">assistant</i>
-                                Groups I Assist
-                            </h6>
-                            {% for delegation in user.delegated_groups_as_delegate.all %}
-                            <a href="{% url 'group_detail' delegation.group.id %}" class="group-item modern-group-item">
-                                <div class="group-item-content">
-                                    <div class="group-icon">
-                                        <i class="material-icons">groups</i>
+            {% block content %}{% endblock %}
                                     </div>
-                                    <div class="group-info">
-                                        <h6 class="group-name">{{ delegation.group.name }}</h6>
-                                        <span class="group-role">Assistant</span>
+    </main>
+
+    <!-- Footer -->
+    <footer class="modern-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-main">
+                    <div class="row">
+                        <div class="col-lg-4 mb-4">
+                            <div class="footer-brand">
+                                <div class="footer-logo mb-3">
+                                    <img src="{% static 'fursvp-logo2025.png' %}" alt="FURsvp Logo" style="height: 60px;">
                                     </div>
-                                    <div class="group-arrow">
-                                        <i class="material-icons">arrow_forward</i>
-                                    </div>
-                                </div>
-                            </a>
-                            {% endfor %}
+                                <p class="footer-description">
+                                    The ultimate platform for furry event organizers and attendees. 
+                                    Free, open-source, and built for the community.
+                                </p>
+                                <div class="footer-social">
+                                    <a href="#" class="social-link" title="GitHub">
+                                        <span class="material-icons">code</span>
+                                    </a>
+                                    <a href="#" class="social-link" title="Discord">
+                                        <span class="material-icons">chat</span>
+                                    </a>
+                                    <a href="#" class="social-link" title="Telegram">
+                                        <span class="material-icons">send</span>
+                                    </a>
                         </div>
-                        {% endif %}
                     </div>
                 </div>
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <h5 class="footer-section-title">Platform</h5>
+                            <ul class="footer-links-list">
+                                <li><a href="{% url 'home' %}">Home</a></li>
+                                <li><a href="{% url 'event_index' %}">Events</a></li>
+                                <li><a href="{% url 'groups_list' %}">Groups</a></li>
+                                <li><a href="{% url 'blog' %}">Blog</a></li>
+                            </ul>
             </div>
-        </div>
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <h5 class="footer-section-title">Support</h5>
+                            <ul class="footer-links-list">
+                                <li><a href="{% url 'faq' %}">FAQ</a></li>
+                                <li><a href="{% url 'privacy' %}">Privacy</a></li>
+                                <li><a href="{% url 'terms' %}">Terms</a></li>
+                                <li><a href="#">Contact</a></li>
+                            </ul>
     </div>
 
-    <div class="main-content">
-        <div class="container">
-            {% if messages %}
-            <div class="message-container">
-                {% for message in messages %}
-                {% if not "admin_notification" in message.tags %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    <i class="material-icons me-2">info</i>
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                {% endif %}
-                {% endfor %}
             </div>
-            {% endif %}
-            {% block content %}
-            {% endblock %}
+                <div class="footer-bottom">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <p class="footer-copyright">
+                                &copy; {% now "Y" %} FURsvp. Made with <span class="heart">❤️</span> for the Furry Fandom.
+                            </p>
         </div>
+                        <div class="col-md-6 text-md-end">
+                            <div class="footer-stats">
+                                <span class="stat-item">
+                                    <span class="material-icons">event</span>
+                                    <span>{{ global_events_count }} Events</span>
+                                </span>
+                                <span class="stat-item">
+                                    <span class="material-icons">groups</span>
+                                    <span>{{ global_groups_count }} Groups</span>
+                                </span>
+                                <span class="stat-item">
+                                    <span class="material-icons">people</span>
+                                    <span>{{ global_users_count }} Members</span>
+                                </span>
     </div>
-
-    <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-bottom-nav">
-        <a href="{% url 'home' %}"
-            class="nav-link home-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-            <i class="material-icons">home</i>
-            <span>Home</span>
-        </a>
-        {% if user.is_authenticated %}
-        <a href="{% url 'notifications_page' %}" class="nav-link" id="mobileNotificationsLink">
-            <i class="material-icons" id="mobileNotificationsIcon">notifications</i>
-            <span>Alerts</span>
-        </a>
-        {% endif %}
-        {% if user.group_roles.all or user.delegated_groups_as_delegate.exists %}
-        <a href="{% url 'create_event' %}" class="nav-link">
-            <i class="material-icons">add</i>
-            <span>New Event</span>
-        </a>
-        {% endif %}
-        {% if user.is_authenticated %}
-        <a href="{% url 'profile' %}"
-            class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-            <i class="material-icons">person</i>
-            <span>Profile</span>
-        </a>
-        <form action="{% url 'logout' %}" method="post" class="d-inline" style="margin: 0;">
-            {% csrf_token %}
-            <button type="submit" class="nav-link logout-link">
-                <i class="material-icons">logout</i>
-                <span>Logout</span>
-            </button>
-        </form>
-        {% else %}
-        <a href="{% url 'login' %}"
-            class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
-            <i class="material-icons">login</i>
-            <span>Login</span>
-        </a>
-        <a href="{% url 'register' %}"
-            class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}">
-            <i class="material-icons">person_add</i>
-            <span>Register</span>
-        </a>
-        {% endif %}
-    </nav>
-
-    <footer class="gradient-footer mt-auto">
-        <div class="container text-center">
-            {% if request.get_host == 'nj.fursvp.org' %}
-            <img src="{% static 'fursvp-nj.png' %}" alt="FURsvp Logo" class="footer-logo">
-            {% else %}
-            <img src="{% static 'fursvp-logo2025.png' %}" alt="FURsvp Logo" class="footer-logo">
-            {% endif %}
-            <div class="d-flex gap-2 justify-content-center mb-2">
-                <a href="mailto:info@fursvp.org"
-                    class="btn btn-outline-primary btn-sm d-flex align-items-center footer-btn-modern">
-                    <i class="material-icons me-1">email</i> Contact Us
-                </a>
-                <a href="https://github.com/furconnect/fursvp" target="_blank"
-                    class="btn btn-outline-primary btn-sm d-flex align-items-center footer-btn-modern">
-                    <i class="material-icons me-1">code</i> GitHub
-                </a>
-                <button id="darkModeToggle"
-                    class="btn btn-outline-primary btn-sm d-flex align-items-center footer-btn-modern" type="button"
-                    style="gap: 0.5rem;">
-                    <span id="darkModeIcon" class="material-icons">dark_mode</span>
-                    <span id="darkModeText">Dark Mode</span>
-                </button>
             </div>
-            <div class="d-flex gap-2 justify-content-center mb-4">
-                <a href="{% url 'terms' %}"
-                    class="btn btn-outline-primary btn-sm d-flex align-items-center footer-btn-modern">
-                    <i class="material-icons me-1">gavel</i> Terms of Service
-                </a>
-                <a href="{% url 'faq' %}"
-                    class="btn btn-outline-primary btn-sm d-flex align-items-center footer-btn-modern">
-                    <i class="material-icons me-1">help</i> FAQ
-                </a>
-                <a href="{% url 'eula' %}"
-                    class="btn btn-outline-primary btn-sm d-flex align-items-center footer-btn-modern">
-                    <i class="material-icons me-1">description</i> EULA
-                </a>
-                <a href="{% url 'privacy' %}"
-                    class="btn btn-outline-primary btn-sm d-flex align-items-center footer-btn-modern">
-                    <i class="material-icons me-1">privacy_tip</i> Privacy
-                </a>
             </div>
-            <div class="footer-meta footer-copyright"
-                style="color: #335588 !important; font-size: 1.1rem; font-weight: 600; text-align: center;">
-                <div>© 2010-{% now "Y" %} FURsvp. All rights reserved.</div>
-                <span class="footer-madeby">
-                    Made with <i class="material-icons footer-heart">favorite</i> by the FURsvp Team
-                </span>
-                {% load git_extras %}
-                <div class="footer-version" style="margin-top: 0.5rem; font-size: 1.125rem;">
-                    <i class="material-icons" style="font-size: 1rem; vertical-align: middle;">code</i>
-                    {% get_git_version_link as git_data %}
-                    {% if git_data and git_data.commit_url %}
-                        <a href="{{ git_data.commit_url }}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; transition: color 0.2s ease;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#355b8c'">
-                            {{ git_data.version_info.commit_hash }}{% if git_data.version_info.has_uncommitted %}+{% endif %}
-                        </a>
-                        {% if git_data.commit_date %}
-                            <span style="font-size: 0.9em;"> • {{ git_data.commit_date }}</span>
-                        {% endif %}
-                    {% else %}
-                        {% get_git_version_display %}
-                    {% endif %}
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap 5 JS -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- TomSelect JS -->
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-    <!-- Flatpickr JS -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.9/dist/flatpickr.min.js"></script>
-    <!-- Cropper JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <!-- TinyMCE -->
-    <script src="https://cdn.jsdelivr.net/npm/tinymce@7.9.1/tinymce.min.js" referrerpolicy="origin"></script>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    {% block extra_js %}
-    {{ block.super }}
-    {% if user.is_authenticated %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const notificationsDropdown = document.getElementById('notificationsDropdown');
-            const mobileNotificationsIcon = document.getElementById('mobileNotificationsIcon');
-
-            // Function to fetch and display notifications
-            async function fetchNotifications() {
-                try {
-                    const response = await fetch('/users/notifications/');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    const unreadCount = data.unread_count;
-
-                    // Update desktop badge if dropdown exists
-                    if (notificationsDropdown) {
-                        const unreadBadge = document.getElementById('unread-notifications-badge');
-                        const notificationsList = document.getElementById('notifications-list');
-                        const noNotificationsMessageItem = document.getElementById(
-                            'no-notifications-message-item');
-                        updateNotificationsList(notificationsList, data.notifications,
-                            noNotificationsMessageItem);
-
-                        if (unreadCount > 0) {
-                            unreadBadge.textContent = unreadCount;
-                            unreadBadge.style.display = 'block';
-                            notificationsDropdown.classList.add('has-unread');
-                        } else {
-                            unreadBadge.style.display = 'none';
-                            notificationsDropdown.classList.remove('has-unread');
-                        }
-                    }
-
-                    // Update mobile notifications icon
-                    if (mobileNotificationsIcon) {
-                        if (unreadCount > 0) {
-                            mobileNotificationsIcon.classList.add('flash-icon');
-                        } else {
-                            mobileNotificationsIcon.classList.remove('flash-icon');
-                        }
-                    }
-
-                } catch (error) {
-                    console.error('Error fetching notifications:', error);
-                }
-            }
-
-            // Function to update a notifications list (desktop only now)
-            function updateNotificationsList(list, notifications, noMessageElement) {
-                // Clear existing dynamically added notifications
-                Array.from(list.querySelectorAll('.notification-item')).forEach(item => {
-                    item.remove();
-                });
-
-                if (notifications && notifications.length > 0) {
-                    noMessageElement.style.display = 'none';
-                    notifications.forEach(notification => {
-                        const notificationItem = document.createElement('div');
-                        notificationItem.classList.add('notification-item');
-                        notificationItem.setAttribute('data-notification-id', notification.id);
-                        if (!notification.is_read) {
-                            notificationItem.classList.add('unread');
-                        }
-
-                        const notificationText = document.createElement('div');
-                        notificationText.classList.add('notification-item-text');
-                        if (notification.event_name) {
-                            notificationText.innerHTML =
-                                `<strong>${notification.event_name}</strong><br>${notification.message}`;
-                        } else {
-                            notificationText.textContent = notification.message;
-                        }
-                        notificationItem.appendChild(notificationText);
-
-                        const notificationDate = document.createElement('div');
-                        notificationDate.classList.add('notification-item-date');
-                        notificationDate.textContent = new Date(notification.timestamp)
-                            .toLocaleString();
-                        notificationItem.appendChild(notificationDate);
-
-                        // Add click event listener to mark as read and redirect
-                        notificationItem.addEventListener('click', async () => {
-                            await markNotificationAsRead(notification.id);
-                            if (notification.link) {
-                                window.location.href = notification.link;
-                            }
-                        });
-                        list.insertBefore(notificationItem, noMessageElement);
-                    });
-                } else {
-                    noMessageElement.style.display = 'block';
-                }
-            }
-
-            // Function to mark notification as read
-            async function markNotificationAsRead(notificationId) {
-                try {
-                    const response = await fetch('/users/notifications/mark_as_read/', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken'),
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            notification_ids: [notificationId]
-                        })
-                    });
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    // Fetch notifications again to update counts and flashing icon
-                    fetchNotifications();
-
-                } catch (error) {
-                    console.error('Error marking notification as read:', error);
-                }
-            }
-
-            // Function to clear all notifications
-            async function clearAllNotifications() {
-                // Create and show a Bootstrap modal for confirmation
-                const modalHtml = `
-                    <div class="modal fade" id="clearNotificationsModal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">
-                                        <i class="material-icons me-2">delete</i>
-                                        Clear Notifications
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Are you sure you want to clear all notifications? This action cannot be undone.</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn btn-danger" id="confirmClearNotifications">
-                                        <i class="material-icons me-1">delete</i>
-                                        Clear All Notifications
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // Add modal to body
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-                const modal = new bootstrap.Modal(document.getElementById('clearNotificationsModal'));
-                modal.show();
-
-                // Handle confirmation
-                document.getElementById('confirmClearNotifications').addEventListener('click', async () => {
-                    try {
-                        const response = await fetch('/users/notifications/purge_read/', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': getCookie('csrftoken'),
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        // Fetch notifications again to update counts and flashing icon
-                        fetchNotifications();
-
-                        // Hide and remove the modal
-                        modal.hide();
-                        document.getElementById('clearNotificationsModal').remove();
-                    } catch (error) {
-                        console.error('Error clearing notifications:', error);
-                        alert('Failed to clear notifications. Please try again.');
-                    }
-                });
-
-                // Clean up modal when hidden
-                document.getElementById('clearNotificationsModal').addEventListener('hidden.bs.modal',
-                    function () {
-                        this.remove();
-                    });
-            }
-
-            // Get CSRF token
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-
-            // Conditional desktop dropdown event listeners
-            if (notificationsDropdown) {
-                const clearNotificationsBtnElement = document.getElementById('clear-notifications-btn');
-                notificationsDropdown.addEventListener('shown.bs.dropdown', fetchNotifications);
-                clearNotificationsBtnElement.addEventListener('click', clearAllNotifications);
-            }
-
-            // Initial fetch on page load for both desktop and mobile
-            fetchNotifications();
-        });
-    </script>
-    {% endif %}
-    <script>
-        // TomSelect autocomplete for Assign New Assistant
-        if (window.TomSelect && document.getElementById('assistant-user-input')) {
-            new TomSelect('#assistant-user-input', {
-                create: false,
-                maxItems: 1,
-                valueField: 'id',
-                labelField: 'text',
-                searchField: 'text',
-                load: function (query, callback) {
-                    if (!query.length) return callback();
-                    fetch('/users/user_search_autocomplete/?exclude_current=true&q=' +
-                            encodeURIComponent(query))
-                        .then(response => response.json())
-                        .then(data => callback(data.results))
-                        .catch(() => callback());
-                }
-            });
-        }
-
-        // Remember and restore last active profile tab
-        const profileTabs = document.getElementById('profileTabs');
-        if (profileTabs) {
-            const lastProfileTab = localStorage.getItem('lastProfileTab');
-            if (lastProfileTab) {
-                const lastTabButton = document.querySelector(
-                    `#profileTabs button[data-bs-target="${lastProfileTab}"]`);
-                if (lastTabButton) {
-                    new bootstrap.Tab(lastTabButton).show();
-                }
-            }
-            profileTabs.querySelectorAll('button[data-bs-toggle="tab"]').forEach(function (tabBtn) {
-                tabBtn.addEventListener('shown.bs.tab', function (e) {
-                    localStorage.setItem('lastProfileTab', e.target.getAttribute(
-                        'data-bs-target'));
-                });
-            });
-        }
-    </script>
-    {% endblock %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var darkModeToggle = document.getElementById('darkModeToggle');
-            var darkModeIcon = document.getElementById('darkModeIcon');
-            var darkModeText = document.getElementById('darkModeText');
-
-            function setDarkMode(enabled) {
-                if (enabled) {
-                    document.body.classList.add('dark-mode');
-                    darkModeIcon.textContent = 'light_mode';
-                    darkModeText.textContent = 'Light Mode';
-                    localStorage.setItem('fursvpDarkMode', 'true');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    darkModeIcon.textContent = 'dark_mode';
-                    darkModeText.textContent = 'Dark Mode';
-                    localStorage.setItem('fursvpDarkMode', 'false');
-                }
-
-                // Dispatch custom event for other components to listen to
-                document.dispatchEvent(new CustomEvent('darkModeChanged', {
-                    detail: {
-                        enabled
-                    }
-                }));
-            }
-
-            setDarkMode(localStorage.getItem('fursvpDarkMode') === 'true');
-
-            if (darkModeToggle) {
-                darkModeToggle.addEventListener('click', function () {
-                    setDarkMode(!document.body.classList.contains('dark-mode'));
-                });
-            }
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            function updateFlatpickrTheme() {
-                var darkCss = document.getElementById('flatpickr-dark-css');
-                if (document.body.classList.contains('dark-mode')) {
-                    darkCss.removeAttribute('disabled');
-                } else {
-                    darkCss.setAttribute('disabled', '');
-                }
-            }
-            updateFlatpickrTheme();
-            document.addEventListener('darkModeChanged', updateFlatpickrTheme);
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var bell = document.getElementById('notificationsDropdown');
-            if (bell) {
-                bell.addEventListener('dblclick', function (e) {
-                    e.preventDefault();
-                    window.location.href = '/users/notifications/all/';
-                });
-            }
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Group Selector Modal
-            const groupSelectorTrigger = document.getElementById('groupSelectorTrigger');
-            if (groupSelectorTrigger) {
-                groupSelectorTrigger.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const modal = new bootstrap.Modal(document.getElementById('groupSelectorModal'));
-                    modal.show();
-                });
-            }
-        });
-    </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
