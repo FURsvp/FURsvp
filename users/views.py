@@ -512,11 +512,11 @@ def administration(request):
                     profile_form = UserProfileForm(request.POST, instance=user_obj.profile, prefix=f'profile_{user_obj.id}')
                     if profile_form.is_valid():
                         old_data = {
-                            'admin_groups': list(user_obj.profile.admin_groups.all().values_list('name', flat=True))
+                            'admin_groups': list(user_obj.group_roles.all().values_list('group__name', flat=True))
                         }
                         profile_form.save()
                         new_data = {
-                            'admin_groups': list(user_obj.profile.admin_groups.all().values_list('name', flat=True))
+                            'admin_groups': list(user_obj.group_roles.all().values_list('group__name', flat=True))
                         }
                         
                         # Log the profile update

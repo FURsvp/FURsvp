@@ -258,7 +258,7 @@
 }
 
 .admin-badge {
-    padding: 0.375rem 0.75rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
     font-size: 0.75rem;
     font-weight: 600;
@@ -289,7 +289,7 @@
 .tom-select-custom .ts-wrapper.focus {
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    z-index: 200;
+    z-index: 9999 !important;
 }
 
 .tom-select-custom .ts-control {
@@ -304,60 +304,69 @@
 }
 
 .tom-select-custom .ts-dropdown {
-    border: 2px solid #e2e8f0;
-    border-radius: 0.75rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border: 2px solid #667eea;
+    border-radius: 1rem;
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
     background: white;
     position: absolute !important;
-    z-index: 9999 !important;
+    z-index: 10000 !important;
     max-height: 300px;
     overflow-y: auto;
-    margin-top: 4px;
+    margin-top: 8px;
+    backdrop-filter: blur(10px);
 }
 
 .tom-select-custom .ts-dropdown .option {
-    padding: 0.75rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    border-bottom: 1px solid #f1f5f9;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
+    padding: 1.25rem 1.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    color: #374151 !important;
+    min-height: 48px !important;
+}
+
+.tom-select-custom .ts-dropdown .option:last-child {
+    border-bottom: none;
 }
 
 .tom-select-custom .ts-dropdown .option:hover {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    transform: translateX(2px);
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
 }
 
 .tom-select-custom .ts-dropdown .option.selected {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .tom-select-custom .ts-dropdown .option.selected:hover {
     background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
 }
 
-/* Selected Items - Admin Badge Theme */
 .tom-select-custom .ts-wrapper .item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 0.5rem 0.75rem;
-    border-radius: 20px;
-    margin: 0.25rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    border: none;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-    transition: all 0.2s ease;
-    max-width: 200px;
-    overflow: hidden;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    padding: 0.625rem 0.875rem !important;
+    border-radius: 20px !important;
+    margin: 0 !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
+    transition: all 0.2s ease !important;
+    max-width: 200px !important;
+    overflow: hidden !important;
+    min-height: 32px !important;
 }
 
 .tom-select-custom .ts-wrapper .item:hover {
@@ -413,26 +422,29 @@
 
 /* Dropdown option logos */
 .tom-select-custom .ts-dropdown .option .group-logo {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #e2e8f0;
     flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tom-select-custom .ts-dropdown .option .group-logo-placeholder {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
     border-color: #e2e8f0;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f1f5f9;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 50%;
-    color: #64748b;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
 }
 
 /* Input placeholder styling */
@@ -461,6 +473,65 @@
 .user-table td {
     position: relative;
     overflow: visible;
+}
+
+/* Force Tom Select to render above everything */
+.tom-select-custom {
+    position: relative;
+    z-index: 1000;
+}
+
+/* Override Tom Select defaults with maximum specificity */
+.tom-select-custom .ts-wrapper .item,
+.ts-wrapper .item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 20px !important;
+    margin: 0 !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
+    transition: all 0.2s ease !important;
+    max-width: 200px !important;
+    overflow: hidden !important;
+    min-height: 40px !important;
+    line-height: 1.2 !important;
+}
+
+.tom-select-custom .ts-wrapper {
+    position: relative !important;
+    z-index: 1000;
+}
+
+.tom-select-custom .ts-wrapper.focus {
+    z-index: 10000 !important;
+}
+
+/* Ensure dropdown appears above all table elements */
+.tom-select-custom .ts-dropdown {
+    z-index: 99999 !important;
+    position: fixed !important;
+}
+
+/* Override any table z-index issues */
+.user-table {
+    position: relative;
+    z-index: 1;
+}
+
+.user-table td {
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+}
+
+.user-table th {
+    z-index: 1;
 }
 
 /* Ensure Tom Select wrapper has proper positioning */
@@ -521,15 +592,15 @@
     gap: 0.5rem;
     background: #667eea;
     color: white;
-    padding: 0.25rem 0.5rem;
+    padding: 0.3125rem 0.625rem;
     border-radius: 0.375rem;
     margin: 0.125rem;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
 }
 
 .ts-wrapper .item .group-logo {
-    width: 16px;
-    height: 16px;
+    width: 32px;
+    height: 32px;
     border-color: rgba(255, 255, 255, 0.3);
 }
 

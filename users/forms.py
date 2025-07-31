@@ -57,19 +57,24 @@ class UserProfileForm(forms.ModelForm):
             self.fields['admin_groups'].initial = Group.objects.filter(group_roles__user=self.instance.user)
         if self.instance and self.instance.profile_picture_base64:
             self.initial['profile_picture_base64'] = self.instance.profile_picture_base64
-        # Only show can_post_blog to superusers
         if not (self.instance and self.instance.user and self.instance.user.is_superuser):
             self.fields.pop('can_post_blog', None)
 
     def save(self, commit=True):
+        # Get the admin_groups data before calling super().save()
+        admin_groups = self.cleaned_data.get('admin_groups', Group.objects.none())
+        
+        # Save the profile first
         instance = super().save(commit=commit)
+        
+        # Then handle the group assignments
         if self.instance and self.instance.user:
-            selected_groups = self.cleaned_data.get('admin_groups', Group.objects.none())
             # Add new GroupRoles
-            for group in selected_groups:
+            for group in admin_groups:
                 GroupRole.objects.get_or_create(user=self.instance.user, group=group)
             # Remove GroupRoles for groups not selected
-            GroupRole.objects.filter(user=self.instance.user).exclude(group__in=selected_groups).delete()
+            GroupRole.objects.filter(user=self.instance.user).exclude(group__in=admin_groups).delete()
+        
         return instance
 
 class UserPublicProfileForm(forms.ModelForm):

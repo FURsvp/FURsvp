@@ -2,7 +2,8 @@
 .env
 *.sqlite3
 staticfiles/
-event/migrations/
+event/migrations/*
+users/migrations/*
 
 # Environment variables
 .env
