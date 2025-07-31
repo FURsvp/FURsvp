@@ -243,18 +243,26 @@
                                 {% if rsvp.user %}
                                 <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
                                 <div class="attendee-info">
-                                    {% if can_view_contact_info %}
-                                    <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
-                                        data-bs-target="#contactInfoModal"
-                                        data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                        data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                        data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                        data-user-id="{{ rsvp.user.id }}">
-                                        {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
-                                    </a>
-                                    {% else %}
-                                    <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
-                                    {% endif %}
+                                    <div class="d-flex align-items-center">
+                                        {% if can_view_contact_info %}
+                                        <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                            data-bs-target="#contactInfoModal"
+                                            data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                            data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                            data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                            data-user-id="{{ rsvp.user.id }}">
+                                            {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                                        </a>
+                                        {% if rsvp.user.profile.discord_username %}
+                                        <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-discord-popup data-discord="{{ rsvp.user.profile.discord_username }}" data-display-name="{{ rsvp.user.profile.get_display_name }}">
+                                            <i class="material-icons">chat</i>
+                                            Discord
+                                        </button>
+                                        {% endif %}
+                                        {% else %}
+                                        <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 {% else %}
                                 <div class="attendee-avatar">
@@ -288,18 +296,26 @@
                                 {% if rsvp.user %}
                                 <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
                                 <div class="attendee-info">
-                                    {% if can_view_contact_info %}
-                                    <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
-                                        data-bs-target="#contactInfoModal"
-                                        data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                        data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                        data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                        data-user-id="{{ rsvp.user.id }}">
-                                        {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
-                                    </a>
-                                    {% else %}
-                                    <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
-                                    {% endif %}
+                                    <div class="d-flex align-items-center">
+                                        {% if can_view_contact_info %}
+                                        <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                            data-bs-target="#contactInfoModal"
+                                            data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                            data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                            data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                            data-user-id="{{ rsvp.user.id }}">
+                                            {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                                        </a>
+                                        {% if rsvp.user.profile.discord_username %}
+                                        <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-discord-popup data-discord="{{ rsvp.user.profile.discord_username }}" data-display-name="{{ rsvp.user.profile.get_display_name }}">
+                                            <i class="material-icons">chat</i>
+                                            Discord
+                                        </button>
+                                        {% endif %}
+                                        {% else %}
+                                        <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 {% else %}
                                 <div class="attendee-avatar">
@@ -333,18 +349,26 @@
                                 {% if rsvp.user %}
                                 <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
                                 <div class="attendee-info">
-                                    {% if can_view_contact_info %}
-                                    <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
-                                        data-bs-target="#contactInfoModal"
-                                        data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                        data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                        data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                        data-user-id="{{ rsvp.user.id }}">
-                                        {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
-                                    </a>
-                                    {% else %}
-                                    <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
-                                    {% endif %}
+                                    <div class="d-flex align-items-center">
+                                        {% if can_view_contact_info %}
+                                        <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                            data-bs-target="#contactInfoModal"
+                                            data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                            data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                            data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                            data-user-id="{{ rsvp.user.id }}">
+                                            {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                                        </a>
+                                        {% if rsvp.user.profile.discord_username %}
+                                        <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-discord-popup data-discord="{{ rsvp.user.profile.discord_username }}" data-display-name="{{ rsvp.user.profile.get_display_name }}">
+                                            <i class="material-icons">chat</i>
+                                            Discord
+                                        </button>
+                                        {% endif %}
+                                        {% else %}
+                                        <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 {% else %}
                                 <div class="attendee-avatar">
@@ -380,18 +404,26 @@
                                 {% if rsvp.user %}
                                 <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
                                 <div class="attendee-info">
-                                    {% if can_view_contact_info %}
-                                    <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
-                                        data-bs-target="#contactInfoModal"
-                                        data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                        data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                        data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                        data-user-id="{{ rsvp.user.id }}">
-                                        {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
-                                    </a>
-                                    {% else %}
-                                    <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
-                                    {% endif %}
+                                    <div class="d-flex align-items-center">
+                                        {% if can_view_contact_info %}
+                                        <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                            data-bs-target="#contactInfoModal"
+                                            data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                            data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                            data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                            data-user-id="{{ rsvp.user.id }}">
+                                            {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                                        </a>
+                                        {% if rsvp.user.profile.discord_username %}
+                                        <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-discord-popup data-discord="{{ rsvp.user.profile.discord_username }}" data-display-name="{{ rsvp.user.profile.get_display_name }}">
+                                            <i class="material-icons">chat</i>
+                                            Discord
+                                        </button>
+                                        {% endif %}
+                                        {% else %}
+                                        <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 {% else %}
                                 <div class="attendee-avatar">
@@ -1000,6 +1032,51 @@
             });
         }
     });
+</script>
+
+
+
+<script>
+// Discord popup functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle Discord button clicks
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('[data-discord-popup]')) {
+            e.preventDefault();
+            const button = e.target.closest('[data-discord-popup]');
+            const discord = button.getAttribute('data-discord');
+            const displayName = button.getAttribute('data-display-name');
+            
+            const content = `
+                <p>Contact <strong>${displayName}</strong> on Discord:</p>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="discordUsername" value="${discord}" readonly>
+                    <button class="btn btn-outline-primary" type="button" onclick="copyDiscordUsername()">
+                        <i class="material-icons">content_copy</i>
+                        Copy
+                    </button>
+                </div>
+            `;
+            
+            customPopup.show(content, '<i class="material-icons">chat</i> Discord Contact');
+        }
+    });
+});
+
+function copyDiscordUsername() {
+    const input = document.getElementById('discordUsername');
+    input.select();
+    input.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    
+    // Show feedback
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="material-icons">check</i> Copied!';
+    setTimeout(() => {
+        button.innerHTML = originalText;
+    }, 2000);
+}
 </script>
 
 <style>

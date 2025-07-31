@@ -668,21 +668,21 @@
             <div class="group-header-content">
                 <div class="group-header-main">
                     <div class="group-logo-section">
-                        {% if group.logo_base64 %}
+                            {% if group.logo_base64 %}
                             <img src="data:image/png;base64,{{ group.logo_base64 }}" alt="{{ group.name }} Logo" class="group-logo">
-                        {% else %}
+                            {% else %}
                             <div class="group-logo-placeholder">
                                 <i class="material-icons">groups</i>
-                            </div>
-                        {% endif %}
-                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
                     
                     <div class="group-info-section">
                         <h1 class="group-title">{{ group.name }}</h1>
                         
                         {% if group.description %}
                             <p class="group-subtitle">{{ group.description|striptags|truncatewords:25 }}</p>
-                        {% endif %}
+                                {% endif %}
                         
                         {% if group.contact_email %}
                             <div class="group-contact">
@@ -701,29 +701,29 @@
                         </button>
                     {% endif %}
                     
-                    {% if group.website %}
+                {% if group.website %}
                         <a href="{{ group.website }}" target="_blank" class="group-action-btn secondary">
                             <i class="material-icons">language</i>
                             Website
                         </a>
-                    {% endif %}
+                {% endif %}
                     
-                    {% if group.telegram_channel %}
+                {% if group.telegram_channel %}
                         <a href="https://t.me/{{ group.telegram_channel|cut:'@' }}" target="_blank" class="group-action-btn secondary">
                             <i class="material-icons">send</i>
                             Events Channel
                         </a>
-                    {% endif %}
+                {% endif %}
                     
                     {% if group.telegram_announcements %}
                         <a href="https://t.me/{{ group.telegram_announcements|cut:'@' }}" target="_blank" class="group-action-btn secondary">
                             <i class="material-icons">campaign</i>
                             Announcements
                         </a>
-                    {% endif %}
+                                {% endif %}
                 </div>
-            </div>
-        </div>
+                            </div>
+                        </div>
     </div>
 
     <!-- Main Content -->
@@ -736,26 +736,26 @@
                     <div class="group-card-header">
                         <i class="material-icons">info</i>
                         <h3>About This Group</h3>
-                    </div>
-                    <div class="group-card-body">
-                        {% if group.description %}
-                            <div class="group-description-html">{{ group.description|safe }}</div>
-                        {% else %}
-                            <p class="text-muted fst-italic">No description provided yet.</p>
-                        {% endif %}
-                    </div>
                 </div>
+                    <div class="group-card-body">
+                    {% if group.description %}
+                            <div class="group-description-html">{{ group.description|safe }}</div>
+                    {% else %}
+                            <p class="text-muted fst-italic">No description provided yet.</p>
+                    {% endif %}
+            </div>
+        </div>
 
-                <!-- Leadership Section -->
+    <!-- Leadership Section -->
                 <div class="group-card">
                     <div class="group-card-header">
                         <i class="material-icons">people</i>
                         <h3>Group Leadership</h3>
-                    </div>
+                        </div>
                     <div class="group-card-body">
-                        {% if leadership_roles %}
+                    {% if leadership_roles %}
                             <div class="leadership-grid">
-                                {% for role in leadership_roles %}
+                            {% for role in leadership_roles %}
                                     <div class="leader-card">
                                         <div>
                                             {% if role.user.profile.profile_picture_base64 %}
@@ -778,90 +778,90 @@
                                                 <a href="https://t.me/{{ role.user.profile.telegram_username }}" target="_blank" class="leader-btn telegram">
                                                     <i class="material-icons">send</i>
                                                     Telegram
-                                                </a>
+                                            </a>
                                             {% endif %}
                                             {% if role.user.profile.discord_username %}
-                                                <button type="button" class="leader-btn discord" data-bs-toggle="modal" data-bs-target="#discordModal" data-discord="{{ role.user.profile.discord_username }}" data-display-name="{{ role.user.profile.get_display_name }}">
-                                                    <i class="material-icons">chat</i>
-                                                    Discord
-                                                </button>
+                                    <button type="button" class="leader-btn discord" data-discord-popup data-discord="{{ role.user.profile.discord_username }}" data-display-name="{{ role.user.profile.get_display_name }}">
+                                        <i class="material-icons">chat</i>
+                                        Discord
+                                            </button>
                                             {% endif %}
-                                        </div>
                                     </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
                             <div class="text-center py-4">
                                 <i class="material-icons mb-3" style="font-size: 3rem; color: #9ca3af;">people_outline</i>
                                 <p class="text-muted">No leaders assigned to this group yet.</p>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
+                        </div>
+                    {% endif %}
+            </div>
+        </div>
 
                 <!-- Events Section -->
                 <div class="group-card">
                     <div class="group-card-header">
                         <i class="material-icons">event</i>
                         <h3>Upcoming Events</h3>
-                    </div>
+                </div>
                     <div class="group-card-body">
-                        {% if upcoming_events %}
+                    {% if upcoming_events %}
                             <div class="events-toggle">
                                 <button class="toggle-btn active" data-view="grid">Grid View</button>
                                 <button class="toggle-btn" data-view="list">List View</button>
-                            </div>
+                        </div>
                             
                             <div id="eventsGrid" class="events-grid">
-                                {% for event in upcoming_events %}
+                            {% for event in upcoming_events %}
                                     <div class="event-card">
                                         <a href="{% url 'event_detail' event.id %}" class="event-title">
-                                            {{ event.title }}
-                                        </a>
+                                                    {{ event.title }}
+                                                </a>
                                         <div class="event-meta">
                                             <span><i class="material-icons">calendar_month</i> {{ event.date }}</span>
-                                            {% if event.start_time %}
+                                                    {% if event.start_time %}
                                                 <span><i class="material-icons">schedule</i> {{ event.start_time|time:"g:i A" }}</span>
                                             {% endif %}
                                         </div>
                                         {% if event.capacity %}
                                             <div class="event-rsvp">
                                                 {{ event.confirmed_count|default:0 }} / {{ event.capacity }} RSVPs
-                                            </div>
+                                        </div>
                                         {% endif %}
                                         <a href="{% url 'event_detail' event.id %}" class="event-link">View Event →</a>
-                                    </div>
-                                {% endfor %}
-                            </div>
+                                </div>
+                            {% endfor %}
+                        </div>
                             
                             <div id="eventsList" class="events-list" style="display: none;">
                                 {% for event in upcoming_events %}
                                     <div class="event-card">
                                         <div class="d-flex justify-content-between align-items-start">
-                                            <div>
+                                        <div>
                                                 <a href="{% url 'event_detail' event.id %}" class="event-title">
-                                                    {{ event.title }}
-                                                </a>
+                                                {{ event.title }}
+                                            </a>
                                                 <div class="event-meta">
                                                     <span><i class="material-icons">calendar_month</i> {{ event.date }}</span>
-                                                    {% if event.start_time %}
+                                                {% if event.start_time %}
                                                         <span><i class="material-icons">schedule</i> {{ event.start_time|time:"g:i A" }}</span>
-                                                    {% endif %}
-                                                </div>
+                                                {% endif %}
+                                            </div>
                                             </div>
                                             <a href="{% url 'event_detail' event.id %}" class="event-link">View Event →</a>
                                         </div>
-                                    </div>
+                                        </div>
                                 {% endfor %}
-                            </div>
-                        {% else %}
+                        </div>
+                    {% else %}
                             <div class="text-center py-4">
                                 <i class="material-icons mb-3" style="font-size: 3rem; color: #9ca3af;">event_busy</i>
                                 <p class="text-muted">No upcoming events for this group.</p>
                             </div>
-                        {% endif %}
-                    </div>
-                </div>
+                    {% endif %}
+            </div>
+        </div>
 
                 <!-- Telegram Announcements Section -->
                 {% if telegram_feed %}
@@ -874,8 +874,8 @@
                                 <i class="material-icons">open_in_new</i>
                                 View Channel
                             </a>
-                        {% endif %}
-                    </div>
+                                        {% endif %}
+                                </div>
                     <div class="group-card-body">
                         <div class="telegram-feed">
                             {% for entry in telegram_feed %}
@@ -889,19 +889,19 @@
                                                 {{ entry.published|default:"Unknown date" }}
                                             {% endif %}
                                         </span>
-                                    </div>
+                                        </div>
                                     <div class="post-content">
                                         <a href="{{ entry.link }}" target="_blank" class="post-title">{{ entry.title }}</a>
                                         {% if entry.summary %}
                                             <p class="post-summary">{{ entry.summary|striptags|truncatewords:30 }}</p>
                                         {% endif %}
                                     </div>
-                                </div>
+                                    </div>
                             {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
             </div>
 
             <!-- Sidebar -->
@@ -910,24 +910,24 @@
                 <div class="sidebar-card">
                     <div class="sidebar-card-header">
                         Group Statistics
-                    </div>
+                </div>
                     <div class="sidebar-card-body">
                         <div class="sidebar-stat">
                             <span class="sidebar-stat-label">Total Events</span>
                             <span class="sidebar-stat-value">{{ upcoming_events|length }}</span>
-                        </div>
+                    </div>
                         <div class="sidebar-stat">
                             <span class="sidebar-stat-label">Group Leaders</span>
                             <span class="sidebar-stat-value">{{ leadership_roles|length }}</span>
-                        </div>
-                    </div>
-                </div>
+                                    </div>
+                                    </div>
+                                    </div>
 
                 <!-- Quick Actions -->
                 <div class="sidebar-card">
                     <div class="sidebar-card-header">
                         Quick Actions
-                    </div>
+                                </div>
                     <div class="sidebar-card-body">
                         <div class="d-grid gap-2">
                             {% if user.is_authenticated %}
@@ -941,23 +941,23 @@
                                     <i class="material-icons">groups</i>
                                     Browse Groups
                                 </a>
-                            {% else %}
+                                                {% else %}
                                 <a href="{% url 'login' %}" class="btn btn-primary">
                                     <i class="material-icons">login</i>
                                     Join FURsvp
                                 </a>
-                            {% endif %}
-                        </div>
+                                                {% endif %}
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- Edit Group Modal -->
 <div class="modal fade" id="editGroupModal" tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editGroupModalLabel">
@@ -966,7 +966,7 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+                <div class="modal-body">
                 <ul class="nav nav-tabs" id="groupManageTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="edit-tab" data-bs-toggle="tab" data-bs-target="#edit" type="button" role="tab">
@@ -988,76 +988,76 @@
                             {% csrf_token %}
                             <input type="hidden" name="submit_group_edit" value="1">
                             
-                            <div class="mb-3">
+                    <div class="mb-3">
                                 <label for="group_name" class="form-label">Group Name</label>
                                 <input type="text" class="form-control" id="group_name" name="group_name" value="{{ group.name }}" required>
-                            </div>
+                    </div>
                             
-                            <div class="mb-3">
+                    <div class="mb-3">
                                 <label for="group_description" class="form-label">Description</label>
                                 <textarea class="form-control" id="group_description" name="group_description" rows="4">{{ group.description|striptags }}</textarea>
-                            </div>
+                        </div>
                             
-                            <div class="mb-3">
+                    <div class="mb-3">
                                 <label for="group_website" class="form-label">Website</label>
                                 <input type="url" class="form-control" id="group_website" name="group_website" value="{{ group.website|default:'' }}">
-                            </div>
+                    </div>
                             
-                            <div class="mb-3">
+                    <div class="mb-3">
                                 <label for="group_telegram" class="form-label">Telegram Event Channel</label>
                                 <input type="text" class="form-control" id="group_telegram" name="group_telegram" value="{{ group.telegram_channel|default:'' }}" placeholder="@channelname">
                                 <div class="form-text">This channel will receive event announcements and updates posted from FURsvp.</div>
-                            </div>
+                    </div>
                             
-                            <div class="mb-3">
+                    <div class="mb-3">
                                 <label for="group_telegram_announcements" class="form-label">Telegram Announcement Channel</label>
                                 <input type="text" class="form-control" id="group_telegram_announcements" name="group_telegram_announcements" value="{{ group.telegram_announcements|default:'' }}" placeholder="@announcements">
                                 <div class="form-text">This channel will receive general announcements and group updates posted from Telegram.</div>
-                            </div>
+                    </div>
                             
-                            <div class="mb-3">
+                    <div class="mb-3">
                                 <label for="group_email" class="form-label">Contact Email</label>
                                 <input type="email" class="form-control" id="group_email" name="group_email" value="{{ group.contact_email|default:'' }}">
-                            </div>
+                    </div>
                             
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="material-icons">save</i>
                                     Save Changes
-                                </button>
+                    </button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                    
+                </div>
+            </form>
+</div>
+
                     <div class="tab-pane fade" id="leadership" role="tabpanel">
                         <form method="post" action="{% url 'group_detail' group.id %}">
-                            {% csrf_token %}
+                    {% csrf_token %}
                             <input type="hidden" name="submit_leadership_changes" value="1">
-                            
-                            <div class="mb-3">
+                
+                <div class="mb-3">
                                 <label class="form-label">Current Leaders</label>
                                 {% for role in leadership_roles %}
                                     <div class="d-flex align-items-center justify-content-between p-2 border rounded mb-2">
                                         <div class="d-flex align-items-center gap-2">
-                                            {% if role.user.profile.profile_picture_base64 %}
+                                        {% if role.user.profile.profile_picture_base64 %}
                                                 <img src="{{ role.user.profile.profile_picture_base64 }}" alt="{{ role.user.profile.get_display_name }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
-                                            {% else %}
+                                        {% else %}
                                                 <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600;">
-                                                    {{ role.user.profile.get_initials }}
-                                                </div>
-                                            {% endif %}
-                                            <span>{{ role.user.profile.get_display_name }}</span>
+                                                {{ role.user.profile.get_initials }}
+                                            </div>
+                                        {% endif %}
+                                        <span>{{ role.user.profile.get_display_name }}</span>
                                             {% if role.custom_label %}
                                                 <span class="badge bg-secondary">{{ role.custom_label }}</span>
-                                            {% endif %}
-                                        </div>
+                            {% endif %}
+                </div>
                                         <button type="submit" name="remove_leader_{{ role.user.id }}" class="btn btn-sm btn-outline-danger">
                                             <i class="material-icons">remove</i>
-                                        </button>
-                                    </div>
+                                            </button>
+            </div>
                                 {% endfor %}
-                            </div>
+            </div>
                             
                             <div class="mb-3">
                                 <label for="new_leader" class="form-label">Add New Leader</label>
@@ -1069,55 +1069,32 @@
                                 </select>
                                 {% if user.is_superuser %}
                                     <div class="form-text">Staff can add any user as a leader.</div>
-                                {% else %}
+                            {% else %}
                                     <div class="form-text">Only users not already in the group are shown.</div>
-                                {% endif %}
-                            </div>
+{% endif %}
+                </div>
                             
                             <div class="mb-3">
                                 <label for="leader_role" class="form-label">Role Label (Optional)</label>
                                 <input type="text" class="form-control" id="leader_role" name="leader_role" placeholder="e.g., Founder, Moderator, etc.">
-                            </div>
+      </div>
                             
                             <div class="d-flex gap-2">
                                 <button type="submit" name="add_leader" class="btn btn-primary">
                                     <i class="material-icons">add</i>
                                     Add Leader
-                                </button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
+                        </form>
+      </div>
+      </div>
     </div>
+  </div>
+</div>
 </div>
 
-<!-- Discord Modal -->
-<div class="modal fade" id="discordModal" tabindex="-1" aria-labelledby="discordModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="discordModalLabel">
-                    <i class="material-icons">chat</i>
-                    Discord Contact
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Contact <span id="discordUserName"></span> on Discord:</p>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="discordUsername" readonly>
-                    <button class="btn btn-outline-primary" type="button" onclick="copyDiscordUsername()">
-                        <i class="material-icons">content_copy</i>
-                        Copy
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script>
 // Events view toggle
@@ -1145,18 +1122,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Discord modal
-    const discordModal = document.getElementById('discordModal');
-    if (discordModal) {
-        discordModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
+    // Discord popup functionality
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('[data-discord-popup]')) {
+            e.preventDefault();
+            const button = e.target.closest('[data-discord-popup]');
             const discord = button.getAttribute('data-discord');
             const displayName = button.getAttribute('data-display-name');
             
-            document.getElementById('discordUserName').textContent = displayName;
-            document.getElementById('discordUsername').value = discord;
-        });
-    }
+            const content = `
+                <p>Contact <strong>${displayName}</strong> on Discord:</p>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="discordUsername" value="${discord}" readonly>
+                    <button class="btn btn-outline-primary" type="button" onclick="copyDiscordUsername()">
+                        <i class="material-icons">content_copy</i>
+                        Copy
+                    </button>
+                </div>
+            `;
+            
+            customPopup.show(content, '<i class="material-icons">chat</i> Discord Contact');
+        }
+    });
 });
 
 function copyDiscordUsername() {
