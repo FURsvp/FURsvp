@@ -896,7 +896,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="text" class="form-control" id="id_telegram_channel" name="telegram_channel" value="{{ group.telegram_channel|default_if_none:'' }}">
                     </div>
                     <div class="mb-3">
-                        <label for="id_telegram_webhook_channel" class="form-label">Telegram Webhook Channel (w/o # or @)<span class="text-muted small">(optional)</span></label>
+                        <label for="id_telegram_webhook_channel" class="form-label">Telegram Webhook Channel (w/o # or @) <span class="text-muted small">(optional)</span></label>
                         <input type="text" class="form-control" id="id_telegram_webhook_channel" name="telegram_webhook_channel" value="{{ group.telegram_webhook_channel|default_if_none:'' }}">
                     </div>
                 </div>

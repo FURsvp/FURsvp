@@ -503,6 +503,7 @@
             color: rgba(255, 255, 255, 0.8);
             line-height: 1.6;
             margin-bottom: 1.5rem;
+            text-align: left;
         }
 
         .footer-social {
@@ -567,11 +568,14 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 2rem;
             margin-top: 2rem;
+                        text-align: center;
+
         }
 
         .footer-copyright {
             color: rgba(255, 255, 255, 0.8);
             margin: 0;
+            text-align: left;
         }
 
         .footer-copyright .heart {
@@ -823,7 +827,7 @@
             <div class="footer-content">
                 <div class="footer-main">
                     <div class="row">
-                        <div class="col-lg-4 mb-4">
+                        <div class="col-lg-6 mb-6">
                             <div class="footer-brand">
                                 <div class="footer-logo mb-3">
                                     <img src="{% static 'fursvp-logo2025.png' %}" alt="FURsvp Logo" style="height: 60px;">
@@ -833,16 +837,13 @@
                                     Free, open-source, and built for the community.
                                 </p>
                                 <div class="footer-social">
-                                    <a href="#" class="social-link" title="GitHub">
+                                    <a href="https://github.com/FURsvp/fursvp" class="social-link" title="GitHub" target="_blank" rel="noopener">
                                         <span class="material-icons">code</span>
                                     </a>
-                                    <a href="#" class="social-link" title="Discord">
-                                        <span class="material-icons">chat</span>
+                                    <a href="https://bsky.app/profile/fursvp.org" class="social-link" title="Bluesky" target="_blank" rel="noopener">
+                                        <span class="material-icons">cloud</span>
                                     </a>
-                                    <a href="#" class="social-link" title="Telegram">
-                                        <span class="material-icons">send</span>
-                                    </a>
-                        </div>
+                                </div>
                     </div>
                 </div>
                         <div class="col-lg-3 col-md-6 mb-4">
@@ -870,7 +871,8 @@
                     <div class="row align-items-center">
                         <div class="col-md-6">
                             <p class="footer-copyright">
-                                &copy; {% now "Y" %} FURsvp. Made with <span class="heart">❤️</span> for the Furry Fandom.
+                                &copy; 2010 - {% now "Y" %} FURsvp.<br>
+                                Made with <span class="heart">❤️</span> for the Furry Fandom by the <a href="http://fursvp.org/group/2/" target="_blank" rel="noopener">FURsvp</a> team.
                             </p>
         </div>
                         <div class="col-md-6 text-md-end">

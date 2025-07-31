@@ -1045,14 +1045,12 @@
             </div>
             <div class="col-md-6">
                 <div id="viewToggleContainer" class="view-toggle-container">
-                    <a href="?view=calendar{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_order %}&order={{ current_order }}{% endif %}{% if filter_adult %}&adult=true{% endif %}{% if mileage_range %}&mileage={{ mileage_range }}{% endif %}" 
-                       id="calendarViewBtn" class="view-toggle-btn {% if view_type != 'list' %}active{% endif %}">
+                    <button type="button" id="calendarViewBtn" class="view-toggle-btn {% if view_type != 'list' %}active{% endif %}">
                         <span class="material-icons">calendar_month</span> Calendar
-                    </a>
-                    <a href="?view=list{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_order %}&order={{ current_order }}{% endif %}{% if filter_adult %}&adult=true{% endif %}{% if mileage_range %}&mileage={{ mileage_range }}{% endif %}" 
-                       id="listViewBtn" class="view-toggle-btn {% if view_type == 'list' %}active{% endif %}">
+                    </button>
+                    <button type="button" id="listViewBtn" class="view-toggle-btn {% if view_type == 'list' %}active{% endif %}">
                         <span class="material-icons">list</span> List
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1086,7 +1084,7 @@
                             <div class="col-12">
                                 <div class="filter-container">
                                     <label class="filter-label">
-                                        <span class="material-icons">search</span>
+                                            <span class="material-icons">search</span>
                                         Search Events
                                     </label>
                                     <div class="input-group search-group">
@@ -1119,19 +1117,19 @@
                                                     <div class="d-flex gap-2 align-items-center">
                                                         <div class="location-btn-container" style="width: 34%;">
                                                             <button type="button" id="useMyLocation" class="btn btn-outline-primary w-100">
-                                                                <span class="material-icons me-1">my_location</span>
-                                                                Use My Location
-                                                            </button>
-                                                        </div>
+                                                        <span class="material-icons me-1">my_location</span>
+                                                        Use My Location
+                                                    </button>
+                                                    </div>
                                                         <div class="text-center" style="width: 32%;">
                                                             <span class="text-muted">OR</span>
                                                         </div>
                                                         <div class="location-btn-container" style="width: 34%;">
                                                             <button type="button" id="manualLocationBtn" class="btn btn-outline-secondary w-100">
-                                                                <span class="material-icons me-1">edit_location</span>
-                                                                Manual Location
-                                                            </button>
-                                                        </div>
+                                                            <span class="material-icons me-1">edit_location</span>
+                                                            Manual Location
+                                                        </button>
+                                                    </div>
                                                     </div>
                                                     <div id="locationStatus" class="location-status mt-2"></div>
                                                     <div id="manualLocationResponse" class="manual-location-response mt-2" style="display: none;">
@@ -1141,13 +1139,13 @@
                                                         </div>
                                                     </div>
                                                     <div id="manualLocationContainer" style="display: none;" class="mt-2">
-                                                        <input type="text" id="manualLocationInput" class="form-control" 
-                                                               placeholder="City, State (e.g., New York, NY)" 
-                                                               maxlength="100">
+                                                            <input type="text" id="manualLocationInput" class="form-control" 
+                                                                   placeholder="City, State (e.g., New York, NY)" 
+                                                                   maxlength="100">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         
                                         <!-- Mileage Slider Row -->
                                         <div class="row g-3">
@@ -1180,25 +1178,25 @@
                                 <div class="controls-container">
                                     <!-- Left Side - Filter Actions -->
                                     <div class="controls-left">
-                                        <a href="{% url 'event_index' %}" class="btn btn-outline-secondary clear-all-btn">
+                                        <button type="button" id="clearAllBtn" class="btn btn-outline-secondary clear-all-btn">
                                             <span class="material-icons me-2">clear_all</span> 
                                             Clear All
-                                        </a>
+                                        </button>
                                     </div>
                                     
                                     <!-- Right Side - View Controls -->
                                     <div class="controls-right">
-                                        <a href="?{% if filter_adult %}adult=false{% else %}adult=true{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_order %}&order={{ current_order }}{% endif %}{% if mileage_range %}&mileage={{ mileage_range }}{% endif %}" class="btn adult-toggle-btn">
+                                        <button type="button" id="adultToggleBtn" class="btn adult-toggle-btn">
                                             <span class="material-icons me-2">visibility</span> 
                                             <span class="toggle-text">{% if filter_adult %}Hide 18+/21+{% else %}Show 18+/21+{% endif %}</span>
-                                        </a>
+                                        </button>
                                         <div class="btn-group view-controls" role="group">
-                                            <a href="?order={% if current_order == 'desc' %}asc{% else %}desc{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if filter_adult %}&adult=true{% endif %}{% if mileage_range %}&mileage={{ mileage_range }}{% endif %}" class="btn btn-outline-primary order-btn" title="Sort Order">
+                                            <button type="button" id="orderToggleBtn" class="btn btn-outline-primary order-btn" title="Sort Order">
                                                 <span class="material-icons">{% if current_order == 'desc' %}arrow_downward{% else %}arrow_upward{% endif %}</span>
-                                            </a>
-                                            <a href="?view={% if view_type == 'list' %}calendar{% else %}list{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_order %}&order={{ current_order }}{% endif %}{% if filter_adult %}&adult=true{% endif %}{% if mileage_range %}&mileage={{ mileage_range }}{% endif %}" class="btn btn-outline-primary view-toggle-btn" title="View Mode">
+                                            </button>
+                                            <button type="button" id="viewToggleBtn" class="btn btn-outline-primary view-toggle-btn" title="View Mode">
                                                 <span class="material-icons">{% if view_type == 'list' %}calendar_view_month{% else %}grid_view{% endif %}</span>
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -1211,22 +1209,18 @@
                 <div class="sorting-controls mb-4">
                     <div class="d-flex flex-wrap justify-content-center gap-2">
                         <div class="btn-group" role="group">
-                            <a href="?sort=date{% if current_order %}&order={{ current_order }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if filter_adult %}&adult=true{% endif %}{% if mileage_range %}&mileage={{ mileage_range }}{% endif %}{% if view_type %}&view={{ view_type }}{% endif %}"
-                               class="btn {% if current_sort == 'date' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            <button type="button" id="sortDateBtn" class="btn {% if current_sort == 'date' %}btn-primary{% else %}btn-outline-primary{% endif %}">
                                 <span class="material-icons me-1">calendar_today</span> Date
-                            </a>
-                            <a href="?sort=group{% if current_order %}&order={{ current_order }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if filter_adult %}&adult=true{% endif %}{% if mileage_range %}&mileage={{ mileage_range }}{% endif %}{% if view_type %}&view={{ view_type }}{% endif %}"
-                               class="btn {% if current_sort == 'group' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            </button>
+                            <button type="button" id="sortGroupBtn" class="btn {% if current_sort == 'group' %}btn-primary{% else %}btn-outline-primary{% endif %}">
                                 <span class="material-icons me-1">group</span> Group
-                            </a>
-                            <a href="?sort=title{% if current_order %}&order={{ current_order }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if filter_adult %}&adult=true{% endif %}{% if mileage_range %}&mileage={{ mileage_range }}{% endif %}{% if view_type %}&view={{ view_type }}{% endif %}"
-                               class="btn {% if current_sort == 'title' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            </button>
+                            <button type="button" id="sortTitleBtn" class="btn {% if current_sort == 'title' %}btn-primary{% else %}btn-outline-primary{% endif %}">
                                 <span class="material-icons me-1">title</span> Title
-                            </a>
-                            <a href="?sort=rsvps{% if current_order %}&order={{ current_order }}{% endif %}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if filter_adult %}&adult=true{% endif %}{% if mileage_range %}&mileage={{ mileage_range }}{% endif %}{% if view_type %}&view={{ view_type }}{% endif %}"
-                               class="btn {% if current_sort == 'rsvps' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            </button>
+                            <button type="button" id="sortRsvpsBtn" class="btn {% if current_sort == 'rsvps' %}btn-primary{% else %}btn-outline-primary{% endif %}">
                                 <span class="material-icons me-1">people</span> RSVPs
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1302,11 +1296,11 @@
                     clearSearchBtn.style.display = 'none';
                 }
             });
-
+                
             // Initial state of clear button
             if (searchInput.value.length > 0) {
                 clearSearchBtn.style.display = 'block';
-            } else {
+                } else {
                 clearSearchBtn.style.display = 'none';
             }
         }
@@ -1334,12 +1328,46 @@
                         const lat = position.coords.latitude;
                         const lng = position.coords.longitude;
                         
-                        locationResponseText.textContent = `Location obtained: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-                        useMyLocationBtn.innerHTML = '<span class="material-icons me-1">my_location</span>Use My Location';
-                        
-                        setTimeout(() => {
-                            manualLocationResponse.style.display = 'none';
-                        }, 3000);
+                        // Reverse geocode to get city name
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'User-Agent': 'FURsvp/1.0'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.address) {
+                                const city = data.address.city || data.address.town || data.address.village || data.address.county || 'Unknown City';
+                                const state = data.address.state || '';
+                                const locationName = state ? `${city}, ${state}` : city;
+                                
+                                locationResponseText.textContent = `Location set to: ${locationName}`;
+                                useMyLocationBtn.innerHTML = '<span class="material-icons me-1">my_location</span>Use My Location';
+                                
+                                // Update the manual location input with the city name
+                                if (manualLocationInput) {
+                                    manualLocationInput.value = locationName;
+                                }
+                            } else {
+                                locationResponseText.textContent = `Location obtained: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                                useMyLocationBtn.innerHTML = '<span class="material-icons me-1">my_location</span>Use My Location';
+                            }
+                            
+                            setTimeout(() => {
+                                manualLocationResponse.style.display = 'none';
+                            }, 3000);
+                        })
+                        .catch(error => {
+                            console.error('Reverse geocoding error:', error);
+                            locationResponseText.textContent = `Location obtained: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                            useMyLocationBtn.innerHTML = '<span class="material-icons me-1">my_location</span>Use My Location';
+                            
+                            setTimeout(() => {
+                                manualLocationResponse.style.display = 'none';
+                            }, 3000);
+                        });
                     },
                     function(error) {
                         locationResponseText.textContent = 'Location unavailable.';
@@ -1358,17 +1386,216 @@
             });
         }
 
+        // Dynamic filter functionality
+        let currentFilters = {
+            search: '{{ search_query|escapejs }}',
+            sort: '{{ current_sort|escapejs }}',
+            order: '{{ current_order|escapejs }}',
+            adult: '{{ filter_adult|escapejs }}',
+            view: '{{ view_type|escapejs }}',
+            mileage: '{{ mileage_range|escapejs }}'
+        };
+
+        // Function to update filters and reload content
+        function updateFilters(newFilters) {
+            Object.assign(currentFilters, newFilters);
+            
+            // Build query string
+            const params = new URLSearchParams();
+            Object.entries(currentFilters).forEach(([key, value]) => {
+                if (value && value !== 'None' && value !== 'False') {
+                    params.set(key, value);
+                }
+            });
+            
+            // Update URL without page refresh
+            const url = new URL(window.location);
+            url.search = params.toString();
+            window.history.pushState({}, '', url);
+            
+            // Reload events content via AJAX
+            fetchEvents();
+        }
+
+        // Function to fetch events with current filters
+        function fetchEvents() {
+            const params = new URLSearchParams();
+            Object.entries(currentFilters).forEach(([key, value]) => {
+                if (value && value !== 'None' && value !== 'False') {
+                    params.set(key, value);
+                }
+            });
+            
+            fetch(`{% url 'event_index' %}?${params.toString()}`)
+                .then(response => response.text())
+                .then(html => {
+                    // Update the events list section
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newEventsList = doc.querySelector('.events-section');
+                    const currentEventsList = document.querySelector('.events-section');
+                    
+                    if (newEventsList && currentEventsList) {
+                        currentEventsList.innerHTML = newEventsList.innerHTML;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching events:', error);
+                });
+        }
+
+        // View toggle functionality
+        const calendarViewBtn = document.getElementById('calendarViewBtn');
+        const listViewBtn = document.getElementById('listViewBtn');
+        const calendarSection = document.querySelector('.calendar-section');
+        const eventsSection = document.querySelector('.events-section');
+        
+        if (calendarViewBtn && listViewBtn) {
+            calendarViewBtn.addEventListener('click', function() {
+                // Update button states
+                calendarViewBtn.classList.add('active');
+                listViewBtn.classList.remove('active');
+                
+                // Show calendar, hide events list
+                if (calendarSection) calendarSection.style.display = 'block';
+                if (eventsSection) eventsSection.style.display = 'none';
+                
+                // Update filters
+                updateFilters({ view: 'calendar' });
+            });
+            
+            listViewBtn.addEventListener('click', function() {
+                // Update button states
+                listViewBtn.classList.add('active');
+                calendarViewBtn.classList.remove('active');
+                
+                // Hide calendar, show events list
+                if (calendarSection) calendarSection.style.display = 'none';
+                if (eventsSection) eventsSection.style.display = 'block';
+                
+                // Update filters
+                updateFilters({ view: 'list' });
+            });
+        }
+
+        // Sort buttons
+        const sortDateBtn = document.getElementById('sortDateBtn');
+        const sortGroupBtn = document.getElementById('sortGroupBtn');
+        const sortTitleBtn = document.getElementById('sortTitleBtn');
+        const sortRsvpsBtn = document.getElementById('sortRsvpsBtn');
+
+        [sortDateBtn, sortGroupBtn, sortTitleBtn, sortRsvpsBtn].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all sort buttons
+                    [sortDateBtn, sortGroupBtn, sortTitleBtn, sortRsvpsBtn].forEach(b => {
+                        b.classList.remove('btn-primary');
+                        b.classList.add('btn-outline-primary');
+                    });
+                    
+                    // Add active class to clicked button
+                    this.classList.remove('btn-outline-primary');
+                    this.classList.add('btn-primary');
+                    
+                    // Update sort filter
+                    const sortType = this.id.replace('sort', '').replace('Btn', '').toLowerCase();
+                    updateFilters({ sort: sortType });
+                });
+            }
+        });
+
+        // Order toggle button
+        const orderToggleBtn = document.getElementById('orderToggleBtn');
+        if (orderToggleBtn) {
+            orderToggleBtn.addEventListener('click', function() {
+                const newOrder = currentFilters.order === 'desc' ? 'asc' : 'desc';
+                updateFilters({ order: newOrder });
+                
+                // Update button icon
+                const icon = this.querySelector('.material-icons');
+                if (icon) {
+                    icon.textContent = newOrder === 'desc' ? 'arrow_downward' : 'arrow_upward';
+                }
+            });
+        }
+
+        // Adult toggle button
+        const adultToggleBtn = document.getElementById('adultToggleBtn');
+        if (adultToggleBtn) {
+            adultToggleBtn.addEventListener('click', function() {
+                const newAdult = currentFilters.adult === 'true' ? 'false' : 'true';
+                updateFilters({ adult: newAdult });
+                
+                // Update button text
+                const toggleText = this.querySelector('.toggle-text');
+                if (toggleText) {
+                    toggleText.textContent = newAdult === 'true' ? 'Hide 18+/21+' : 'Show 18+/21+';
+                }
+            });
+        }
+
+        // Clear all button
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', function() {
+                // Reset all filters
+                currentFilters = {
+                    search: '',
+                    sort: '',
+                    order: '',
+                    adult: 'false',
+                    view: 'calendar',
+                    mileage: '50'
+                };
+                
+                // Clear search input
+                if (searchInput) searchInput.value = '';
+                
+                // Reset mileage slider
+                if (mileageRange) mileageRange.value = '50';
+                
+                // Reset button states
+                [sortDateBtn, sortGroupBtn, sortTitleBtn, sortRsvpsBtn].forEach(btn => {
+                    if (btn) {
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-outline-primary');
+                    }
+                });
+                
+                // Update URL and reload
+                updateFilters(currentFilters);
+            });
+        }
+
+        // Search input with debouncing
+        let searchTimeout;
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    updateFilters({ search: this.value });
+                    }, 500);
+            });
+        }
+
+        // Mileage slider
+        if (mileageRange) {
+            mileageRange.addEventListener('change', function() {
+                updateFilters({ mileage: this.value });
+            });
+        }
+
         // Manual location functionality
         if (manualLocationBtn && manualLocationInput) {
             const manualLocationContainer = document.getElementById('manualLocationContainer');
-            
-            manualLocationBtn.addEventListener('click', function() {
+
+        manualLocationBtn.addEventListener('click', function() {
                 // Toggle the input field visibility
                 if (manualLocationContainer.style.display === 'none') {
                     manualLocationContainer.style.display = 'block';
-                    manualLocationInput.focus();
+                manualLocationInput.focus();
                     manualLocationBtn.innerHTML = '<span class="material-icons me-1">check</span>Save Location';
-                } else {
+            } else {
                     const location = manualLocationInput.value.trim();
                     if (location) {
                         // Show response popup
@@ -1377,7 +1604,7 @@
                         
                         // Hide input and reset button
                         manualLocationContainer.style.display = 'none';
-                        manualLocationInput.value = '';
+                manualLocationInput.value = '';
                         manualLocationBtn.innerHTML = '<span class="material-icons me-1">edit_location</span>Manual Location';
                         
                         // Hide response after 3 seconds
@@ -1397,11 +1624,11 @@
             });
 
             // Also trigger on Enter key
-            manualLocationInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
+        manualLocationInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
                     manualLocationBtn.click();
-                }
-            });
+            }
+        });
         }
     });
 </script>

@@ -91,11 +91,18 @@ def home(request):
     
     # Base queryset - filter out events that have already passed and cancelled events
     now = timezone.now()
-    events = Event.objects.filter(
-        models.Q(date__gt=now.date()) | 
-        (models.Q(date=now.date()) & models.Q(end_time__gt=now.time())),
-        status='active'  # Only show active events
-    )
+    
+    # Only show events that the user has RSVP'd to
+    if request.user.is_authenticated:
+        events = Event.objects.filter(
+            models.Q(date__gt=now.date()) | 
+            (models.Q(date=now.date()) & models.Q(end_time__gt=now.time())),
+            status='active',  # Only show active events
+            rsvps__user=request.user  # Only events user has RSVP'd to
+        ).distinct()
+    else:
+        # If not authenticated, show no events
+        events = Event.objects.none()
 
     if filter_adult == 'false':
         events = events.exclude(age_restriction__in=['adult', 'mature'])

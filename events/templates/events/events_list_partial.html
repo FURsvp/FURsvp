@@ -412,10 +412,13 @@
         </a>
     </div>
     {% empty %}
-    <div class="col-12">
-        <div class="alert alert-info text-center" role="alert">
-            <i class="material-icons align-middle me-2">event_busy</i> No upcoming events found.
-        </div>
+    <div class="text-center py-5">
+        <i class="material-icons mb-3" style="font-size: 4rem; color: #a0aec0;">event_busy</i>
+        <h3 class="text-muted mb-2">No RSVPed Events</h3>
+        <p class="text-muted">You haven't RSVP'd to any upcoming events yet.</p>
+        <a href="{% url 'event_index' %}" class="btn btn-primary mt-3">
+            <span class="material-icons me-2">event</span> Browse All Events
+        </a>
     </div>
     {% endfor %}
 </div>
@@ -495,8 +498,13 @@
         </div>
     </a>
     {% empty %}
-    <div class="alert alert-info text-center" role="alert">
-        <i class="material-icons align-middle me-2">event_busy</i> No upcoming events found.
+    <div class="text-center py-5">
+        <i class="material-icons mb-3" style="font-size: 4rem; color: #a0aec0;">event_busy</i>
+        <h3 class="text-muted mb-2">No RSVPed Events</h3>
+        <p class="text-muted">You haven't RSVP'd to any upcoming events yet.</p>
+        <a href="{% url 'event_index' %}" class="btn btn-primary mt-3">
+            <span class="material-icons me-2">event</span> Browse All Events
+        </a>
     </div>
     {% endfor %}
 </div>
