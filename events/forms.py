@@ -98,7 +98,6 @@ class EventForm(forms.ModelForm):
             'end_time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
             'city': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control'}),
             'waitlist_enabled': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'attendee_list_public': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'enable_rsvp_questions': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -190,6 +189,8 @@ class EventForm(forms.ModelForm):
 
 class GroupForm(forms.ModelForm):
     telegram_webhook_channel = forms.CharField(required=False, max_length=100, label="Telegram Webhook Channel (without @)")
+    description = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 20}))
+    
     class Meta:
         model = Group
         fields = ['name', 'description', 'logo_base64', 'website', 'contact_email', 'telegram_channel', 'telegram_webhook_channel']

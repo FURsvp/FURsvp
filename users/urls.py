@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', views.custom_logout, name='logout'),
     path('profile/', views.profile, name='profile'),
     path('administration/', views.administration, name='administration'),
+    path('administration/toggle_admin/', views.toggle_admin_status, name='toggle_admin_status'),
     path('<int:user_id>/ban/', views.ban_user, name='ban_user'),
     path('user_search_autocomplete/', views.user_search_autocomplete, name='user_search_autocomplete'),
     path('notifications/', views.get_notifications, name='get_notifications'),

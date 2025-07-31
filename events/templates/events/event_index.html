@@ -1588,6 +1588,38 @@
             });
         }
 
+        // Clear filters button in empty state
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'clearFiltersBtn') {
+                // Reset all filters
+                currentFilters = {
+                    search: '',
+                    sort: '',
+                    order: '',
+                    adult: 'false',
+                    view: 'calendar',
+                    mileage: '50'
+                };
+                
+                // Clear search input
+                if (searchInput) searchInput.value = '';
+                
+                // Reset mileage slider
+                if (mileageRange) mileageRange.value = '50';
+                
+                // Reset button states
+                [sortDateBtn, sortGroupBtn, sortTitleBtn, sortRsvpsBtn].forEach(btn => {
+                    if (btn) {
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-outline-primary');
+                    }
+                });
+                
+                // Update URL and reload
+                updateFilters(currentFilters);
+            }
+        });
+
         // Search input with debouncing
         let searchTimeout;
         if (searchInput) {

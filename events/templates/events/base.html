@@ -16,6 +16,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@300;400;500;600;700&family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* Modal Positioning Fix */
+        .modal-backdrop {
+            background: transparent !important;
+        }
+        
+        .modal {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 1055 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        .modal-dialog {
+            position: relative !important;
+            margin: 0 !important;
+            max-width: 90vw !important;
+            max-height: 90vh !important;
+            transform: none !important;
+        }
+        
+        .modal-content {
+            border-radius: var(--border-radius) !important;
+            box-shadow: var(--shadow-lg) !important;
+            border: none !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+        }
+        
+        /* Ensure modals appear above body scaling */
+        body.modal-open {
+            overflow: hidden !important;
+        }
+        
+        /* Fix for body scaling affecting modals */
+        .modal.show {
+            display: flex !important;
+        }
+
+
+
+
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -866,7 +912,7 @@
                                 <span class="material-icons">groups</span>
                                 Groups
                         </a>
-                            </li>
+                    </li>
                     <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'blog' %}active{% endif %}" href="{% url 'blog' %}">
                                 <span class="material-icons">article</span>
@@ -905,7 +951,7 @@
                                                         Organizer
                                                     {% else %}
                                                         Member
-                    {% endif %}
+                    {% endif %}r
                 </div>
             </div>
         </div>
@@ -932,10 +978,39 @@
                                         Administration
                                     </a></li>
                                     {% endif %}
-                                    <li><a class="dropdown-item" href="{% url 'groups_list' %}">
-                                        <span class="material-icons">groups</span>
-                                        My Groups
-                                    </a></li>
+
+                                    <!-- Groups Section -->
+                                    {% if user_groups_count == 1 %}
+                                        <li><a class="dropdown-item" href="{% url 'group_detail' user_groups.0.id %}">
+                                            {% if user_groups.0.logo_base64 %}
+                                                <img src="data:image/png;base64,{{ user_groups.0.logo_base64 }}" alt="{{ user_groups.0.name }}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 8px;">
+                                            {% else %}
+                                                <span class="material-icons">group</span>
+                                            {% endif %}
+                                            {{ user_groups.0.name }}
+                                        </a></li>
+                                    {% elif user_groups_count > 1 %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><span class="dropdown-item-text">
+                                            <span class="material-icons">groups</span>
+                                            My Groups
+                                        </span></li>
+                                        {% for group in user_groups %}
+                                            <li><a class="dropdown-item" href="{% url 'group_detail' group.id %}" style="padding-left: 2rem;">
+                                                {% if group.logo_base64 %}
+                                                    <img src="data:image/png;base64,{{ group.logo_base64 }}" alt="{{ group.name }}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 8px;">
+                                                {% else %}
+                                                    <span class="material-icons">group</span>
+                                                {% endif %}
+                                                {{ group.name }}
+                                            </a></li>
+                                        {% endfor %}
+                                        <li><a class="dropdown-item" href="{% url 'groups_list' %}" style="padding-left: 2rem;">
+                                            <span class="material-icons">groups</span>
+                                            All Groups
+                                        </a></li>
+                                    {% endif %}
+
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item logout-item" href="{% url 'logout' %}">
                                         <span class="material-icons">logout</span>

@@ -3,6 +3,7 @@ from .models import Event, RSVP, Post, Group
 from django.utils import timezone
 from datetime import timedelta, datetime
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from .forms import EventForm, RSVPForm, Group
 from users.models import Profile, GroupDelegation, BannedUser, Notification, GroupRole, AuditLog
 from django.contrib import messages
@@ -25,6 +26,9 @@ import json
 import requests
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_GET
+from django.contrib.auth.models import User
+from .models import PlatformStats
+
 
 # Create your views here.
 
@@ -227,11 +231,7 @@ def home(request):
     
     # Get all unique states for the dropdown
     all_states = Event.objects.exclude(state__isnull=True).exclude(state__exact='').values_list('state', flat=True).distinct().order_by('state')
-    
-    # Calculate actual statistics
-    from django.contrib.auth.models import User
-    from .models import PlatformStats
-    
+
     # Get cumulative stats that always increase
     stats = PlatformStats.get_or_create_stats()
     
@@ -793,18 +793,34 @@ def group_detail(request, group_id):
         
         # Handle leadership management
         elif 'add_leader' in request.POST:
-            form = GroupRoleForm(request.POST, group=group)
-            if form.is_valid():
-                role = form.save(commit=False)
-                role.group = group
-                # If this is the first leader for the group, give all permissions
-                if GroupRole.objects.filter(group=group).count() == 0:
-                    role.can_post = True
-                    role.can_manage_leadership = True
-                role.save()
-                messages.success(request, 'Leader added successfully.')
+            user_id = request.POST.get('new_leader')
+            custom_label = request.POST.get('leader_role', '')
+            
+            if user_id:
+                try:
+                    user_obj = User.objects.get(id=user_id)
+                    
+                    # Check if user is already a leader in this group
+                    existing_role = GroupRole.objects.filter(user=user_obj, group=group).first()
+                    if existing_role:
+                        messages.error(request, f'{user_obj.profile.get_display_name()} is already a leader in this group.')
+                    else:
+                        # Create new role
+                        role = GroupRole.objects.create(
+                            user=user_obj,
+                            group=group,
+                            custom_label=custom_label,
+                            can_post=True,
+                            can_manage_leadership=True
+                        )
+                        messages.success(request, f'{user_obj.profile.get_display_name()} added as leader successfully.')
+                except User.DoesNotExist:
+                    messages.error(request, 'Selected user not found.')
+                except Exception as e:
+                    messages.error(request, f'Error adding leader: {str(e)}')
             else:
-                messages.error(request, 'Error adding leader. Please check the form.')
+                messages.error(request, 'Please select a user to add as leader.')
+            
             return redirect('group_detail', group_id=group.id)
         
         elif 'edit_leader' in request.POST:
@@ -835,7 +851,16 @@ def group_detail(request, group_id):
 
     # Leadership roles and form
     leadership_roles = GroupRole.objects.filter(group=group).select_related('user')
-    leadership_form = GroupRoleForm(group=group)
+    
+    # For staff, show all users. For group leaders, only show users not already in the group
+    if request.user.is_superuser:
+        leadership_form = GroupRoleForm()  # Show all users for staff
+        all_users = User.objects.all().select_related('profile')
+    else:
+        leadership_form = GroupRoleForm(group=group)  # Exclude existing members for group leaders
+        all_users = User.objects.exclude(
+            id__in=GroupRole.objects.filter(group=group).values_list('user_id', flat=True)
+        ).select_related('profile')
     
     context = {
         'group': group,
@@ -847,6 +872,7 @@ def group_detail(request, group_id):
         'telegram_feed': telegram_feed,
         'leadership_roles': leadership_roles,
         'leadership_form': leadership_form,
+        'all_users': all_users,
         'can_manage_leadership': can_edit_group,  # or use your own logic
     }
     
@@ -862,7 +888,12 @@ def manage_group_leadership(request, group_id):
 
     if request.method == 'POST':
         if 'add_leader' in request.POST:
-            form = GroupRoleForm(request.POST, group=group)
+            # For staff, don't pass group parameter to allow adding any user
+            if request.user.is_superuser:
+                form = GroupRoleForm(request.POST)
+            else:
+                form = GroupRoleForm(request.POST, group=group)
+            
             if form.is_valid():
                 role = form.save(commit=False)
                 role.group = group

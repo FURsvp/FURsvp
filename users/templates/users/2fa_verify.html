@@ -1,7 +1,220 @@
-<form method="post">
-  {% csrf_token %}
-  <label for="token">Enter 2FA code:</label>
-  <input type="text" name="token" id="token" required>
-  <button type="submit">Verify</button>
-  {% if error %}<div class="error" style="color:red;">{{ error }}</div>{% endif %}
-</form> 
+{% extends "events/base.html" %}
+{% block title %}Verify Two-Factor Authentication - FURsvp{% endblock %}
+
+{% block content %}
+<div class="twofa-container">
+    <!-- 2FA Header -->
+    <div class="twofa-header">
+        <h1>
+            <i class="material-icons align-middle me-2">security</i>
+            Two-Factor Authentication
+        </h1>
+        <p>Enter your verification code to continue</p>
+    </div>
+
+    <div class="twofa-card">
+        <div class="twofa-card-header">
+            <h3>
+                <i class="material-icons align-middle me-2">pin</i>
+                Verification Required
+            </h3>
+            <p>Please enter the 6-digit code from your authenticator app</p>
+        </div>
+        
+        <div class="twofa-content">
+            <form method="post" class="twofa-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="token" class="form-label">
+                        <i class="material-icons align-middle me-2">pin</i>
+                        Verification Code
+                    </label>
+                    <input type="text" name="token" id="token" class="form-control" required 
+                           placeholder="Enter 6-digit code" maxlength="6" autocomplete="off">
+                    {% if error %}
+                    <div class="invalid-feedback d-block">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary-admin">
+                        <i class="material-icons">verified</i>
+                        Verify Code
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* 2FA Container */
+.twofa-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+/* 2FA Header */
+.twofa-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.twofa-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.twofa-header p {
+    color: #6b7280;
+    font-size: 1.125rem;
+    margin: 0;
+}
+
+/* 2FA Card */
+.twofa-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.twofa-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.twofa-card-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.twofa-card-header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+/* 2FA Content */
+.twofa-content {
+    padding: 2rem;
+}
+
+.twofa-form {
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.form-control {
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    transition: all 0.3s ease;
+    background: white;
+    width: 100%;
+    text-align: center;
+    max-width: 200px;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+}
+
+.invalid-feedback {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.form-actions {
+    margin-top: 1rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary-admin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary-admin:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .twofa-container {
+        padding: 1rem;
+    }
+    
+    .twofa-header h1 {
+        font-size: 2rem;
+    }
+    
+    .form-control {
+        font-size: 1.25rem;
+        max-width: 180px;
+    }
+}
+</style>
+{% endblock %} 

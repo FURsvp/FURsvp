@@ -393,7 +393,8 @@ def administration(request):
     group_search = request.GET.get('group_search', '').strip()
     
     # Get all users including superusers with search and pagination
-    all_users = User.objects.all().prefetch_related('profile')
+    # Staff members first (sorted alphabetically), then regular users (sorted alphabetically)
+    all_users = User.objects.all().prefetch_related('profile').order_by('-is_superuser', 'profile__display_name', 'username')
     
     # Apply user search filter if provided
     if user_search:
@@ -417,7 +418,7 @@ def administration(request):
         users_to_promote = user_paginator.page(1)
 
     # Get all groups with search and pagination
-    all_groups = Group.objects.all()
+    all_groups = Group.objects.all().order_by('name')
     
     # Apply group search filter if provided
     if group_search:
@@ -447,7 +448,7 @@ def administration(request):
     audit_user_filter = request.GET.get('audit_user_filter', '').strip()
     audit_action_filter = request.GET.get('audit_action_filter', '').strip()
     
-    audit_logs = AuditLog.objects.all().select_related('user', 'target_user', 'group', 'event')
+    audit_logs = AuditLog.objects.all().select_related('user', 'target_user', 'group', 'event').order_by('-timestamp')
     
     # Apply audit log filters
     if audit_search:
@@ -1375,6 +1376,61 @@ def approve_all_logged_in_users():
         if hasattr(user, 'profile') and not user.profile.is_verified:
             user.profile.is_verified = True
             user.profile.save()
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+@require_POST
+def toggle_admin_status(request):
+    """Toggle admin status for a user via AJAX"""
+    try:
+        data = json.loads(request.body)
+        user_id = data.get('user_id')
+        new_status = data.get('new_status')
+        
+        if not user_id or new_status not in ['admin', 'user']:
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid parameters'
+            }, status=400)
+        
+        # Get the user to modify
+        target_user = get_object_or_404(User, id=user_id)
+        
+        # Prevent self-modification
+        if target_user == request.user:
+            return JsonResponse({
+                'success': False,
+                'error': 'You cannot modify your own admin status'
+            }, status=400)
+        
+        # Update the user's admin status
+        target_user.is_superuser = (new_status == 'admin')
+        target_user.save()
+        
+        # Log the action
+        AuditLog.objects.create(
+            user=request.user,
+            action='TOGGLE_ADMIN',
+            target_user=target_user,
+            details=f"Changed admin status to: {new_status}"
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Admin status updated to {new_status}',
+            'new_status': new_status
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
 
 @login_required
 def custom_logout(request):

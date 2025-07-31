@@ -3,6 +3,7 @@ from django.utils import timezone
 from .models import Event, Group, PlatformStats
 from django.contrib.auth.models import User
 from .models import RSVP
+from users.models import GroupRole
 
 def global_stats(request):
     """Provide global statistics for templates"""
@@ -35,4 +36,36 @@ def global_stats(request):
             'global_users_count': 0,
             'global_rsvps_count': 0,
             'active_events_count': 0,
+        }
+
+def user_groups(request):
+    """Provide user's groups for navigation"""
+    if request.user.is_authenticated:
+        try:
+            # Get groups where user is a leader
+            user_groups = GroupRole.objects.filter(user=request.user).select_related('group').order_by('group__name')
+            groups_list = [role.group for role in user_groups]
+            
+            # Debug output (remove this after testing)
+            print(f"DEBUG: User {request.user.username} has {len(groups_list)} groups: {[g.name for g in groups_list]}")
+            
+            # Force refresh by checking the database directly
+            from django.db import connection
+            connection.ensure_connection()
+            
+            return {
+                'user_groups': groups_list,
+                'user_groups_count': len(groups_list),
+                'user_groups_timestamp': timezone.now().timestamp(),  # Cache busting
+            }
+        except Exception as e:
+            print(f"DEBUG: Error in user_groups context processor: {e}")
+            return {
+                'user_groups': [],
+                'user_groups_count': 0,
+            }
+    else:
+        return {
+            'user_groups': [],
+            'user_groups_count': 0,
         } 
