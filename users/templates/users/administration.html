@@ -4,8 +4,6 @@
 {% block title %}Administration - FURsvp{% endblock %}
 
 {% block extra_css %}
-<!-- Tom Select CSS -->
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 <style>
 /* Admin Panel Styles */
 .admin-container {
@@ -304,37 +302,43 @@
 }
 
 .tom-select-custom .ts-dropdown {
-    border: 2px solid #e2e8f0;
-    border-radius: 0.75rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border: 2px solid #667eea;
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
     background: white;
     position: absolute !important;
-    z-index: 9999 !important;
+    z-index: 99999 !important;
     max-height: 300px;
     overflow-y: auto;
-    margin-top: 4px;
+    margin-top: 8px;
+    padding: 0.5rem 0;
 }
 
 .tom-select-custom .ts-dropdown .option {
-    padding: 0.75rem 1rem;
+    padding: 1rem 1.25rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     border-bottom: 1px solid #f1f5f9;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
+    color: #374151;
+    margin: 0 0.5rem;
+    border-radius: 0.5rem;
 }
 
 .tom-select-custom .ts-dropdown .option:hover {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    transform: translateX(2px);
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
 }
 
 .tom-select-custom .ts-dropdown .option.selected {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .tom-select-custom .ts-dropdown .option.selected:hover {
@@ -401,7 +405,7 @@
     width: 16px;
     height: 16px;
     font-size: 8px;
-    border-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -409,30 +413,42 @@
     background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     color: white;
+    font-weight: 700;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.2px;
 }
 
 /* Dropdown option logos */
 .tom-select-custom .ts-dropdown .option .group-logo {
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #e2e8f0;
     flex-shrink: 0;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    position: relative;
+    left: 0;
 }
 
 .tom-select-custom .ts-dropdown .option .group-logo-placeholder {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
-    border-color: #e2e8f0;
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    border: 2px solid #e2e8f0;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f1f5f9;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 50%;
-    color: #64748b;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 3px 6px rgba(102, 126, 234, 0.3);
+    position: relative;
+    left: 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
 }
 
 /* Input placeholder styling */
@@ -470,7 +486,7 @@
 }
 
 .tom-select-custom .ts-wrapper.focus {
-    z-index: 9998 !important;
+    z-index: 99998 !important;
 }
 
 .tom-select-custom .ts-dropdown .option {
@@ -748,6 +764,18 @@
         padding: 0.75rem;
     }
 }
+
+/* Force dropdown to appear above everything */
+.ts-dropdown,
+.tom-select-custom .ts-dropdown {
+    z-index: 999999 !important;
+    position: absolute !important;
+}
+
+/* Lower z-index for buttons to prevent conflicts */
+.btn, .action-btn, .btn-primary-admin {
+    z-index: 1 !important;
+}
 </style>
 {% endblock %}
 
@@ -897,20 +925,7 @@
                                         </td>
                                         <td>
                                             {% with profile_form=user_profile_forms|get_item:user_obj.id %}
-                                                                                            <select name="{{ profile_form.admin_groups.name }}" 
-                                                    id="admin_groups_{{ user_obj.id }}" 
-                                                    class="tom-select-groups tom-select-custom" 
-                                                    multiple 
-                                                    data-user-id="{{ user_obj.id }}">
-                                                    {% for group in profile_form.admin_groups.field.queryset %}
-                                                        <option value="{{ group.id }}" 
-                                                                {% if group in profile_form.admin_groups.initial %}selected{% endif %}
-                                                                data-logo="{{ group.logo_base64|default:'' }}"
-                                                                data-name="{{ group.name }}">
-                                                            {{ group.name }}
-                                                        </option>
-                                                    {% endfor %}
-                                                </select>
+                                                {{ profile_form.admin_groups }}
                                             {% endwith %}
                                         </td>
                                     </tr>
@@ -1054,20 +1069,12 @@
                                             <div class="user-details">
                                                 <h4>{{ group.name }}</h4>
                                                 <p>{{ group.description|safe|truncatechars_html:80|default:"No description" }}</p>
-                                                {% if group.website or group.contact_email %}
+                                                {% if group.contact_email %}
                                                 <div class="group-meta">
-                                                    {% if group.website %}
                                                     <small class="text-muted">
-                                                        <i class="material-icons" style="font-size: 0.75rem;">link</i>
-                                                        <a href="{{ group.website }}" target="_blank" rel="noopener noreferrer">{{ group.website|truncatechars:30 }}</a>
-                                                    </small>
-                                                    {% endif %}
-                                                    {% if group.contact_email %}
-                                                    <small class="text-muted d-block">
                                                         <i class="material-icons" style="font-size: 0.75rem;">email</i>
                                                         {{ group.contact_email }}
                                                     </small>
-                                                    {% endif %}
                                                 </div>
                                                 {% endif %}
                                             </div>
@@ -1408,278 +1415,5 @@
     </div>
 
 {% block extra_js %}
-<!-- Tom Select JS -->
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-<script>
-// Wait for both DOM and TomSelect to be ready
-function initializeTomSelect() {
-    console.log('Initializing Tom Select...');
-    
-    // Check if TomSelect is available
-    if (typeof TomSelect === 'undefined') {
-        console.error('TomSelect is not loaded!');
-        return;
-    }
-    
-    // Find all group selectors
-    const groupSelects = document.querySelectorAll('.tom-select-groups');
-    console.log('Found', groupSelects.length, 'group selectors');
-    
-            groupSelects.forEach(function(select, index) {
-            console.log('Initializing TomSelect for element', index + 1, select);
-            
-            // Validate that the select element has options
-            const options = select.querySelectorAll('option');
-            if (options.length === 0) {
-                console.warn('No options found in select element', index + 1);
-                return;
-            }
-            
-            // Validate option values
-            let hasValidOptions = false;
-            options.forEach(function(option) {
-                if (option.value && option.value.trim() !== '') {
-                    hasValidOptions = true;
-                }
-            });
-            
-            if (!hasValidOptions) {
-                console.warn('No valid options found in select element', index + 1);
-                    return;
-                }
-
-            try {
-                console.log('Creating TomSelect with custom rendering...');
-                const tomSelect = new TomSelect(select, {
-                    plugins: ['remove_button'],
-                    maxItems: null,
-                    create: false,
-                    dropdownParent: 'body',
-                    render: {
-                        option: function(data, escape) {
-                            try {
-                                // Validate data
-                                if (!data || !data.value) {
-                                    return `<div class="option" data-selectable><span>Invalid option</span></div>`;
-                                }
-                                
-                                // Get the original option element to access dataset
-                                const originalOption = this.input.querySelector(`option[value="${data.value}"]`);
-                                const logo = originalOption ? originalOption.getAttribute('data-logo') : '';
-                                const name = originalOption ? originalOption.getAttribute('data-name') : (data.text || 'Unknown');
-                                const initials = name ? name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2) : 'GR';
-                                
-                                let logoHtml = '';
-                                if (logo && typeof logo === 'string' && logo.trim() !== '') {
-                                    logoHtml = `<img src="data:image/png;base64,${logo}" alt="${escape(name)}" class="group-logo">`;
-                    } else {
-                                    logoHtml = `<div class="group-logo-placeholder">${initials}</div>`;
-                    }
-                                
-                                return `<div class="option" data-selectable>
-                                    ${logoHtml}
-                                    <span>${escape(name)}</span>
-                                </div>`;
-                } catch (error) {
-                                console.error('Error rendering option:', error);
-                                return `<div class="option" data-selectable><span>Error loading option</span></div>`;
-                            }
-                        },
-                        item: function(data, escape) {
-                            try {
-                                // Validate data
-                                if (!data || !data.value) {
-                                    return `<div class="item"><span>Invalid item</span></div>`;
-                                }
-                                
-                                // Get the original option element to access dataset
-                                const originalOption = this.input.querySelector(`option[value="${data.value}"]`);
-                                const logo = originalOption ? originalOption.getAttribute('data-logo') : '';
-                                const name = originalOption ? originalOption.getAttribute('data-name') : (data.text || 'Unknown');
-                                const initials = name ? name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2) : 'GR';
-                                
-                                let logoHtml = '';
-                                if (logo && typeof logo === 'string' && logo.trim() !== '') {
-                                    logoHtml = `<img src="data:image/png;base64,${logo}" alt="${escape(name)}" class="group-logo">`;
-            } else {
-                                    logoHtml = `<div class="group-logo-placeholder">${initials}</div>`;
-                                }
-                                
-                                return `<div class="item">
-                                    ${logoHtml}
-                                    <span>${escape(name)}</span>
-                                </div>`;
-                            } catch (error) {
-                                console.error('Error rendering item:', error);
-                                return `<div class="item"><span>Error loading item</span></div>`;
-                                                     }
-                     }
-                     },
-                  onInitialize: function() {
-                    console.log('TomSelect initialized for element', index + 1);
-                    // Add custom class to wrapper
-                    this.wrapper.classList.add('tom-select-custom');
-                }
-            });
-            
-            console.log('TomSelect created successfully for element', index + 1);
-                } catch (error) {
-            console.error('Error initializing TomSelect for element', index + 1, ':', error);
-                }
-            });
-        }
-
-// Try to initialize immediately if DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeTomSelect);
-            } else {
-    // DOM is already ready
-    initializeTomSelect();
-}
-
-// Admin Panel Tab Memory
-document.addEventListener('DOMContentLoaded', function() {
-    // Get URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-    const activeTab = urlParams.get('tab') || localStorage.getItem('adminActiveTab') || 'users';
-    
-    // Activate the remembered tab
-    const tabButton = document.querySelector(`[data-bs-target="#${activeTab}"]`);
-    const tabContent = document.getElementById(activeTab);
-    
-    if (tabButton && tabContent) {
-        // Remove active class from all tabs
-        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
-        
-        // Activate the remembered tab
-        tabButton.classList.add('active');
-        tabContent.classList.add('show', 'active');
-    }
-    
-    // Remember tab changes
-    document.querySelectorAll('.nav-link[data-bs-toggle="pill"]').forEach(link => {
-        link.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-bs-target').substring(1);
-            localStorage.setItem('adminActiveTab', targetId);
-            
-            // Update URL without page reload
-            const newUrl = new URL(window.location);
-            newUrl.searchParams.set('tab', targetId);
-            window.history.replaceState({}, '', newUrl);
-        });
-    });
-});
-
-// Add User to Group Modal Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const addUserModal = document.getElementById('addUserToGroupModal');
-    const userSearch = document.getElementById('userSearch');
-    const userList = document.getElementById('userList');
-    const selectedGroupName = document.getElementById('selectedGroupName');
-    const selectedGroupId = document.getElementById('selectedGroupId');
-    
-    // Handle modal show event
-    addUserModal.addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
-        const groupId = button.getAttribute('data-group-id');
-        const groupName = button.getAttribute('data-group-name');
-        
-        selectedGroupId.value = groupId;
-        selectedGroupName.value = groupName;
-        
-        // Clear previous search
-        userSearch.value = '';
-        userList.innerHTML = `
-            <div class="text-center text-muted">
-                <i class="material-icons">search</i>
-                <p>Search for users above to add them to the group</p>
-            </div>
-        `;
-    });
-    
-    // Handle user search
-    let searchTimeout;
-    userSearch.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        const query = this.value.trim();
-        
-        if (query.length < 2) {
-            userList.innerHTML = `
-                <div class="text-center text-muted">
-                    <i class="material-icons">search</i>
-                    <p>Search for users above to add them to the group</p>
-                    </div>
-            `;
-            return;
-        }
-        
-        searchTimeout = setTimeout(function() {
-            // Show loading
-            userList.innerHTML = `
-                <div class="text-center text-muted">
-                    <i class="material-icons">hourglass_empty</i>
-                    <p>Searching users...</p>
-                </div>
-            `;
-            
-            // Fetch users via AJAX
-            fetch(`/users/search-autocomplete/?q=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.users && data.users.length > 0) {
-                        userList.innerHTML = data.users.map(user => `
-                            <div class="user-selection-item" data-user-id="${user.id}">
-                                <input type="checkbox" class="user-selection-checkbox" name="selected_users" value="${user.id}">
-                                <div class="user-selection-avatar">
-                                    ${user.initials || 'U'}
-                </div>
-                                <div class="user-selection-details">
-                                    <h6>${user.display_name || user.username}</h6>
-                                    <small>@${user.username}</small>
-        </div>
-    </div>
-                        `).join('');
-                        
-                        // Add click handlers
-                        userList.querySelectorAll('.user-selection-item').forEach(item => {
-                            item.addEventListener('click', function(e) {
-                                if (e.target.type !== 'checkbox') {
-                                    const checkbox = this.querySelector('input[type="checkbox"]');
-                                    checkbox.checked = !checkbox.checked;
-                                    this.classList.toggle('selected', checkbox.checked);
-                                }
-                            });
-                            
-                            const checkbox = item.querySelector('input[type="checkbox"]');
-                            checkbox.addEventListener('change', function() {
-                                item.classList.toggle('selected', this.checked);
-                            });
-                        });
-                    } else {
-                        userList.innerHTML = `
-                            <div class="text-center text-muted">
-                                <i class="material-icons">person_off</i>
-                                <p>No users found matching "${query}"</p>
-                            </div>
-                        `;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error searching users:', error);
-                    userList.innerHTML = `
-                        <div class="text-center text-muted">
-                            <i class="material-icons">error</i>
-                            <p>Error searching users. Please try again.</p>
-                        </div>
-                    `;
-                });
-        }, 300);
-    });
-});
-
-// Also try after a short delay to ensure everything is loaded
-setTimeout(initializeTomSelect, 100);
-</script>
 {% endblock %}
 {% endblock %}

@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from .forms import UserRegisterForm, UserProfileForm, AssistantAssignmentForm, UserPublicProfileForm, UserPasswordChangeForm
+from .forms import UserRegisterForm, UserProfileForm, UserGroupManagementForm, AssistantAssignmentForm, UserPublicProfileForm, UserPasswordChangeForm
 from events.models import Group, RSVP, Event
 from events.forms import GroupForm, RenameGroupForm
 from .models import Profile, GroupDelegation, BannedUser, Notification, GroupRole, AuditLog
@@ -438,7 +438,7 @@ def administration(request):
 
     group_form = GroupForm()
     rename_group_forms = {group.id: RenameGroupForm(instance=group) for group in all_groups}
-    user_profile_forms = {user_obj.id: UserProfileForm(instance=user_obj.profile, prefix=f'profile_{user_obj.id}') for user_obj in all_users}
+    user_profile_forms = {user_obj.id: UserGroupManagementForm(user_obj, prefix=f'profile_{user_obj.id}') for user_obj in all_users}
     all_banned_users = BannedUser.objects.all().select_related('user', 'group', 'banned_by', 'organizer').order_by('-banned_at')
 
     # Get audit log entries with filtering
@@ -509,7 +509,7 @@ def administration(request):
             for user_obj in users_to_promote:
                 try:
                     user_obj.profile.refresh_from_db()
-                    profile_form = UserProfileForm(request.POST, instance=user_obj.profile, prefix=f'profile_{user_obj.id}')
+                    profile_form = UserGroupManagementForm(user_obj, request.POST, prefix=f'profile_{user_obj.id}')
                     if profile_form.is_valid():
                         old_data = {
                             'admin_groups': list(user_obj.group_roles.all().values_list('group__name', flat=True))

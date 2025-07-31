@@ -24,10 +24,13 @@ class UserRegisterForm(UserCreationForm):
         fields = ['username', 'email']
 
 class UserProfileForm(forms.ModelForm):
-    admin_groups = forms.ModelMultipleChoiceField(
-        queryset=Group.objects.all(),
+    admin_groups = forms.CharField(
         required=False,
-        label="Groups"
+        label="Groups",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Type group names separated by commas...'
+        })
     )
     clear_profile_picture = forms.BooleanField(required=False, label="Remove Profile Picture")
     can_post_blog = forms.BooleanField(required=False, label="Can post blog posts to Bluesky")
@@ -54,7 +57,10 @@ class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.user:
-            self.fields['admin_groups'].initial = Group.objects.filter(group_roles__user=self.instance.user)
+            # Set initial value to comma-separated group names
+            user_groups = Group.objects.filter(group_roles__user=self.instance.user)
+            group_names = ', '.join([group.name for group in user_groups])
+            self.fields['admin_groups'].initial = group_names
         if self.instance and self.instance.profile_picture_base64:
             self.initial['profile_picture_base64'] = self.instance.profile_picture_base64
         if not (self.instance and self.instance.user and self.instance.user.is_superuser):
@@ -62,20 +68,63 @@ class UserProfileForm(forms.ModelForm):
 
     def save(self, commit=True):
         # Get the admin_groups data before calling super().save()
-        admin_groups = self.cleaned_data.get('admin_groups', Group.objects.none())
+        admin_groups_text = self.cleaned_data.get('admin_groups', '')
         
         # Save the profile first
         instance = super().save(commit=commit)
         
         # Then handle the group assignments
         if self.instance and self.instance.user:
+            # Parse comma-separated group names
+            group_names = [name.strip() for name in admin_groups_text.split(',') if name.strip()]
+            
+            # Find groups by name
+            groups = Group.objects.filter(name__in=group_names)
+            
+            # Clear existing group roles
+            GroupRole.objects.filter(user=self.instance.user).delete()
+            
             # Add new GroupRoles
-            for group in admin_groups:
-                GroupRole.objects.get_or_create(user=self.instance.user, group=group)
-            # Remove GroupRoles for groups not selected
-            GroupRole.objects.filter(user=self.instance.user).exclude(group__in=admin_groups).delete()
+            for group in groups:
+                GroupRole.objects.create(user=self.instance.user, group=group)
         
         return instance
+
+class UserGroupManagementForm(forms.Form):
+    """Form specifically for managing user groups in the administration panel"""
+    admin_groups = forms.CharField(
+        required=False,
+        label="Groups",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Type group names separated by commas...'
+        })
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+        # Set initial value to comma-separated group names
+        user_groups = Group.objects.filter(group_roles__user=user)
+        group_names = ', '.join([group.name for group in user_groups])
+        self.fields['admin_groups'].initial = group_names
+
+    def save(self):
+        """Only handle group assignments, don't touch profile data"""
+        admin_groups_text = self.cleaned_data.get('admin_groups', '')
+        
+        # Parse comma-separated group names
+        group_names = [name.strip() for name in admin_groups_text.split(',') if name.strip()]
+        
+        # Find groups by name
+        groups = Group.objects.filter(name__in=group_names)
+        
+        # Clear existing group roles
+        GroupRole.objects.filter(user=self.user).delete()
+        
+        # Add new GroupRoles
+        for group in groups:
+            GroupRole.objects.create(user=self.user, group=group)
 
 class UserPublicProfileForm(forms.ModelForm):
     clear_profile_picture = forms.BooleanField(required=False, label="Remove Profile Picture")
