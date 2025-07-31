@@ -301,9 +301,7 @@
                         <i class="material-icons">login</i> Login
                     </button>
                 </form>
-                
                 <div class="divider">or</div>
-                
                 {% if telegram_login_enabled %}
                 <div class="telegram-login-section">
                     <div class="telegram-login-title">
@@ -320,10 +318,12 @@
                     </div>
                 </div>
                 {% endif %}
-                
                 <a href="{% url 'register' %}" class="register-link-modern">
                     <i class="material-icons">person_add</i> Create Account
                 </a>
+                <div class="text-center mt-3">
+                    <a href="{% url 'password_reset' %}" class="forgot-password-link">Forgot password?</a>
+                </div>
             </div>
         </div>
     </div>
