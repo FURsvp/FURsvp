@@ -37,14 +37,17 @@
 
     <!-- Breadcrumbs -->
     <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="/" class="d-flex align-items-center">
-                    <span class="material-icons me-1">home</span> Events
-                </a>
-            </li>
-            <li class="breadcrumb-item active">{{ event.title }}</li>
-        </ol>
+        <div class="modern-breadcrumbs">
+            <a href="{% url 'home' %}" class="d-flex align-items-center">
+                <i class="material-icons me-1">home</i> Home
+            </a>
+            <span class="breadcrumb-chevron">›</span>
+            <a href="{% url 'event_index' %}" class="d-flex align-items-center">
+                <i class="material-icons me-1">event</i> Events
+            </a>
+            <span class="breadcrumb-chevron">›</span>
+            <span class="breadcrumb-current">{{ event.title }}</span>
+        </div>
     </nav>
 
     <!-- Event Header -->

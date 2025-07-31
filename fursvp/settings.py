@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'D71CFE3703158C6A495D119ED73820B99ACAC6E07BA1A910BC4F66B971466AC3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  # Set to False for production
+DEBUG = True  # Set to False for production
 
 ALLOWED_HOSTS = ["fursvp.org", "127.0.0.1", "localhost"]  # Set to your production domain
 

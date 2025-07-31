@@ -2,6 +2,15 @@
 {% block title %}Home - FURsvp{% endblock %}
 
 {% block content %}
+<!-- Breadcrumbs -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <div class="modern-breadcrumbs">
+        <span class="breadcrumb-current">
+            <i class="material-icons me-1">home</i> Home
+        </span>
+    </div>
+</nav>
+
 <!-- Hero Section -->
 <section class="hero-section mb-5">
     <div class="container">
@@ -128,7 +137,7 @@
                 </div>
                 <div class="col-md-6 text-md-end">
                                     <a href="{% url 'event_index' %}" class="btn btn-outline-primary">
-                    <span class="material-icons me-2">event</span> View All Events
+                    <span class="material-icons me-2">event</span> Browse All Events
                 </a>
                 </div>
             </div>

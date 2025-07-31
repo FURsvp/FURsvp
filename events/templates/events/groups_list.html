@@ -2,6 +2,19 @@
 {% block title %}Groups - FURsvp{% endblock %}
 
 {% block content %}
+<!-- Breadcrumbs -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <div class="modern-breadcrumbs">
+        <a href="{% url 'home' %}" class="d-flex align-items-center">
+            <i class="material-icons me-1">home</i> Home
+        </a>
+        <span class="breadcrumb-chevron">›</span>
+        <span class="breadcrumb-current">
+            <i class="material-icons me-1">group</i> Groups
+        </span>
+    </div>
+</nav>
+
 <div class="container py-4">
     <h1 class="mb-4 fw-bold text-primary">All Groups</h1>
     <!-- Group Search Form -->

@@ -3,6 +3,106 @@
 {% load widget_tweaks %}
 {% block title %}Administration - FURsvp{% endblock %}
 
+{% block extra_css %}
+<!-- Tom Select CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+<style>
+.tom-select-custom .ts-wrapper {
+    border-radius: 0.5rem;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.tom-select-custom .ts-wrapper.focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.tom-select-custom .ts-control {
+    border: none;
+    background: transparent;
+    padding: 0.5rem 0.75rem;
+    min-height: 38px;
+}
+
+.tom-select-custom .ts-dropdown {
+    border-radius: 0.5rem;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.tom-select-custom .ts-dropdown .option {
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid #f1f3f4;
+    transition: background-color 0.2s ease;
+}
+
+.tom-select-custom .ts-dropdown .option:hover {
+    background-color: #f8fafc;
+}
+
+.tom-select-custom .ts-dropdown .option.selected {
+    background-color: #667eea;
+    color: white;
+}
+
+.tom-select-custom .ts-dropdown .option.selected .group-logo {
+    border-color: white;
+}
+
+.group-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.group-logo-placeholder {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #667eea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    border: 2px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.ts-wrapper .item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #667eea;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    margin: 0.125rem;
+}
+
+.ts-wrapper .item .group-logo {
+    width: 16px;
+    height: 16px;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.ts-wrapper .item .group-logo-placeholder {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <div class="card shadow-sm mb-4">
@@ -101,7 +201,20 @@
                                                 {{ profile_form.discord_username.as_hidden }}
                                                 {{ profile_form.display_name.as_hidden }}
                                                 {{ profile_form.telegram_username.as_hidden }}
-                                                {{ profile_form.admin_groups|add_class:"tomselect-allowed-groups form-select form-select-sm"|attr:"multiple:true" }}
+                                                <select name="{{ profile_form.admin_groups.name }}" 
+                                                        id="admin_groups_{{ user_obj.id }}" 
+                                                        class="tom-select-groups" 
+                                                        multiple 
+                                                        data-user-id="{{ user_obj.id }}">
+                                                    {% for group in profile_form.admin_groups.field.queryset %}
+                                                        <option value="{{ group.id }}" 
+                                                                {% if group in profile_form.admin_groups.initial %}selected{% endif %}
+                                                                data-logo="{{ group.logo_base64|default:'' }}"
+                                                                data-name="{{ group.name }}">
+                                                            {{ group.name }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
                                             {% endwith %}
                                         </td>
                                     </tr>

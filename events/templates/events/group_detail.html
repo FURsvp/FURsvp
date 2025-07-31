@@ -8,11 +8,13 @@
 {% block content %}
 <nav aria-label="breadcrumb" class="mb-4">
     <div class="modern-breadcrumbs">
-        <a href="/" class="d-flex align-items-center">
-            <i class="material-icons me-1">home</i> Homex
+        <a href="{% url 'home' %}" class="d-flex align-items-center">
+            <i class="material-icons me-1">home</i> Home
         </a>
         <span class="breadcrumb-chevron">›</span>
-        <a href="/group/" class="d-flex align-items-center">Groups</a>
+        <a href="{% url 'groups_list' %}" class="d-flex align-items-center">
+            <i class="material-icons me-1">group</i> Groups
+        </a>
         <span class="breadcrumb-chevron">›</span>
         <span class="breadcrumb-current">{{ group.name }}</span>
     </div>

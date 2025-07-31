@@ -178,7 +178,7 @@
         }
 
         .dropdown-item {
-                display: flex;
+            display: flex;
                 align-items: center;
             gap: 0.75rem;
             padding: 0.875rem 1rem;
@@ -198,10 +198,10 @@
 
         .dropdown-item .material-icons {
             font-size: 1.25rem;
-                display: flex;
+            display: flex;
                 align-items: center;
                 justify-content: center;
-            transition: all 0.3s ease;
+                transition: all 0.3s ease;
         }
 
         .dropdown-item:hover .material-icons {
@@ -221,8 +221,8 @@
         }
 
         .profile-dropdown-header .profile-info {
-            display: flex;
-            align-items: center;
+                display: flex;
+                align-items: center;
             gap: 0.75rem;
         }
 
@@ -249,7 +249,7 @@
 
         /* Special styling for logout */
         .dropdown-item.logout-item {
-            color: #dc3545;
+                color: #dc3545;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
             margin-top: 0.5rem;
             padding-top: 1rem;
@@ -514,7 +514,7 @@
         .social-link {
             display: flex;
             align-items: center;
-                justify-content: center;
+            justify-content: center;
             width: 40px;
             height: 40px;
             background: rgba(255, 255, 255, 0.1);
@@ -568,7 +568,7 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 2rem;
             margin-top: 2rem;
-                        text-align: center;
+            text-align: center;
 
         }
 
@@ -685,6 +685,67 @@
             70% { transform: scale(0.9); }
             100% { transform: scale(1); opacity: 1; }
         }
+
+        /* Modern Breadcrumbs */
+        .modern-breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modern-breadcrumbs a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .modern-breadcrumbs a:hover {
+            color: var(--primary-color);
+            transform: translateX(2px);
+        }
+
+        .modern-breadcrumbs .breadcrumb-chevron {
+            color: var(--text-light);
+            font-weight: bold;
+        }
+
+        .modern-breadcrumbs .breadcrumb-current {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .modern-breadcrumbs .material-icons {
+                font-size: 1rem;
+        }
+
+        /* Dark mode support */
+        .dark-mode .modern-breadcrumbs {
+            background: rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode .modern-breadcrumbs .breadcrumb-current,
+        .dark-mode .modern-breadcrumbs .material-icons {
+            color: white;
+        }
+
+        .dark-mode .modern-breadcrumbs a {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dark-mode .modern-breadcrumbs a:hover {
+            color: white;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -748,7 +809,9 @@
                                             <div class="user-details">
                                                 <div class="user-name">{{ user.profile.get_display_name }}</div>
                                                 <div class="user-role">
-                                                    {% if user.profile.is_organizer %}
+                                                    {% if user.is_superuser %}
+                                                        FURsvp Staff
+                                                    {% elif user.profile.is_organizer %}
                                                         Organizer
                                                     {% else %}
                                                         Member
@@ -771,6 +834,12 @@
                                     <li><a class="dropdown-item" href="{% url 'event_create' %}">
                                         <span class="material-icons">add_circle</span>
                                         Create Event
+                                    </a></li>
+                                    {% endif %}
+                                    {% if user.is_superuser or user.profile.can_post_blog %}
+                                    <li><a class="dropdown-item" href="{% url 'administration' %}">
+                                        <span class="material-icons">admin_panel_settings</span>
+                                        Administration
                                     </a></li>
                                     {% endif %}
                                     <li><a class="dropdown-item" href="{% url 'groups_list' %}">
@@ -843,7 +912,7 @@
                                     <a href="https://bsky.app/profile/fursvp.org" class="social-link" title="Bluesky" target="_blank" rel="noopener">
                                         <span class="material-icons">cloud</span>
                                     </a>
-                                </div>
+                        </div>
                     </div>
                 </div>
                         <div class="col-lg-3 col-md-6 mb-4">
@@ -887,7 +956,7 @@
                                 </span>
                                 <span class="stat-item">
                                     <span class="material-icons">people</span>
-                                    <span>{{ global_users_count }} Members</span>
+                                    <span>{{ global_users_count }} FURsvp Staff</span>
                                 </span>
     </div>
             </div>
