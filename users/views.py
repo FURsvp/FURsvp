@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView
 from .forms import UserRegisterForm, UserProfileForm, AssistantAssignmentForm, UserPublicProfileForm, UserPasswordChangeForm
 from events.models import Group, RSVP, Event
 from events.forms import GroupForm, RenameGroupForm
-from .models import Profile, GroupDelegation, BannedUser, Notification, GroupRole
+from .models import Profile, GroupDelegation, BannedUser, Notification, GroupRole, AuditLog
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
@@ -264,25 +264,93 @@ def ban_user(request, user_id):
                 if not can_ban_sitewide:
                     return JsonResponse({'status': 'error', 'message': 'Permission denied.'}, status=403)
                 BannedUser.objects.filter(user=target_user, group__isnull=True).delete()
+                
+                # Log the unban action
+                AuditLog.log_action(
+                    user=request.user,
+                    action='user_unbanned',
+                    description=f'Unbanned {target_user.username} from site-wide access',
+                    target_user=target_user,
+                    ip_address=request.META.get('REMOTE_ADDR'),
+                    user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                    additional_data={
+                        'ban_type': 'sitewide',
+                        'reason': 'Unbanned from admin panel'
+                    }
+                )
+                
                 return JsonResponse({'status': 'success', 'message': f'{target_user.profile.get_display_name()} has been unbanned from the site.'})
             
             elif ban_type == 'group' and group:
                 if not can_ban_group:
                     return JsonResponse({'status': 'error', 'message': 'Permission denied.'}, status=403)
                 BannedUser.objects.filter(user=target_user, group=group).delete()
+                
+                # Log the unban action
+                AuditLog.log_action(
+                    user=request.user,
+                    action='user_unbanned',
+                    description=f'Unbanned {target_user.username} from group {group.name}',
+                    target_user=target_user,
+                    group=group,
+                    ip_address=request.META.get('REMOTE_ADDR'),
+                    user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                    additional_data={
+                        'ban_type': 'group',
+                        'group_name': group.name,
+                        'reason': 'Unbanned from admin panel'
+                    }
+                )
+                
                 return JsonResponse({'status': 'success', 'message': f'{target_user.profile.get_display_name()} has been unbanned from {group.name}.'})
 
         elif action == 'ban':
             if ban_type == 'sitewide':
                 if not can_ban_sitewide:
                     return JsonResponse({'status': 'error', 'message': 'Permission denied.'}, status=403)
-                BannedUser.objects.get_or_create(user=target_user, group=None, defaults={'banned_by': request.user, 'reason': reason or 'Banned from admin panel.'})
+                banned_entry, created = BannedUser.objects.get_or_create(user=target_user, group=None, defaults={'banned_by': request.user, 'reason': reason or 'Banned from admin panel.'})
+                
+                if created:
+                    # Log the ban action
+                    AuditLog.log_action(
+                        user=request.user,
+                        action='user_banned',
+                        description=f'Banned {target_user.username} from site-wide access',
+                        target_user=target_user,
+                        ip_address=request.META.get('REMOTE_ADDR'),
+                        user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                        additional_data={
+                            'ban_type': 'sitewide',
+                            'reason': reason or 'Banned from admin panel',
+                            'banned_by': request.user.username
+                        }
+                    )
+                
                 return JsonResponse({'status': 'success', 'message': f'{target_user.profile.get_display_name()} has been banned from the site.'})
 
             elif ban_type == 'group' and group:
                 if not can_ban_group:
                     return JsonResponse({'status': 'error', 'message': 'Permission denied.'}, status=403)
-                BannedUser.objects.get_or_create(user=target_user, group=group, defaults={'banned_by': request.user, 'reason': reason or 'Banned from group.'})
+                banned_entry, created = BannedUser.objects.get_or_create(user=target_user, group=group, defaults={'banned_by': request.user, 'reason': reason or 'Banned from group.'})
+                
+                if created:
+                    # Log the ban action
+                    AuditLog.log_action(
+                        user=request.user,
+                        action='user_banned',
+                        description=f'Banned {target_user.username} from group {group.name}',
+                        target_user=target_user,
+                        group=group,
+                        ip_address=request.META.get('REMOTE_ADDR'),
+                        user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                        additional_data={
+                            'ban_type': 'group',
+                            'group_name': group.name,
+                            'reason': reason or 'Banned from group',
+                            'banned_by': request.user.username
+                        }
+                    )
+                
                 return JsonResponse({'status': 'success', 'message': f'{target_user.profile.get_display_name()} has been banned from {group.name}.'})
 
         return JsonResponse({'status': 'error', 'message': 'Invalid request.'}, status=400)
@@ -346,6 +414,46 @@ def administration(request):
     user_profile_forms = {user_obj.id: UserProfileForm(instance=user_obj.profile, prefix=f'profile_{user_obj.id}') for user_obj in all_users}
     all_banned_users = BannedUser.objects.all().select_related('user', 'group', 'banned_by', 'organizer').order_by('-banned_at')
 
+    # Get audit log entries with filtering
+    audit_search = request.GET.get('audit_search', '').strip()
+    audit_user_filter = request.GET.get('audit_user_filter', '').strip()
+    audit_action_filter = request.GET.get('audit_action_filter', '').strip()
+    
+    audit_logs = AuditLog.objects.all().select_related('user', 'target_user', 'group', 'event')
+    
+    # Apply audit log filters
+    if audit_search:
+        audit_logs = audit_logs.filter(
+            Q(description__icontains=audit_search) |
+            Q(user__username__icontains=audit_search) |
+            Q(target_user__username__icontains=audit_search) |
+            Q(group__name__icontains=audit_search) |
+            Q(event__title__icontains=audit_search)
+        )
+    
+    if audit_user_filter:
+        audit_logs = audit_logs.filter(
+            Q(user__username__icontains=audit_user_filter) |
+            Q(target_user__username__icontains=audit_user_filter)
+        )
+    
+    if audit_action_filter:
+        audit_logs = audit_logs.filter(action=audit_action_filter)
+    
+    # Paginate audit logs
+    audit_paginator = Paginator(audit_logs, 20)
+    audit_page = request.GET.get('audit_page', 1)
+    try:
+        audit_page = int(audit_page)
+        if audit_page < 1:
+            audit_page = 1
+    except (TypeError, ValueError):
+        audit_page = 1
+    try:
+        paginated_audit_logs = audit_paginator.page(audit_page)
+    except (PageNotAnInteger, EmptyPage):
+        paginated_audit_logs = audit_paginator.page(1)
+
     bluesky_posts = []
     bluesky_posts_page = []
     bluesky_posts_paginator = None
@@ -376,7 +484,28 @@ def administration(request):
                     user_obj.profile.refresh_from_db()
                     profile_form = UserProfileForm(request.POST, instance=user_obj.profile, prefix=f'profile_{user_obj.id}')
                     if profile_form.is_valid():
+                        old_data = {
+                            'admin_groups': list(user_obj.profile.admin_groups.all().values_list('name', flat=True))
+                        }
                         profile_form.save()
+                        new_data = {
+                            'admin_groups': list(user_obj.profile.admin_groups.all().values_list('name', flat=True))
+                        }
+                        
+                        # Log the profile update
+                        AuditLog.log_action(
+                            user=request.user,
+                            action='user_profile_updated',
+                            description=f'Updated profile for user {user_obj.username}',
+                            target_user=user_obj,
+                            ip_address=request.META.get('REMOTE_ADDR'),
+                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                            additional_data={
+                                'old_data': old_data,
+                                'new_data': new_data,
+                                'changes': 'Profile groups updated'
+                            }
+                        )
                         success_count += 1
                     else:
                         error_count += 1
@@ -407,6 +536,7 @@ def administration(request):
                         messages.success(request, f'Group "{new_group.name}" created successfully.', extra_tags='admin_notification')
                 except Exception as e:
                     messages.error(request, f'Error creating group: {str(e)}', extra_tags='admin_notification')
+                    messages.error(request, f'Error creating group: {str(e)}', extra_tags='admin_notification')
             else:
                 messages.error(request, 'Group name is required.', extra_tags='admin_notification')
             # Preserve current tab
@@ -419,8 +549,23 @@ def administration(request):
                     rename_form = RenameGroupForm(request.POST, instance=group)
                     if rename_form.is_valid():
                         try:
+                            old_name = group.name
                             rename_form.save()
                             create_notification(request.user, f'You have renamed the group to "{group.name}".', link='/administration')
+                            
+                            # Log the group rename
+                            AuditLog.log_action(
+                                user=request.user,
+                                action='group_renamed',
+                                description=f'Renamed group from "{old_name}" to "{group.name}"',
+                                group=group,
+                                ip_address=request.META.get('REMOTE_ADDR'),
+                                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                                additional_data={
+                                    'old_name': old_name,
+                                    'new_name': group.name
+                                }
+                            )
                         except Exception as e:
                             messages.error(request, f'Error renaming group: {str(e)}', extra_tags='admin_notification')
                     else:
@@ -436,6 +581,20 @@ def administration(request):
                 try:
                     group_to_delete = Group.objects.get(id=group_id)
                     group_name = group_to_delete.name
+                    
+                    # Log the group deletion before deleting
+                    AuditLog.log_action(
+                        user=request.user,
+                        action='group_deleted',
+                        description=f'Deleted group: {group_name}',
+                        ip_address=request.META.get('REMOTE_ADDR'),
+                        user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                        additional_data={
+                            'group_name': group_name,
+                            'group_id': group_id
+                        }
+                    )
+                    
                     group_to_delete.delete()
                     create_notification(request.user, f'You have deleted the group "{group_name}".', link='/administration')
                 except Group.DoesNotExist:
@@ -495,6 +654,21 @@ def administration(request):
             full_message = f"{admin_name}: {message}"
             for user in users:
                 Notification.objects.create(user=user, message=full_message, link=link)
+            
+            # Log the bulk notification
+            AuditLog.log_action(
+                user=request.user,
+                action='bulk_notification_sent',
+                description=f'Sent bulk notification to {users.count()} users: {message[:100]}{"..." if len(message) > 100 else ""}',
+                ip_address=request.META.get('REMOTE_ADDR'),
+                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                additional_data={
+                    'message': message,
+                    'link': link,
+                    'recipient_count': users.count()
+                }
+            )
+            
             messages.success(request, f'Notification sent to {users.count()} users.')
             # Preserve current tab
             current_tab = request.GET.get('tab', 'notify')
@@ -523,9 +697,32 @@ def administration(request):
                     cache.delete('banner_text')
                     cache.delete('banner_type')
                 
+                # Log the banner update
                 if banner_enabled and banner_text:
+                    AuditLog.log_action(
+                        user=request.user,
+                        action='banner_updated',
+                        description=f'Updated site banner with {banner_type} style: {banner_text[:100]}{"..." if len(banner_text) > 100 else ""}',
+                        ip_address=request.META.get('REMOTE_ADDR'),
+                        user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                        additional_data={
+                            'banner_text': banner_text,
+                            'banner_type': banner_type,
+                            'banner_enabled': banner_enabled
+                        }
+                    )
                     messages.success(request, f'Site banner has been updated and is now visible with {banner_type} style.')
                 elif not banner_enabled:
+                    AuditLog.log_action(
+                        user=request.user,
+                        action='banner_disabled',
+                        description='Disabled site banner',
+                        ip_address=request.META.get('REMOTE_ADDR'),
+                        user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                        additional_data={
+                            'banner_enabled': banner_enabled
+                        }
+                    )
                     messages.success(request, 'Site banner has been disabled.')
                 else:
                     messages.warning(request, 'Banner is enabled but no text was provided.')
@@ -546,6 +743,11 @@ def administration(request):
         'all_banned_users': all_banned_users,
         'user_search': user_search,
         'group_search': group_search,
+        'audit_logs': paginated_audit_logs,
+        'audit_search': audit_search,
+        'audit_user_filter': audit_user_filter,
+        'audit_action_filter': audit_action_filter,
+        'audit_actions': AuditLog.ACTION_CHOICES,
         'banner_enabled': cache.get('banner_enabled', False),
         'banner_text': cache.get('banner_text', ''),
         'banner_type': cache.get('banner_type', 'info'),
@@ -570,6 +772,20 @@ def delete_bluesky_post(request):
         client = Client()
         client.login(bsky_handle, bsky_app_password)
         client.delete_post(uri)
+        
+        # Log the blog post deletion
+        AuditLog.log_action(
+            user=request.user,
+            action='blog_post_deleted',
+            description=f'Deleted blog post from Bluesky',
+            ip_address=request.META.get('REMOTE_ADDR'),
+            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+            additional_data={
+                'uri': uri,
+                'platform': 'Bluesky'
+            }
+        )
+        
         messages.success(request, 'Post deleted from Bluesky.')
     except Exception as e:
         messages.error(request, f'Error deleting post: {e}')
@@ -728,6 +944,21 @@ def post_to_bluesky(request):
                 client.login(bsky_handle, bsky_app_password)
                 post_text = f"{title}\n\n{content}"
                 client.send_post(text=post_text)
+                
+                # Log the blog post creation
+                AuditLog.log_action(
+                    user=request.user,
+                    action='blog_post_created',
+                    description=f'Created blog post: {title}',
+                    ip_address=request.META.get('REMOTE_ADDR'),
+                    user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                    additional_data={
+                        'title': title,
+                        'content_length': len(content),
+                        'platform': 'Bluesky'
+                    }
+                )
+                
                 messages.success(request, 'Blog post successfully posted to Bluesky!')
             except Exception as e:
                 messages.error(request, f'Error posting to Bluesky: {e}')
