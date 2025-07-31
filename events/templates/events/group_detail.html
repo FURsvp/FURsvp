@@ -783,10 +783,10 @@
                                             </a>
                                             {% endif %}
                                             {% if role.user.profile.discord_username %}
-                                    <button type="button" class="leader-btn discord" data-discord-popup data-discord="{{ role.user.profile.discord_username }}" data-display-name="{{ role.user.profile.get_display_name }}">
-                                        <i class="material-icons">chat</i>
-                                        Discord
-                                            </button>
+                                                <button type="button" class="leader-btn discord" data-discord-popup data-discord="{{ role.user.profile.discord_username }}" data-display-name="{{ role.user.profile.get_display_name }}">
+                                                    <i class="material-icons">chat</i>
+                                                    Discord
+                                                </button>
                                             {% endif %}
                                     </div>
                                 </div>
@@ -1105,7 +1105,7 @@
 
 <!-- Discord Contact Modal -->
 <div class="modal fade" id="discordModal" tabindex="-1" aria-labelledby="discordModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="discordModalTitle">
@@ -1115,7 +1115,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Contact this user on Discord:</p>
                 <div class="input-group">
                     <input type="text" class="form-control" id="discordUsername" readonly>
                     <button class="btn btn-outline-primary" type="button" onclick="copyDiscordUsername()">

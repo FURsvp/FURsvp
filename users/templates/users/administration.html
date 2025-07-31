@@ -367,6 +367,94 @@
     background: white;
 }
 
+/* Groups with logos Tom Select styling */
+.tom-select-groups-with-logos {
+    min-width: 250px;
+}
+
+.tom-select-groups-with-logos .ts-wrapper {
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: white;
+}
+
+.tom-select-groups-with-logos .ts-wrapper:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.tom-select-groups-with-logos .ts-control {
+    border: none;
+    background: transparent;
+    padding: 0.75rem 1rem;
+    min-height: 48px;
+}
+
+.tom-select-groups-with-logos .ts-dropdown {
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+}
+
+.tom-select-groups-with-logos .ts-dropdown .option {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.tom-select-groups-with-logos .ts-dropdown .option:hover {
+    background: #f8fafc;
+}
+
+.tom-select-groups-with-logos .ts-dropdown .option.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+/* Users with avatars Tom Select styling */
+.tom-select-users-with-avatars {
+    min-width: 300px;
+}
+
+.tom-select-users-with-avatars .ts-wrapper {
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: white;
+}
+
+.tom-select-users-with-avatars .ts-wrapper:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.tom-select-users-with-avatars .ts-control {
+    border: none;
+    background: transparent;
+    padding: 0.75rem 1rem;
+    min-height: 48px;
+}
+
+.tom-select-users-with-avatars .ts-dropdown {
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+}
+
+.tom-select-users-with-avatars .ts-dropdown .option {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.tom-select-users-with-avatars .ts-dropdown .option:hover {
+    background: #f8fafc;
+}
+
+.tom-select-users-with-avatars .ts-dropdown .option.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
 .tom-select-modal-groups .ts-wrapper:focus-within {
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -635,29 +723,47 @@
 .modal .permission-controls {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .modal .permission-toggle {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    border: 2px solid #e2e8f0;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
     border-radius: 0.5rem;
     background: #f8fafc;
     transition: all 0.2s ease;
+    min-height: 48px;
+    cursor: pointer;
 }
 
 .modal .permission-toggle:hover {
     border-color: #667eea;
     background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal .permission-toggle:focus-within {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .modal .permission-toggle input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     accent-color: #667eea;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: 2px solid #d1d5db;
+    border-radius: 3px;
+}
+
+.modal .permission-toggle input[type="checkbox"]:checked {
+    background-color: #667eea;
+    border-color: #667eea;
 }
 
 .modal .permission-toggle label {
@@ -665,6 +771,60 @@
     color: #374151;
     cursor: pointer;
     margin: 0;
+    font-size: 0.9rem;
+    min-width: 80px;
+}
+
+.modal .permission-description {
+    font-size: 0.8rem;
+    color: #6b7280;
+    font-weight: 400;
+    margin-left: auto;
+}
+
+/* Fix modal positioning */
+.modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1055 !important;
+}
+
+.modal-dialog {
+    position: relative !important;
+    margin: 1.75rem auto !important;
+    pointer-events: none !important;
+}
+
+.modal-dialog-centered {
+    display: flex !important;
+    align-items: center !important;
+    min-height: calc(100% - 3.5rem) !important;
+}
+
+.modal-content {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    pointer-events: auto !important;
+    background-color: #fff !important;
+    background-clip: padding-box !important;
+    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    border-radius: 0.3rem !important;
+    outline: 0 !important;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal-backdrop {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 1050 !important;
 }
 </style>
 
@@ -899,6 +1059,44 @@
                                 <span class="material-icons">add</span>
                             Create Group
                         </button>
+                        </form>
+                    </div>
+
+                    <!-- Add Users to Group -->
+                    <div class="search-container" style="text-align: center;">
+                        <form method="post" class="search-form" style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                            {% csrf_token %}
+                            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: center;">
+                                <select name="add_user_group_id" id="addUserGroupSelect" class="tom-select-groups-with-logos" required>
+                                    <option value="">Select a group...</option>
+                                    {% for group in all_groups %}
+                                        <option value="{{ group.id }}" 
+                                                data-name="{{ group.name }}"
+                                                data-description="{{ group.description|default:'' }}"
+                                                data-logo="{% if group.logo_base64 %}data:image/png;base64,{{ group.logo_base64 }}{% endif %}"
+                                                data-search="{{ group.name }} {{ group.description|default:'' }}">
+                                            {{ group.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <select name="selected_users" id="addUsersSelect" class="tom-select-users-with-avatars" multiple required>
+                                    <option value="">Select users...</option>
+                                    {% for user_obj in all_users %}
+                                        <option value="{{ user_obj.id }}" 
+                                                data-username="@{{ user_obj.username }}"
+                                                data-display-name="{{ user_obj.profile.get_display_name }}"
+                                                data-avatar-color="{{ user_obj.profile.get_avatar_color }}"
+                                                data-has-pfp="{% if user_obj.profile.profile_picture_base64 %}true{% else %}false{% endif %}"
+                                                data-search="{{ user_obj.profile.get_display_name }} {{ user_obj.username }}">
+                                            {{ user_obj.profile.get_display_name }} (@{{ user_obj.username }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" name="add_users_to_group" class="search-btn">
+                                <span class="material-icons">group_add</span>
+                                Add Users to Group
+                            </button>
                         </form>
                     </div>
 
@@ -1329,8 +1527,8 @@
 </div>
 
 <!-- Edit User Modal -->
-<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editUserModalLabel">
@@ -1342,27 +1540,31 @@
             <form method="post" id="editUserForm">
                 {% csrf_token %}
                 <div class="modal-body">
-                    <div class="user-info mb-4">
-                        <div class="user-avatar" id="modalUserAvatar" style="width: 64px; height: 64px;">
-                            <!-- User avatar will be populated by JavaScript -->
+                    <div class="user-info mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="user-avatar" id="modalUserAvatar" style="width: 48px; height: 48px; flex-shrink: 0;">
+                                <!-- User avatar will be populated by JavaScript -->
                         </div>
-                        <div class="user-details">
-                            <div class="user-name" id="modalUserName"></div>
-                            <div class="username" id="modalUserUsername"></div>
-                            <div class="user-id" id="modalUserId"></div>
+                            <div class="user-details flex-grow-1">
+                                <div class="user-name" id="modalUserName" style="font-size: 1.1rem; font-weight: 600;"></div>
+                                <div class="username" id="modalUserUsername" style="font-size: 0.9rem; color: #6b7280;"></div>
+                                <div class="user-id" id="modalUserId" style="font-size: 0.8rem; color: #9ca3af;"></div>
                         </div>
                                         </div>
+                                    </div>
                     
                     <div class="form-group">
                         <label class="form-label">Permissions</label>
                         <div class="permission-controls">
                             <div class="permission-toggle">
                                 <input type="checkbox" id="modal_staff" name="modal_staff">
-                                <label for="modal_staff">Staff (Superuser)</label>
-                                    </div>
+                                <label for="modal_staff">Staff</label>
+                                <span class="permission-description">Superuser access</span>
+                            </div>
                             <div class="permission-toggle">
                                 <input type="checkbox" id="modal_blog" name="modal_blog">
-                                <label for="modal_blog">Can Post Blog</label>
+                                <label for="modal_blog">Blog Post</label>
+                                <span class="permission-description">Can post to Bluesky</span>
                             </div>
                         </div>
                     </div>
@@ -1407,9 +1609,169 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-        // Initialize Tom Select for ban user selection with avatars
-    const banUserSelect = document.getElementById('banUserSelect');
-    if (banUserSelect) {
+        // Initialize Tom Select for groups with logos
+        const groupLogoSelect = document.getElementById('addUserGroupSelect');
+        if (groupLogoSelect) {
+            // Cache for group logos
+            const logoCache = new Map();
+            
+            // Function to fetch group logo
+            async function fetchGroupLogo(groupId) {
+                if (logoCache.has(groupId)) {
+                    return logoCache.get(groupId);
+                }
+                
+                try {
+                    const response = await fetch(`/users/group-logo/${groupId}/`);
+                    const data = await response.json();
+                    logoCache.set(groupId, data);
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching group logo:', error);
+                    return null;
+                }
+            }
+            
+            // Pre-load logos for all options
+            async function preloadLogos() {
+                const options = groupLogoSelect.querySelectorAll('option[value]');
+                const promises = [];
+                
+                for (const option of options) {
+                    const groupId = option.value;
+                    if (groupId && !logoCache.has(groupId)) {
+                        promises.push(fetchGroupLogo(groupId));
+                    }
+                }
+                
+                await Promise.all(promises);
+            }
+            
+            new TomSelect(groupLogoSelect, {
+                    render: {
+                        option: function(data, escape) {
+                    try {
+                        // Handle different data structures
+                        let name = '';
+                        let description = '';
+                        let logo = '';
+                        
+                        if (data && typeof data === 'object') {
+                            // Try to get data from various possible sources
+                            if (data.option && data.option.dataset) {
+                                name = data.option.dataset.name || '';
+                                description = data.option.dataset.description || '';
+                            } else if (data.dataset) {
+                                name = data.dataset.name || '';
+                                description = data.dataset.description || '';
+                            } else if (data.text) {
+                                name = data.text;
+                            }
+                            
+                            // Get group ID for logo lookup
+                            const groupId = data.value || '';
+                            const logoData = logoCache.get(groupId);
+                            
+                            // Create logo HTML
+                            if (logoData && logoData.has_logo && logoData.logo) {
+                                logo = logoData.logo;
+                            }
+                        }
+                        
+                        // Fallback to data.text if name is still empty
+                        if (!name && data && data.text) {
+                            name = data.text;
+                        }
+                        
+                        let logoHtml = '';
+                        if (logo) {
+                            logoHtml = `<img src="${logo}" alt="${escape(name)}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 8px;">`;
+                        } else {
+                            logoHtml = `<div style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin-right: 8px; color: white; font-size: 12px; font-weight: bold;">G</div>`;
+                        }
+                        
+                        return `<div style="display: flex; align-items: center;">
+                            ${logoHtml}
+                            <div>
+                                <div style="font-weight: 600;">${escape(name)}</div>
+                                ${description ? `<div style="font-size: 12px; color: #6b7280;">${escape(description)}</div>` : ''}
+                            </div>
+                        </div>`;
+                    } catch (error) {
+                        console.error('Error rendering group option:', error, data);
+                        return `<div style="display: flex; align-items: center;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin-right: 8px; color: white; font-size: 12px; font-weight: bold;">G</div>
+                            <div>
+                                <div style="font-weight: 600;">Group</div>
+                            </div>
+                                </div>`;
+                            }
+                        },
+                        item: function(data, escape) {
+                    try {
+                        // Handle different data structures
+                        let name = '';
+                        let logo = '';
+                        
+                                                if (data && typeof data === 'object') {
+                            // Try to get data from various possible sources
+                            if (data.option && data.option.dataset) {
+                                name = data.option.dataset.name || '';
+                            } else if (data.dataset) {
+                                name = data.dataset.name || '';
+                            } else if (data.text) {
+                                name = data.text;
+                            }
+                            
+                            // Get group ID for logo lookup
+                            const groupId = data.value || '';
+                            const logoData = logoCache.get(groupId);
+                            
+                            // Create logo HTML
+                            if (logoData && logoData.has_logo && logoData.logo) {
+                                logo = logoData.logo;
+                            }
+                        }
+                        
+                        // Fallback to data.text if name is still empty
+                        if (!name && data && data.text) {
+                            name = data.text;
+                        }
+                        
+                        let logoHtml = '';
+                        if (logo) {
+                            logoHtml = `<img src="${logo}" alt="${escape(name)}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 6px;">`;
+                        } else {
+                            logoHtml = `<div style="width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin-right: 6px; color: white; font-size: 10px; font-weight: bold;">G</div>`;
+                        }
+                        
+                        return `<div style="display: flex; align-items: center;">
+                            ${logoHtml}
+                                <span>${escape(name)}</span>
+                            </div>`;
+                    } catch (error) {
+                        console.error('Error rendering group item:', error, data);
+                        return `<div style="display: flex; align-items: center;">
+                            <div style="width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin-right: 6px; color: white; font-size: 10px; font-weight: bold;">G</div>
+                            <span>Group</span>
+                        </div>`;
+                    }
+                }
+            },
+            placeholder: 'Select a group...',
+            create: false,
+            maxItems: 1,
+            closeAfterSelect: true,
+            sortField: 'text',
+            searchField: ['text', 'data-search']
+        });
+        
+        // Logos are already in the HTML data attributes, no need to preload
+    }
+    
+    // Initialize Tom Select for users with avatars
+    const usersAvatarSelect = document.getElementById('addUsersSelect');
+    if (usersAvatarSelect) {
         // Cache for avatars
         const avatarCache = new Map();
         
@@ -1443,6 +1805,167 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Pre-load avatars for all options
         async function preloadAvatars() {
+            const options = usersAvatarSelect.querySelectorAll('option[value]');
+            const promises = [];
+            
+            for (const option of options) {
+                const userId = option.value;
+                if (userId && !avatarCache.has(userId)) {
+                    promises.push(fetchAvatar(userId));
+                }
+            }
+            
+            await Promise.all(promises);
+        }
+        
+        // Initialize Tom Select with synchronous render functions
+        const tomSelect = new TomSelect(usersAvatarSelect, {
+            render: {
+                option: function(data, escape) {
+                    try {
+                        // Handle different data structures
+                        let displayName = '';
+                        let username = '';
+                        let userId = '';
+                        
+                        if (data && typeof data === 'object') {
+                            // Try to get data from various possible sources
+                            if (data.option && data.option.dataset) {
+                                displayName = data.option.dataset.displayName || '';
+                                username = data.option.dataset.username || '';
+                            } else if (data.dataset) {
+                                displayName = data.dataset.displayName || '';
+                                username = data.dataset.username || '';
+                            } else if (data.text) {
+                                displayName = data.text;
+                            }
+                            
+                            userId = data.value || '';
+                        }
+                        
+                        // Fallback to data.text if displayName is still empty
+                        if (!displayName && data && data.text) {
+                            displayName = data.text;
+                        }
+                        
+                        // Get avatar data from cache (should be pre-loaded)
+                        const avatarData = avatarCache.get(userId);
+                        
+                        // Create avatar HTML
+                        const avatarHtml = createAvatarHtml(avatarData, 24);
+                        
+                        return `<div style="display: flex; align-items: center; gap: 8px;">
+                            ${avatarHtml}
+                            <div>
+                                <div style="font-weight: 600;">${escape(displayName)}</div>
+                                <div style="font-size: 12px; color: #6b7280;">${escape(username)}</div>
+                            </div>
+                        </div>`;
+                    } catch (error) {
+                        console.error('Error rendering user option:', error, data);
+                        return `<div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">U</div>
+                            <div>
+                                <div style="font-weight: 600;">User</div>
+                                <div style="font-size: 12px; color: #6b7280;">user</div>
+                            </div>
+                                </div>`;
+                        }
+                },
+                item: function(data, escape) {
+                    try {
+                        // Handle different data structures
+                        let displayName = '';
+                        let userId = '';
+                        
+                        if (data && typeof data === 'object') {
+                            // Try to get data from various possible sources
+                            if (data.option && data.option.dataset) {
+                                displayName = data.option.dataset.displayName || '';
+                            } else if (data.dataset) {
+                                displayName = data.dataset.displayName || '';
+                            } else if (data.text) {
+                                displayName = data.text;
+                            }
+                            
+                            userId = data.value || '';
+                        }
+                        
+                        // Fallback to data.text if displayName is still empty
+                        if (!displayName && data && data.text) {
+                            displayName = data.text;
+                        }
+                        
+                        // Get avatar data from cache
+                        const avatarData = avatarCache.get(userId);
+                        
+                        // Create avatar HTML for selected item
+                        const avatarHtml = createAvatarHtml(avatarData, 20);
+                        
+                        return `<div style="display: flex; align-items: center; gap: 6px;">
+                            ${avatarHtml}
+                            <span>${escape(displayName)}</span>
+                        </div>`;
+                    } catch (error) {
+                        console.error('Error rendering user item:', error, data);
+                        return `<div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold;">U</div>
+                            <span>User</span>
+                        </div>`;
+                    }
+                }
+            },
+            placeholder: 'Select users...',
+            create: false,
+            maxItems: null,
+            closeAfterSelect: false,
+            sortField: 'text',
+            searchField: ['text', 'data-search']
+        });
+        
+        // Pre-load avatars after Tom Select is initialized
+        preloadAvatars().then(() => {
+            // Refresh the dropdown to show avatars
+            tomSelect.refreshOptions();
+        });
+    }
+    
+        // Initialize Tom Select for ban user selection with avatars
+    const banUserSelect = document.getElementById('banUserSelect');
+    if (banUserSelect) {
+        // Cache for avatars
+        const avatarCache = new Map();
+        
+        // Function to fetch avatar
+        async function fetchAvatar(userId) {
+            if (avatarCache.has(userId)) {
+                return avatarCache.get(userId);
+            }
+            
+            try {
+                const response = await fetch(`/users/avatar/${userId}/`);
+                const data = await response.json();
+                avatarCache.set(userId, data);
+                return data;
+            } catch (error) {
+                console.error('Error fetching avatar:', error);
+                return null;
+            }
+        }
+        
+        // Function to create avatar HTML
+        function createAvatarHtml(avatarData, size = 24) {
+            if (avatarData && avatarData.has_pfp && avatarData.avatar) {
+                return `<img src="${avatarData.avatar}" alt="Profile" style="width: ${size}px; height: ${size}px; border-radius: 50%; object-fit: cover;">`;
+                } else {
+                const initials = avatarData ? avatarData.initials : 'U';
+                const color = avatarData ? avatarData.color : '#667eea';
+                return `<div style="width: ${size}px; height: ${size}px; border-radius: 50%; background-color: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: ${size * 0.5}px; font-weight: bold;">${initials}</div>`;
+            }
+        }
+        
+        // Pre-load avatars for all options
+        async function preloadAvatars() {
             const options = banUserSelect.querySelectorAll('option[value]');
             const promises = [];
             
@@ -1460,42 +1983,97 @@ document.addEventListener('DOMContentLoaded', function() {
         const tomSelect = new TomSelect(banUserSelect, {
             render: {
                 option: function(data, escape) {
-                    // Get data from the option element
-                    const option = data.option || data;
-                    const displayName = option.dataset ? option.dataset.displayName : '';
-                    const username = option.dataset ? option.dataset.username : '';
-                    const userId = data.value;
-                    
-                    // Get avatar data from cache (should be pre-loaded)
-                    const avatarData = avatarCache.get(userId);
-                    
-                    // Create avatar HTML
-                    const avatarHtml = createAvatarHtml(avatarData, 24);
-                    
-                    return `<div style="display: flex; align-items: center; gap: 8px;">
-                        ${avatarHtml}
-                        <div>
-                            <div style="font-weight: 600;">${escape(displayName || data.text)}</div>
-                            <div style="font-size: 12px; color: #6b7280;">${escape(username)}</div>
-                        </div>
-                    </div>`;
+                    try {
+                        // Handle different data structures
+                        let displayName = '';
+                        let username = '';
+                        let userId = '';
+                        
+                        if (data && typeof data === 'object') {
+                            // Try to get data from various possible sources
+                            if (data.option && data.option.dataset) {
+                                displayName = data.option.dataset.displayName || '';
+                                username = data.option.dataset.username || '';
+                            } else if (data.dataset) {
+                                displayName = data.dataset.displayName || '';
+                                username = data.dataset.username || '';
+                            } else if (data.text) {
+                                displayName = data.text;
+                            }
+                            
+                            userId = data.value || '';
+                        }
+                        
+                        // Fallback to data.text if displayName is still empty
+                        if (!displayName && data && data.text) {
+                            displayName = data.text;
+                        }
+                        
+                        // Get avatar data from cache (should be pre-loaded)
+                        const avatarData = avatarCache.get(userId);
+                        
+                        // Create avatar HTML
+                        const avatarHtml = createAvatarHtml(avatarData, 24);
+                        
+                        return `<div style="display: flex; align-items: center; gap: 8px;">
+                            ${avatarHtml}
+                            <div>
+                                <div style="font-weight: 600;">${escape(displayName)}</div>
+                                <div style="font-size: 12px; color: #6b7280;">${escape(username)}</div>
+                            </div>
+                        </div>`;
+                    } catch (error) {
+                        console.error('Error rendering ban user option:', error, data);
+                        return `<div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">U</div>
+                            <div>
+                                <div style="font-weight: 600;">User</div>
+                                <div style="font-size: 12px; color: #6b7280;">user</div>
+                            </div>
+                        </div>`;
+                    }
                 },
                 item: function(data, escape) {
-                    // Get data from the option element
-                    const option = data.option || data;
-                    const displayName = option.dataset ? option.dataset.displayName : '';
-                    const userId = data.value;
-                    
-                    // Get avatar data from cache
-                    const avatarData = avatarCache.get(userId);
-                    
-                    // Create avatar HTML for selected item
-                    const avatarHtml = createAvatarHtml(avatarData, 20);
-                    
-                    return `<div style="display: flex; align-items: center; gap: 6px;">
-                        ${avatarHtml}
-                        <span>${escape(displayName || data.text)}</span>
-                    </div>`;
+                    try {
+                        // Handle different data structures
+                        let displayName = '';
+                        let userId = '';
+                        
+                        if (data && typeof data === 'object') {
+                            // Try to get data from various possible sources
+                            if (data.option && data.option.dataset) {
+                                displayName = data.option.dataset.displayName || '';
+                            } else if (data.dataset) {
+                                displayName = data.dataset.displayName || '';
+                            } else if (data.text) {
+                                displayName = data.text;
+                            }
+                            
+                            userId = data.value || '';
+                        }
+                        
+                        // Fallback to data.text if displayName is still empty
+                        if (!displayName && data && data.text) {
+                            displayName = data.text;
+                        }
+                        
+                        // Get avatar data from cache
+                        const avatarData = avatarCache.get(userId);
+                        
+                        // Create avatar HTML for selected item
+                        const avatarHtml = createAvatarHtml(avatarData, 20);
+                        
+                        return `<div style="display: flex; align-items: center; gap: 6px;">
+                            ${avatarHtml}
+                            <span>${escape(displayName)}</span>
+                        </div>`;
+                    } catch (error) {
+                        console.error('Error rendering ban user item:', error, data);
+                        return `<div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold;">U</div>
+                            <span>User</span>
+                        </div>`;
+                    }
                 }
             },
             placeholder: 'Select user to ban...',
@@ -1566,42 +2144,97 @@ document.addEventListener('DOMContentLoaded', function() {
         const notificationTomSelect = new TomSelect(notificationUserSelect, {
             render: {
                 option: function(data, escape) {
-                    // Get data from the option element
-                    const option = data.option || data;
-                    const displayName = option.dataset ? option.dataset.displayName : '';
-                    const username = option.dataset ? option.dataset.username : '';
-                    const userId = data.value;
-                    
-                    // Get avatar data from cache (should be pre-loaded)
-                    const avatarData = avatarCache.get(userId);
-                    
-                    // Create avatar HTML
-                    const avatarHtml = createAvatarHtml(avatarData, 24);
-                    
-                    return `<div style="display: flex; align-items: center; gap: 8px;">
-                        ${avatarHtml}
-                        <div>
-                            <div style="font-weight: 600;">${escape(displayName || data.text)}</div>
-                            <div style="font-size: 12px; color: #6b7280;">${escape(username)}</div>
-                        </div>
-                    </div>`;
+                    try {
+                        // Handle different data structures
+                        let displayName = '';
+                        let username = '';
+                        let userId = '';
+                        
+                        if (data && typeof data === 'object') {
+                            // Try to get data from various possible sources
+                            if (data.option && data.option.dataset) {
+                                displayName = data.option.dataset.displayName || '';
+                                username = data.option.dataset.username || '';
+                            } else if (data.dataset) {
+                                displayName = data.dataset.displayName || '';
+                                username = data.dataset.username || '';
+                            } else if (data.text) {
+                                displayName = data.text;
+                            }
+                            
+                            userId = data.value || '';
+                        }
+                        
+                        // Fallback to data.text if displayName is still empty
+                        if (!displayName && data && data.text) {
+                            displayName = data.text;
+                        }
+                        
+                        // Get avatar data from cache (should be pre-loaded)
+                        const avatarData = avatarCache.get(userId);
+                        
+                        // Create avatar HTML
+                        const avatarHtml = createAvatarHtml(avatarData, 24);
+                        
+                        return `<div style="display: flex; align-items: center; gap: 8px;">
+                            ${avatarHtml}
+                            <div>
+                                <div style="font-weight: 600;">${escape(displayName)}</div>
+                                <div style="font-size: 12px; color: #6b7280;">${escape(username)}</div>
+                            </div>
+                        </div>`;
+            } catch (error) {
+                        console.error('Error rendering notification user option:', error, data);
+                        return `<div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">U</div>
+                            <div>
+                                <div style="font-weight: 600;">User</div>
+                                <div style="font-size: 12px; color: #6b7280;">user</div>
+                            </div>
+                        </div>`;
+                    }
                 },
                 item: function(data, escape) {
-                    // Get data from the option element
-                    const option = data.option || data;
-                    const displayName = option.dataset ? option.dataset.displayName : '';
-                    const userId = data.value;
-                    
-                    // Get avatar data from cache
-                    const avatarData = avatarCache.get(userId);
-                    
-                    // Create avatar HTML for selected item
-                    const avatarHtml = createAvatarHtml(avatarData, 20);
-                    
-                    return `<div style="display: flex; align-items: center; gap: 6px;">
-                        ${avatarHtml}
-                        <span>${escape(displayName || data.text)}</span>
-                    </div>`;
+                    try {
+                        // Handle different data structures
+                        let displayName = '';
+                        let userId = '';
+                        
+                        if (data && typeof data === 'object') {
+                            // Try to get data from various possible sources
+                            if (data.option && data.option.dataset) {
+                                displayName = data.option.dataset.displayName || '';
+                            } else if (data.dataset) {
+                                displayName = data.dataset.displayName || '';
+                            } else if (data.text) {
+                                displayName = data.text;
+                            }
+                            
+                            userId = data.value || '';
+                        }
+                        
+                        // Fallback to data.text if displayName is still empty
+                        if (!displayName && data && data.text) {
+                            displayName = data.text;
+                        }
+                        
+                        // Get avatar data from cache
+                        const avatarData = avatarCache.get(userId);
+                        
+                        // Create avatar HTML for selected item
+                        const avatarHtml = createAvatarHtml(avatarData, 20);
+                        
+                        return `<div style="display: flex; align-items: center; gap: 6px;">
+                            ${avatarHtml}
+                            <span>${escape(displayName)}</span>
+                        </div>`;
+                    } catch (error) {
+                        console.error('Error rendering notification user item:', error, data);
+                        return `<div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold;">U</div>
+                            <span>User</span>
+                        </div>`;
+                    }
                 }
             },
             placeholder: 'Select users...',
@@ -1629,26 +2262,91 @@ document.addEventListener('DOMContentLoaded', function() {
                 placeholder: 'Select groups...',
                 render: {
                     option: function(data, escape) {
-                        const name = data.dataset.name;
-                        const description = data.dataset.description;
-                        
-                        let descriptionHtml = '';
-                        if (description) {
-                            descriptionHtml = `<div class="group-description">${escape(description)}</div>`;
+                        try {
+                            // Handle different data structures
+                            let name = '';
+                            let description = '';
+                            
+                            if (data && typeof data === 'object') {
+                                // Try to get data from various possible sources
+                                if (data.option && data.option.dataset) {
+                                    name = data.option.dataset.name || '';
+                                    description = data.option.dataset.description || '';
+                                } else if (data.dataset) {
+                                    name = data.dataset.name || '';
+                                    description = data.dataset.description || '';
+                                } else if (data.text) {
+                                    name = data.text;
+                                }
+                            }
+                            
+                            // Fallback to data.text if name is still empty
+                            if (!name && data && data.text) {
+                                name = data.text;
+                            }
+                            
+                            let descriptionHtml = '';
+                            if (description) {
+                                descriptionHtml = `<div class="group-description">${escape(description)}</div>`;
+                            }
+                            
+                            return `<div>
+                                <div style="font-weight: 600;">${escape(name)}</div>
+                                ${descriptionHtml}
+                            </div>`;
+                        } catch (error) {
+                            console.error('Error rendering modal group option:', error, data);
+                            return `<div>
+                                <div style="font-weight: 600;">Group</div>
+                            </div>`;
                         }
-                        
-                        return `<div>
-                            <div style="font-weight: 600;">${escape(name)}</div>
-                            ${descriptionHtml}
-                        </div>`;
                     },
                     item: function(data, escape) {
-                        const name = data.dataset.name;
-                        return `<span>${escape(name)}</span>`;
+                        try {
+                            // Handle different data structures
+                            let name = '';
+                            
+                            if (data && typeof data === 'object') {
+                                // Try to get data from various possible sources
+                                if (data.option && data.option.dataset) {
+                                    name = data.option.dataset.name || '';
+                                } else if (data.dataset) {
+                                    name = data.dataset.name || '';
+                                } else if (data.text) {
+                                    name = data.text;
+                                }
+                            }
+                            
+                            // Fallback to data.text if name is still empty
+                            if (!name && data && data.text) {
+                                name = data.text;
+                            }
+                            
+                            return `<span>${escape(name)}</span>`;
+                        } catch (error) {
+                            console.error('Error rendering modal group item:', error, data);
+                            return `<span>Group</span>`;
+                        }
                 }
             }
                             });
-        }
+    }
+
+    // Fix modal positioning
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ensure modals are properly positioned
+        const modals = document.querySelectorAll('.modal');
+    modals.forEach(function(modal) {
+            modal.addEventListener('show.bs.modal', function() {
+                // Force modal to center in viewport
+                const dialog = this.querySelector('.modal-dialog');
+                if (dialog) {
+                    dialog.style.marginTop = '0';
+                    dialog.style.marginBottom = '0';
+                }
+            });
+        });
+        });
     });
 
     // Handle notification recipient selection

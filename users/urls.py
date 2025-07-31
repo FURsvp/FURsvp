@@ -35,4 +35,5 @@ urlpatterns = [
     path('reset/done/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('verify/<str:token>/', views.verify_email, name='verify_email'),
     path('avatar/<int:user_id>/', views.get_user_avatar, name='get_user_avatar'),
+    path('group-logo/<int:group_id>/', views.get_group_logo, name='get_group_logo'),
 ] 

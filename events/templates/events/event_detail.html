@@ -254,10 +254,6 @@
                                             {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
                                         </a>
                                         {% if rsvp.user.profile.discord_username %}
-                                        <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-discord-popup data-discord="{{ rsvp.user.profile.discord_username }}" data-display-name="{{ rsvp.user.profile.get_display_name }}">
-                                            <i class="material-icons">chat</i>
-                                            Discord
-                                        </button>
                                         {% endif %}
                                         {% else %}
                                         <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
@@ -307,10 +303,6 @@
                                             {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
                                         </a>
                                         {% if rsvp.user.profile.discord_username %}
-                                        <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-discord-popup data-discord="{{ rsvp.user.profile.discord_username }}" data-display-name="{{ rsvp.user.profile.get_display_name }}">
-                                            <i class="material-icons">chat</i>
-                                            Discord
-                                        </button>
                                         {% endif %}
                                         {% else %}
                                         <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
@@ -360,10 +352,6 @@
                                             {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
                                         </a>
                                         {% if rsvp.user.profile.discord_username %}
-                                        <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-discord-popup data-discord="{{ rsvp.user.profile.discord_username }}" data-display-name="{{ rsvp.user.profile.get_display_name }}">
-                                            <i class="material-icons">chat</i>
-                                            Discord
-                                        </button>
                                         {% endif %}
                                         {% else %}
                                         <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
@@ -414,12 +402,7 @@
                                             data-user-id="{{ rsvp.user.id }}">
                                             {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
                                         </a>
-                                        {% if rsvp.user.profile.discord_username %}
-                                        <button type="button" class="btn btn-sm btn-outline-primary ms-2" data-discord-popup data-discord="{{ rsvp.user.profile.discord_username }}" data-display-name="{{ rsvp.user.profile.get_display_name }}">
-                                            <i class="material-icons">chat</i>
-                                            Discord
-                                        </button>
-                                        {% endif %}
+
                                         {% else %}
                                         <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
                                         {% endif %}
@@ -1041,10 +1024,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Handle Discord button clicks
     document.addEventListener('click', function(e) {
-        if (e.target.closest('[data-discord-popup]')) {
-            e.preventDefault();
-            const button = e.target.closest('[data-discord-popup]');
-            const discord = button.getAttribute('data-discord');
             const displayName = button.getAttribute('data-display-name');
             
             const content = `

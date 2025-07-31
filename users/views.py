@@ -713,8 +713,6 @@ def administration(request):
                     group_name = group_to_delete.name
                     
                     # Check for related data before deletion
-                    from events.models import Event
-                    from users.models import GroupRole, GroupDelegation, BannedUser
                     
                     event_count = Event.objects.filter(group=group_to_delete).count()
                     role_count = GroupRole.objects.filter(group=group_to_delete).count()
@@ -1988,6 +1986,35 @@ def custom_logout(request):
 
 @require_GET
 @login_required
+def get_group_logo(request, group_id):
+    """
+    Get group logo data for Tom Select dropdowns
+    """
+    try:
+        group = Group.objects.get(id=group_id)
+        
+        if group.logo_base64:
+            return JsonResponse({
+                'success': True,
+                'logo': group.logo_base64,
+                'has_logo': True
+            })
+        else:
+            return JsonResponse({
+                'success': True,
+                'logo': None,
+                'has_logo': False,
+                'name': group.name,
+                'description': group.description or ''
+            })
+    except Group.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Group not found'
+        })
+
+@require_GET
+@login_required
 def get_user_avatar(request, user_id):
     """
     Get user avatar data for Tom Select dropdowns
@@ -2014,4 +2041,33 @@ def get_user_avatar(request, user_id):
         return JsonResponse({
             'success': False,
             'error': 'User not found'
+        })
+
+@require_GET
+@login_required
+def get_group_logo(request, group_id):
+    """
+    Get group logo data for Tom Select dropdowns
+    """
+    try:
+        group = Group.objects.get(id=group_id)
+        
+        if group.logo_base64:
+            return JsonResponse({
+                'success': True,
+                'logo': group.logo_base64,
+                'has_logo': True
+            })
+        else:
+            return JsonResponse({
+                'success': True,
+                'logo': None,
+                'has_logo': False,
+                'name': group.name,
+                'description': group.description or ''
+            })
+    except Group.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Group not found'
         })
