@@ -1140,12 +1140,8 @@
                                         </a></li>
                                     {% elif user_groups_count > 1 %}
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><span class="dropdown-item-text">
-                                            <span class="material-icons">groups</span>
-                                            My Groups
-                                        </span></li>
                                         {% for group in user_groups %}
-                                            <li><a class="dropdown-item" href="{% url 'group_detail' group.id %}" style="padding-left: 2rem;">
+                                            <li><a class="dropdown-item" href="{% url 'group_detail' group.id %}">
                                                 {% if group.logo_base64 %}
                                                     <img src="data:image/png;base64,{{ group.logo_base64 }}" alt="{{ group.name }}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 8px;">
                                                 {% else %}
@@ -1154,10 +1150,6 @@
                                                 {{ group.name }}
                                             </a></li>
                                         {% endfor %}
-                                        <li><a class="dropdown-item" href="{% url 'groups_list' %}" style="padding-left: 2rem;">
-                                            <span class="material-icons">groups</span>
-                                            All Groups
-                                        </a></li>
                                     {% endif %}
 
                                     <li><hr class="dropdown-divider"></li>

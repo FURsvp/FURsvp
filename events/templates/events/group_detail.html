@@ -6,6 +6,8 @@
 {% block title %}{{ group.name }} - FURsvp{% endblock %}
 
 {% block extra_css %}
+<!-- Tom Select CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
 <style>
 /* Facebook-style Group Page */
 .group-page-container {
@@ -1061,10 +1063,17 @@
                             
                             <div class="mb-3">
                                 <label for="new_leader" class="form-label">Add New Leader</label>
-                                <select class="form-select" id="new_leader" name="new_leader">
+                                <select class="form-select tom-select-leader" id="new_leader" name="new_leader">
                                     <option value="">Select a user...</option>
                                     {% for user_obj in all_users %}
-                                        <option value="{{ user_obj.id }}">{{ user_obj.profile.get_display_name }} (@{{ user_obj.username }})</option>
+                                        <option value="{{ user_obj.id }}" 
+                                                data-username="@{{ user_obj.username }}"
+                                                data-display-name="{{ user_obj.profile.get_display_name }}"
+                                                data-avatar-color="{{ user_obj.profile.get_avatar_color }}"
+                                                data-has-pfp="{% if user_obj.profile.profile_picture_base64 %}true{% else %}false{% endif %}"
+                                                data-search="{{ user_obj.profile.get_display_name }} {{ user_obj.username }}">
+                                            {{ user_obj.profile.get_display_name }} (@{{ user_obj.username }})
+                                        </option>
                                     {% endfor %}
                                 </select>
                                 {% if user.is_superuser %}
@@ -1094,7 +1103,36 @@
 </div>
 </div>
 
+<!-- Discord Contact Modal -->
+<div class="modal fade" id="discordModal" tabindex="-1" aria-labelledby="discordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="discordModalTitle">
+                    <i class="material-icons">chat</i>
+                    Discord Contact
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Contact this user on Discord:</p>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="discordUsername" readonly>
+                    <button class="btn btn-outline-primary" type="button" onclick="copyDiscordUsername()">
+                        <i class="material-icons">content_copy</i>
+                        Copy
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Tom Select JS -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
 <script>
 // Events view toggle
@@ -1130,29 +1168,167 @@ document.addEventListener('DOMContentLoaded', function() {
             const discord = button.getAttribute('data-discord');
             const displayName = button.getAttribute('data-display-name');
             
-            const content = `
-                <p>Contact <strong>${displayName}</strong> on Discord:</p>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="discordUsername" value="${discord}" readonly>
-                    <button class="btn btn-outline-primary" type="button" onclick="copyDiscordUsername()">
-                        <i class="material-icons">content_copy</i>
-                        Copy
-                    </button>
-                </div>
-            `;
+            // Update modal content
+            document.getElementById('discordModalTitle').textContent = `Contact ${displayName} on Discord`;
+            document.getElementById('discordUsername').value = discord;
             
-            customPopup.show(content, '<i class="material-icons">chat</i> Discord Contact');
+            // Show the modal
+            const discordModal = new bootstrap.Modal(document.getElementById('discordModal'));
+            discordModal.show();
         }
     });
+    
+    // Handle remove leader buttons in the modal
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('button[name^="remove_leader_"]')) {
+            e.preventDefault();
+            const button = e.target.closest('button[name^="remove_leader_"]');
+            const userName = button.closest('.d-flex').querySelector('span').textContent;
+            
+            if (confirm(`Are you sure you want to remove ${userName} as a leader?`)) {
+                // Submit the form
+                const form = button.closest('form');
+                if (form) {
+                    form.submit();
+                }
+            }
+        }
+    });
+    
+    // Initialize Tom Select for leader selection with avatars
+    const leaderSelect = document.getElementById('new_leader');
+    if (leaderSelect) {
+        // Cache for avatars
+        const avatarCache = new Map();
+        
+        // Function to fetch avatar
+        async function fetchAvatar(userId) {
+            if (avatarCache.has(userId)) {
+                return avatarCache.get(userId);
+            }
+            
+            try {
+                const response = await fetch(`/users/avatar/${userId}/`);
+                const data = await response.json();
+                avatarCache.set(userId, data);
+                return data;
+            } catch (error) {
+                console.error('Error fetching avatar:', error);
+                return null;
+            }
+        }
+        
+        // Function to create avatar HTML
+        function createAvatarHtml(avatarData, size = 24) {
+            if (avatarData && avatarData.has_pfp && avatarData.avatar) {
+                return `<img src="${avatarData.avatar}" alt="Profile" style="width: ${size}px; height: ${size}px; border-radius: 50%; object-fit: cover;">`;
+            } else {
+                const initials = avatarData ? avatarData.initials : 'U';
+                const color = avatarData ? avatarData.color : '#667eea';
+                return `<div style="width: ${size}px; height: ${size}px; border-radius: 50%; background-color: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: ${size * 0.5}px; font-weight: bold;">${initials}</div>`;
+            }
+        }
+        
+        // Pre-load avatars for all options
+        async function preloadAvatars() {
+            const options = leaderSelect.querySelectorAll('option[value]');
+            const promises = [];
+            
+            for (const option of options) {
+                const userId = option.value;
+                if (userId && !avatarCache.has(userId)) {
+                    promises.push(fetchAvatar(userId));
+                }
+            }
+            
+            await Promise.all(promises);
+        }
+        
+        // Initialize Tom Select with synchronous render functions
+        const tomSelect = new TomSelect(leaderSelect, {
+            render: {
+                option: function(data, escape) {
+                    // Get data from the option element
+                    const option = data.option || data;
+                    const displayName = option.dataset ? option.dataset.displayName : '';
+                    const username = option.dataset ? option.dataset.username : '';
+                    const userId = data.value;
+                    
+                    // Get avatar data from cache (should be pre-loaded)
+                    const avatarData = avatarCache.get(userId);
+                    
+                    // Create avatar HTML
+                    const avatarHtml = createAvatarHtml(avatarData, 24);
+                    
+                    return `<div style="display: flex; align-items: center; gap: 8px;">
+                        ${avatarHtml}
+                        <div>
+                            <div style="font-weight: 600;">${escape(displayName || data.text)}</div>
+                            <div style="font-size: 12px; color: #6b7280;">${escape(username)}</div>
+                        </div>
+                    </div>`;
+                },
+                item: function(data, escape) {
+                    // Get data from the option element
+                    const option = data.option || data;
+                    const displayName = option.dataset ? option.dataset.displayName : '';
+                    const userId = data.value;
+                    
+                    // Get avatar data from cache
+                    const avatarData = avatarCache.get(userId);
+                    
+                    // Create avatar HTML for selected item
+                    const avatarHtml = createAvatarHtml(avatarData, 20);
+                    
+                    return `<div style="display: flex; align-items: center; gap: 6px;">
+                        ${avatarHtml}
+                        <span>${escape(displayName || data.text)}</span>
+                    </div>`;
+                }
+            },
+            placeholder: 'Select a user...',
+            create: false,
+            maxItems: 1,
+            closeAfterSelect: true,
+            sortField: 'text',
+            searchField: ['text', 'data-search']
+        });
+        
+        // Pre-load avatars after Tom Select is initialized
+        preloadAvatars().then(() => {
+            // Refresh the dropdown to show avatars
+            tomSelect.refreshOptions();
+        });
+    }
 });
 
 function copyDiscordUsername() {
     const input = document.getElementById('discordUsername');
+    const textToCopy = input.value;
+    
+    // Use modern clipboard API if available, fallback to execCommand
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            showCopyFeedback();
+        }).catch(() => {
+            // Fallback to execCommand
+            fallbackCopyTextToClipboard(input);
+            showCopyFeedback();
+        });
+    } else {
+        // Fallback to execCommand for older browsers
+        fallbackCopyTextToClipboard(input);
+        showCopyFeedback();
+    }
+}
+
+function fallbackCopyTextToClipboard(input) {
     input.select();
     input.setSelectionRange(0, 99999);
     document.execCommand('copy');
-    
-    // Show feedback
+}
+
+function showCopyFeedback() {
     const btn = event.target.closest('button');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="material-icons">check</i> Copied!';
@@ -1161,4 +1337,46 @@ function copyDiscordUsername() {
     }, 2000);
 }
 </script>
+
+<style>
+/* Tom Select styling for leader selection */
+.tom-select-leader .ts-wrapper {
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: white;
+}
+
+.tom-select-leader .ts-wrapper:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.tom-select-leader .ts-control {
+    border: none;
+    background: transparent;
+    padding: 0.75rem 1rem;
+    min-height: 48px;
+}
+
+.tom-select-leader .ts-dropdown {
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+}
+
+.tom-select-leader .ts-dropdown .option {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.tom-select-leader .ts-dropdown .option:hover {
+    background: #f8fafc;
+}
+
+.tom-select-leader .ts-dropdown .option.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+</style>
 {% endblock %}

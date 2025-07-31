@@ -767,7 +767,15 @@ def group_detail(request, group_id):
         )
     
     # Handle POST requests
-    if request.method == 'POST' and can_edit_group:
+    if request.method == 'POST':
+        print("DEBUG: POST request received")
+        print("DEBUG: User is superuser:", request.user.is_superuser)
+        print("DEBUG: Can edit group:", can_edit_group)
+        print("DEBUG: POST keys:", list(request.POST.keys()))
+        
+        if not can_edit_group:
+            messages.error(request, 'You do not have permission to edit this group.')
+            return redirect('group_detail', group_id=group.id)
         # Handle group editing
         if 'edit_group' in request.POST:
             try:
@@ -835,14 +843,67 @@ def group_detail(request, group_id):
                 messages.error(request, 'Leader not found.')
             return redirect('group_detail', group_id=group.id)
         
-        elif 'remove_leader' in request.POST:
-            role_id = request.POST.get('role_id')
-            try:
-                role = GroupRole.objects.get(pk=role_id, group=group)
-                role.delete()
-                messages.success(request, 'Leader removed successfully.')
-            except GroupRole.DoesNotExist:
-                messages.error(request, 'Leader not found.')
+        elif 'submit_leadership_changes' in request.POST or 'remove_leader' in request.POST:
+            # Handle leadership changes from the modal
+            if 'remove_leader' in request.POST:
+                # Find which remove_leader button was clicked
+                user_id = None
+                for key in request.POST.keys():
+                    if key.startswith('remove_leader_'):
+                        user_id = key.replace('remove_leader_', '')
+                        break
+                
+                if user_id:
+                    try:
+                        role = GroupRole.objects.get(user_id=user_id, group=group)
+                        user_name = role.user.profile.get_display_name()
+                        
+                        # Check if trying to remove the last leader (prevent orphaned groups)
+                        total_leaders = GroupRole.objects.filter(group=group).count()
+                        if total_leaders <= 1:
+                            messages.error(request, f'Cannot remove {user_name}: Groups must have at least one leader.')
+                        else:
+                            role.delete()
+                            messages.success(request, f'Successfully removed {user_name} as leader.')
+                    except GroupRole.DoesNotExist:
+                        messages.error(request, 'Leader not found.')
+                else:
+                    messages.error(request, 'Invalid request. No user ID found.')
+                    # Debug: log all POST keys
+                    print("DEBUG: POST keys:", list(request.POST.keys()))
+                    print("DEBUG: User is superuser:", request.user.is_superuser)
+                    print("DEBUG: Can edit group:", can_edit_group)
+            
+            # Handle add leader from the modal
+            elif 'add_leader' in request.POST:
+                user_id = request.POST.get('new_leader')
+                custom_label = request.POST.get('leader_role', '').strip()
+                
+                if user_id:
+                    try:
+                        user_obj = User.objects.get(id=user_id)
+                        
+                        # Check if user is already a leader in this group
+                        existing_role = GroupRole.objects.filter(user=user_obj, group=group).first()
+                        if existing_role:
+                            messages.error(request, f'{user_obj.profile.get_display_name()} is already a leader in this group.')
+                        else:
+                            # Create new role
+                            role = GroupRole.objects.create(
+                                user=user_obj,
+                                group=group,
+                                custom_label=custom_label,
+                                can_post=True,
+                                can_manage_leadership=True
+                            )
+                            messages.success(request, f'{user_obj.profile.get_display_name()} added as leader successfully.')
+                    except User.DoesNotExist:
+                        messages.error(request, 'Selected user not found.')
+                    except Exception as e:
+                        messages.error(request, f'Error adding leader: {str(e)}')
+                else:
+                    messages.error(request, 'Please select a user to add as leader.')
+            
             return redirect('group_detail', group_id=group.id)
     
     # Get Telegram feed for this group (if channel set), else default

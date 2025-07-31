@@ -4,7 +4,7 @@ import time
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.models import User
 from django.conf import settings
-from .models import Profile
+from .models import Profile, BannedUser
 
 
 class TelegramBackend(BaseBackend):
@@ -31,7 +31,13 @@ class TelegramBackend(BaseBackend):
         # Try to find existing user by Telegram ID
         try:
             profile = Profile.objects.get(telegram_id=telegram_id)
-            return profile.user
+            user = profile.user
+            
+            # Check if user is site-wide banned
+            if BannedUser.objects.filter(user=user, group__isnull=True).exists():
+                return None  # Prevent login for banned users
+                
+            return user
         except Profile.DoesNotExist:
             # Create new user if Telegram ID doesn't exist
             return self._create_user_from_telegram(telegram_data)

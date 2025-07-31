@@ -68,6 +68,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'fursvp.middleware.StaticFilesMiddleware',
     'django_otp.middleware.OTPMiddleware',
+    'users.middleware.BanCheckMiddleware',
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [

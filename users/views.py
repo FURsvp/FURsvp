@@ -388,6 +388,67 @@ def ban_user(request, user_id):
 @login_required
 @user_passes_test(lambda u: u.is_superuser or (hasattr(u, 'profile') and getattr(u.profile, 'can_post_blog', False)))
 def administration(request):
+    # Helper function to build redirect URL with current state
+    def build_redirect_url(tab=None, page=None, search=None, user_filter=None, action_filter=None):
+        """Build redirect URL preserving current state parameters"""
+        params = {}
+        
+        # Preserve current tab if not specified
+        if tab is None:
+            tab = request.GET.get('tab', 'users')
+        params['tab'] = tab
+        
+        # Preserve current pagination based on tab
+        if tab == 'users':
+            if page is None:
+                page = request.GET.get('user_page', 1)
+            params['user_page'] = page
+        elif tab == 'groups':
+            if page is None:
+                page = request.GET.get('group_page', 1)
+            params['group_page'] = page
+        elif tab == 'audit':
+            if page is None:
+                page = request.GET.get('audit_page', 1)
+            params['audit_page'] = page
+        elif tab == 'blog':
+            if page is None:
+                page = request.GET.get('blog_page', 1)
+            params['blog_page'] = page
+        
+        # Preserve search parameters based on tab
+        if tab == 'users':
+            if search is None:
+                search = request.GET.get('user_search', '')
+            if search:
+                params['user_search'] = search
+        elif tab == 'groups':
+            if search is None:
+                search = request.GET.get('group_search', '')
+            if search:
+                params['group_search'] = search
+        elif tab == 'audit':
+            if search is None:
+                search = request.GET.get('audit_search', '')
+            if search:
+                params['audit_search'] = search
+            if user_filter is None:
+                user_filter = request.GET.get('audit_user_filter', '')
+            if user_filter:
+                params['audit_user_filter'] = user_filter
+            if action_filter is None:
+                action_filter = request.GET.get('audit_action_filter', '')
+            if action_filter:
+                params['audit_action_filter'] = action_filter
+        
+        # Build URL with parameters
+        url = reverse('administration')
+        if params:
+            query_string = '&'.join([f'{k}={v}' for k, v in params.items() if v])
+            if query_string:
+                url += '?' + query_string
+        return url
+
     # Get search parameters
     user_search = request.GET.get('user_search', '').strip()
     group_search = request.GET.get('group_search', '').strip()
@@ -588,9 +649,8 @@ def administration(request):
             if error_count > 0:
                 messages.error(request, f'Failed to process {error_count} user group assignments.', extra_tags='admin_notification')
 
-            # Preserve current tab
-            current_tab = request.GET.get('tab', 'users')
-            return redirect(f'{reverse("administration")}?tab={current_tab}')
+            # Preserve current state
+            return redirect(build_redirect_url(tab='users'))
         
         elif 'create_group_submit' in request.POST:
             # Only process group creation, ignore any user profile data
@@ -606,21 +666,21 @@ def administration(request):
                         messages.success(request, f'Group "{new_group.name}" created successfully.', extra_tags='admin_notification')
                 except Exception as e:
                     messages.error(request, f'Error creating group: {str(e)}', extra_tags='admin_notification')
-                    messages.error(request, f'Error creating group: {str(e)}', extra_tags='admin_notification')
             else:
                 messages.error(request, 'Group name is required.', extra_tags='admin_notification')
-            # Preserve current tab
-            current_tab = request.GET.get('tab', 'groups')
-            return redirect(f'{reverse("administration")}?tab={current_tab}')
+            # Preserve current state
+            return redirect(build_redirect_url(tab='groups'))
         
         elif any(f'rename_group_{group.id}' in request.POST for group in all_groups):
             for group in all_groups:
                 if f'rename_group_{group.id}' in request.POST:
-                    rename_form = RenameGroupForm(request.POST, instance=group)
-                    if rename_form.is_valid():
+                    # Get the new name from the rename field
+                    new_name = request.POST.get(f'rename_{group.id}', '').strip()
+                    if new_name:
                         try:
                             old_name = group.name
-                            rename_form.save()
+                            group.name = new_name
+                            group.save()
                             create_notification(request.user, f'You have renamed the group to "{group.name}".', link='/administration')
                             
                             # Log the group rename
@@ -636,13 +696,13 @@ def administration(request):
                                     'new_name': group.name
                                 }
                             )
+                            messages.success(request, f'Group renamed successfully from "{old_name}" to "{group.name}".', extra_tags='admin_notification')
                         except Exception as e:
                             messages.error(request, f'Error renaming group: {str(e)}', extra_tags='admin_notification')
                     else:
-                        messages.error(request, f'Error renaming group: Invalid form data.', extra_tags='admin_notification')
-                    # Preserve current tab
-                    current_tab = request.GET.get('tab', 'groups')
-                    return redirect(f'{reverse("administration")}?tab={current_tab}')
+                        messages.error(request, 'Group name cannot be empty.', extra_tags='admin_notification')
+                    # Preserve current state
+                    return redirect(build_redirect_url(tab='groups'))
                     break
         
         elif 'delete_group_submit' in request.POST:
@@ -652,28 +712,65 @@ def administration(request):
                     group_to_delete = Group.objects.get(id=group_id)
                     group_name = group_to_delete.name
                     
+                    # Check for related data before deletion
+                    from events.models import Event
+                    from users.models import GroupRole, GroupDelegation, BannedUser
+                    
+                    event_count = Event.objects.filter(group=group_to_delete).count()
+                    role_count = GroupRole.objects.filter(group=group_to_delete).count()
+                    delegation_count = GroupDelegation.objects.filter(group=group_to_delete).count()
+                    ban_count = BannedUser.objects.filter(group=group_to_delete).count()
+                    
                     # Log the group deletion before deleting
                     AuditLog.log_action(
                         user=request.user,
                         action='group_deleted',
-                        description=f'Deleted group: {group_name}',
+                        description=f'Deleted group: {group_name} (Events: {event_count}, Roles: {role_count}, Delegations: {delegation_count}, Bans: {ban_count})',
                         ip_address=request.META.get('REMOTE_ADDR'),
                         user_agent=request.META.get('HTTP_USER_AGENT', ''),
                         additional_data={
                             'group_name': group_name,
-                            'group_id': group_id
+                            'group_id': group_id,
+                            'event_count': event_count,
+                            'role_count': role_count,
+                            'delegation_count': delegation_count,
+                            'ban_count': ban_count
                         }
                     )
                     
+                    # Delete the group (this will cascade delete related records)
                     group_to_delete.delete()
+                    
+                    # Create success message with details
+                    related_items = []
+                    if event_count > 0:
+                        related_items.append(f"{event_count} event(s)")
+                    if role_count > 0:
+                        related_items.append(f"{role_count} member(s)")
+                    if delegation_count > 0:
+                        related_items.append(f"{delegation_count} delegation(s)")
+                    if ban_count > 0:
+                        related_items.append(f"{ban_count} ban(s)")
+                    
+                    if related_items:
+                        message = f'Successfully deleted group "{group_name}" and all related data: {", ".join(related_items)}.'
+                    else:
+                        message = f'Successfully deleted group "{group_name}".'
+                    
+                    messages.success(request, message, extra_tags='admin_notification')
                     create_notification(request.user, f'You have deleted the group "{group_name}".', link='/administration')
+                    
                 except Group.DoesNotExist:
                     messages.error(request, 'Group not found.', extra_tags='admin_notification')
                 except Exception as e:
-                    messages.error(request, f'Error deleting group: {str(e)}', extra_tags='admin_notification')
-                # Preserve current tab
-                current_tab = request.GET.get('tab', 'groups')
-                return redirect(f'{reverse("administration")}?tab={current_tab}')
+                    # Provide more specific error information
+                    error_msg = str(e)
+                    if 'FOREIGN KEY constraint failed' in error_msg:
+                        messages.error(request, f'Cannot delete group "{group_name}": It has related data that cannot be automatically removed. Please contact an administrator.', extra_tags='admin_notification')
+                    else:
+                        messages.error(request, f'Error deleting group: {error_msg}', extra_tags='admin_notification')
+                # Preserve current state
+                return redirect(build_redirect_url(tab='groups'))
 
         elif 'add_users_to_group' in request.POST:
             group_id = request.POST.get('add_user_group_id')
@@ -708,16 +805,15 @@ def administration(request):
                     messages.error(request, f'Error adding users to group: {str(e)}', extra_tags='admin_notification')
             else:
                 messages.error(request, 'Please select a group and at least one user.', extra_tags='admin_notification')
-            # Preserve current tab
-            current_tab = request.GET.get('tab', 'groups')
-            return redirect(f'{reverse("administration")}?tab={current_tab}')
+            # Preserve current state
+            return redirect(build_redirect_url(tab='groups'))
 
         elif 'send_bulk_notification' in request.POST:
             message = request.POST.get('notification_message')
             link = request.POST.get('notification_link', None)
             if not message:
                 messages.error(request, 'Notification message is required.')
-                return redirect('administration')
+                return redirect(build_redirect_url(tab='notify'))
             UserModel = get_user_model()
             users = UserModel.objects.all()
             admin_name = request.user.profile.get_display_name() if hasattr(request.user, 'profile') else request.user.username
@@ -740,9 +836,8 @@ def administration(request):
             )
             
             messages.success(request, f'Notification sent to {users.count()} users.')
-            # Preserve current tab
-            current_tab = request.GET.get('tab', 'notify')
-            return redirect(f'{reverse("administration")}?tab={current_tab}')
+            # Preserve current state
+            return redirect(build_redirect_url(tab='notify'))
 
         elif request.POST.get('action') == 'update_banner':
             try:                
@@ -800,13 +895,465 @@ def administration(request):
             except Exception as e:
                 messages.error(request, f'Error updating banner: {str(e)}')
             
-            return redirect('administration')
+            # Preserve current state
+            return redirect(build_redirect_url(tab='banner'))
 
-        return redirect('administration')
+        elif 'update_permissions' in request.POST:
+            # Handle user permission updates
+            success_count = 0
+            error_count = 0
+            
+            for user_obj in all_users:
+                staff_field = f'staff_{user_obj.id}'
+                blog_field = f'blog_{user_obj.id}'
+                
+                if staff_field in request.POST or blog_field in request.POST:
+                    try:
+                        # Update staff status
+                        new_staff_status = staff_field in request.POST
+                        if user_obj.is_superuser != new_staff_status:
+                            user_obj.is_superuser = new_staff_status
+                            user_obj.is_staff = new_staff_status  # Staff should also be staff
+                            user_obj.save()
+                            
+                            # Log the change
+                            AuditLog.log_action(
+                                user=request.user,
+                                action='user_profile_updated',
+                                description=f'Updated staff status for user {user_obj.username} to {new_staff_status}',
+                                target_user=user_obj,
+                                ip_address=request.META.get('REMOTE_ADDR'),
+                                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                                additional_data={
+                                    'old_staff_status': not new_staff_status,
+                                    'new_staff_status': new_staff_status
+                                }
+                            )
+                        
+                        # Update blog posting permission
+                        new_blog_status = blog_field in request.POST
+                        if user_obj.profile.can_post_blog != new_blog_status:
+                            user_obj.profile.can_post_blog = new_blog_status
+                            user_obj.profile.save()
+                            
+                            # Log the change
+                            AuditLog.log_action(
+                                user=request.user,
+                                action='user_profile_updated',
+                                description=f'Updated blog posting permission for user {user_obj.username} to {new_blog_status}',
+                                target_user=user_obj,
+                                ip_address=request.META.get('REMOTE_ADDR'),
+                                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                                additional_data={
+                                    'old_blog_status': not new_blog_status,
+                                    'new_blog_status': new_blog_status
+                                }
+                            )
+                        
+                        success_count += 1
+                    except Exception as e:
+                        error_count += 1
+                        messages.error(request, f'Error updating permissions for {user_obj.username}: {str(e)}', extra_tags='admin_notification')
+            
+            if success_count > 0:
+                messages.success(request, f'Successfully updated permissions for {success_count} user(s).', extra_tags='admin_notification')
+            if error_count > 0:
+                messages.error(request, f'Failed to update permissions for {error_count} user(s).', extra_tags='admin_notification')
+            
+            return redirect(build_redirect_url(tab='users'))
+
+        elif 'update_groups' in request.POST:
+            # Handle user group updates
+            success_count = 0
+            error_count = 0
+            
+            for user_obj in all_users:
+                groups_field = f'groups_{user_obj.id}'
+                
+                if groups_field in request.POST:
+                    try:
+                        selected_group_ids = request.POST.getlist(groups_field)
+                        
+                        # Get current groups
+                        current_groups = set(user_obj.group_roles.all().values_list('group_id', flat=True))
+                        new_groups = set(int(gid) for gid in selected_group_ids if gid.isdigit())
+                        
+                        # Find groups to add and remove
+                        groups_to_add = new_groups - current_groups
+                        groups_to_remove = current_groups - new_groups
+                        
+                        # Remove groups
+                        if groups_to_remove:
+                            GroupRole.objects.filter(user=user_obj, group_id__in=groups_to_remove).delete()
+                        
+                        # Add groups
+                        for group_id in groups_to_add:
+                            try:
+                                group = Group.objects.get(id=group_id)
+                                GroupRole.objects.create(user=user_obj, group=group)
+                            except Group.DoesNotExist:
+                                continue
+                        
+                        if groups_to_add or groups_to_remove:
+                            # Log the change
+                            AuditLog.log_action(
+                                user=request.user,
+                                action='user_profile_updated',
+                                description=f'Updated groups for user {user_obj.username}',
+                                target_user=user_obj,
+                                ip_address=request.META.get('REMOTE_ADDR'),
+                                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                                additional_data={
+                                    'groups_added': list(groups_to_add),
+                                    'groups_removed': list(groups_to_remove)
+                                }
+                            )
+                        
+                        success_count += 1
+                    except Exception as e:
+                        error_count += 1
+                        messages.error(request, f'Error updating groups for {user_obj.username}: {str(e)}', extra_tags='admin_notification')
+            
+            if success_count > 0:
+                messages.success(request, f'Successfully updated groups for {success_count} user(s).', extra_tags='admin_notification')
+            if error_count > 0:
+                messages.error(request, f'Failed to update groups for {error_count} user(s).', extra_tags='admin_notification')
+            
+            return redirect(build_redirect_url(tab='users'))
+
+        elif 'ban_user_submit' in request.POST:
+            # Handle user banning
+            user_id = request.POST.get('ban_user_id')
+            reason = request.POST.get('ban_reason', '').strip()
+            
+            if user_id and reason:
+                try:
+                    user_to_ban = User.objects.get(id=user_id)
+                    
+                    # Check if user is already banned
+                    if BannedUser.objects.filter(user=user_to_ban, group__isnull=True).exists():
+                        messages.error(request, f'User {user_to_ban.username} is already banned.', extra_tags='admin_notification')
+                    else:
+                        # Create site-wide ban
+                        BannedUser.objects.create(
+                            user=user_to_ban,
+                            group=None,  # Site-wide ban
+                            banned_by=request.user,
+                            organizer=request.user,
+                            reason=reason
+                        )
+                        
+                        # Log the ban
+                        AuditLog.log_action(
+                            user=request.user,
+                            action='user_banned',
+                            description=f'Banned user {user_to_ban.username} site-wide: {reason}',
+                            target_user=user_to_ban,
+                            ip_address=request.META.get('REMOTE_ADDR'),
+                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                            additional_data={
+                                'reason': reason,
+                                'ban_type': 'site_wide'
+                            }
+                        )
+                        
+                        messages.success(request, f'User {user_to_ban.username} has been banned site-wide.', extra_tags='admin_notification')
+                except User.DoesNotExist:
+                    messages.error(request, 'User not found.', extra_tags='admin_notification')
+                except Exception as e:
+                    messages.error(request, f'Error banning user: {str(e)}', extra_tags='admin_notification')
+            else:
+                messages.error(request, 'User and reason are required.', extra_tags='admin_notification')
+            
+            return redirect(build_redirect_url(tab='bans'))
+
+        elif 'unban_user_submit' in request.POST:
+            # Handle user unbanning
+            user_id = request.POST.get('unban_user_id')
+            
+            if user_id:
+                try:
+                    user_to_unban = User.objects.get(id=user_id)
+                    ban_entry = BannedUser.objects.filter(user=user_to_unban, group__isnull=True).first()
+                    
+                    if ban_entry:
+                        ban_entry.delete()
+                        
+                        # Log the unban
+                        AuditLog.log_action(
+                            user=request.user,
+                            action='user_unbanned',
+                            description=f'Unbanned user {user_to_unban.username} from site-wide ban',
+                            target_user=user_to_unban,
+                            ip_address=request.META.get('REMOTE_ADDR'),
+                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                            additional_data={
+                                'ban_type': 'site_wide'
+                            }
+                        )
+                        
+                        messages.success(request, f'User {user_to_unban.username} has been unbanned.', extra_tags='admin_notification')
+                    else:
+                        messages.error(request, f'User {user_to_unban.username} is not banned.', extra_tags='admin_notification')
+                except User.DoesNotExist:
+                    messages.error(request, 'User not found.', extra_tags='admin_notification')
+                except Exception as e:
+                    messages.error(request, f'Error unbanning user: {str(e)}', extra_tags='admin_notification')
+            else:
+                messages.error(request, 'User ID is required.', extra_tags='admin_notification')
+            
+            return redirect(build_redirect_url(tab='bans'))
+
+        elif 'send_notification' in request.POST:
+            # Handle notification sending
+            recipients = request.POST.get('notification_recipients')
+            message = request.POST.get('notification_message', '').strip()
+            link = request.POST.get('notification_link', '').strip()
+            
+            if recipients and message:
+                try:
+                    users_to_notify = []
+                    
+                    if recipients == 'all':
+                        users_to_notify = User.objects.all()
+                    elif recipients == 'organizers':
+                        # Get users who are organizers (have group roles with can_post or can_manage_leadership)
+                        users_to_notify = User.objects.filter(
+                            group_roles__can_post=True
+                        ).distinct() | User.objects.filter(
+                            group_roles__can_manage_leadership=True
+                        ).distinct()
+                    elif recipients == 'selected':
+                        selected_user_ids = request.POST.getlist('selected_users')
+                        users_to_notify = User.objects.filter(id__in=selected_user_ids)
+                    
+                    if users_to_notify:
+                        admin_name = request.user.profile.get_display_name() if hasattr(request.user, 'profile') else request.user.username
+                        full_message = f"{admin_name}: {message}"
+                        
+                        notifications_created = []
+                        for user in users_to_notify:
+                            notification = Notification.objects.create(
+                                user=user,
+                                message=full_message,
+                                link=link if link else None
+                            )
+                            notifications_created.append(notification)
+                        
+                        # Log the notification
+                        AuditLog.log_action(
+                            user=request.user,
+                            action='bulk_notification_sent',
+                            description=f'Sent notification to {len(notifications_created)} users: {message[:100]}{"..." if len(message) > 100 else ""}',
+                            ip_address=request.META.get('REMOTE_ADDR'),
+                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                            additional_data={
+                                'message': message,
+                                'link': link,
+                                'recipient_count': len(notifications_created),
+                                'recipient_type': recipients
+                            }
+                        )
+                        
+                        messages.success(request, f'Notification sent to {len(notifications_created)} users.', extra_tags='admin_notification')
+                    else:
+                        messages.warning(request, 'No users found to notify.', extra_tags='admin_notification')
+                except Exception as e:
+                    messages.error(request, f'Error sending notification: {str(e)}', extra_tags='admin_notification')
+            else:
+                messages.error(request, 'Recipients and message are required.', extra_tags='admin_notification')
+            
+            return redirect(build_redirect_url(tab='notify'))
+
+        elif 'create_blog_post' in request.POST:
+            # Handle blog post creation
+            title = request.POST.get('blog_title', '').strip()
+            content = request.POST.get('blog_content', '').strip()
+            
+            if title and content and hasattr(request.user, 'profile') and getattr(request.user.profile, 'can_post_blog', False):
+                try:
+                    bsky_handle = os.environ.get('BLUESKY_HANDLE')
+                    bsky_app_password = os.environ.get('BLUESKY_APP_PASSWORD')
+                    
+                    if bsky_handle and bsky_app_password:
+                        client = Client()
+                        client.login(bsky_handle, bsky_app_password)
+                        
+                        # Create the post
+                        post_text = f"{title}\n\n{content}"
+                        response = client.post(post_text)
+                        
+                        # Log the blog post
+                        AuditLog.log_action(
+                            user=request.user,
+                            action='blog_post_created',
+                            description=f'Created blog post: {title}',
+                            ip_address=request.META.get('REMOTE_ADDR'),
+                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                            additional_data={
+                                'title': title,
+                                'content_length': len(content),
+                                'platform': 'Bluesky'
+                            }
+                        )
+                        
+                        messages.success(request, f'Blog post "{title}" has been posted to Bluesky.', extra_tags='admin_notification')
+                    else:
+                        messages.error(request, 'Bluesky credentials not configured.', extra_tags='admin_notification')
+                except Exception as e:
+                    messages.error(request, f'Error posting to Bluesky: {str(e)}', extra_tags='admin_notification')
+            else:
+                if not (hasattr(request.user, 'profile') and getattr(request.user.profile, 'can_post_blog', False)):
+                    messages.error(request, 'You do not have permission to post blog posts.', extra_tags='admin_notification')
+                else:
+                    messages.error(request, 'Title and content are required.', extra_tags='admin_notification')
+            
+            return redirect(build_redirect_url(tab='blog'))
+
+        elif 'delete_blog_post' in request.POST:
+            # Handle blog post deletion
+            post_uri = request.POST.get('delete_post_uri')
+            
+            if post_uri and hasattr(request.user, 'profile') and getattr(request.user.profile, 'can_post_blog', False):
+                try:
+                    bsky_handle = os.environ.get('BLUESKY_HANDLE')
+                    bsky_app_password = os.environ.get('BLUESKY_APP_PASSWORD')
+                    
+                    if bsky_handle and bsky_app_password:
+                        client = Client()
+                        client.login(bsky_handle, bsky_app_password)
+                        
+                        # Delete the post
+                        client.delete_post(post_uri)
+                        
+                        # Log the deletion
+                        AuditLog.log_action(
+                            user=request.user,
+                            action='blog_post_deleted',
+                            description=f'Deleted blog post: {post_uri}',
+                            ip_address=request.META.get('REMOTE_ADDR'),
+                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                            additional_data={
+                                'post_uri': post_uri
+                            }
+                        )
+                        
+                        messages.success(request, 'Blog post has been deleted from Bluesky.', extra_tags='admin_notification')
+                    else:
+                        messages.error(request, 'Bluesky credentials not configured.', extra_tags='admin_notification')
+                except Exception as e:
+                    messages.error(request, f'Error deleting from Bluesky: {str(e)}', extra_tags='admin_notification')
+            else:
+                if not (hasattr(request.user, 'profile') and getattr(request.user.profile, 'can_post_blog', False)):
+                    messages.error(request, 'You do not have permission to delete blog posts.', extra_tags='admin_notification')
+                else:
+                    messages.error(request, 'Post URI is required.', extra_tags='admin_notification')
+            
+            return redirect(build_redirect_url(tab='blog'))
+
+        elif 'update_user_modal' in request.POST:
+            # Handle user updates from modal
+            user_id = request.POST.get('edit_user_id')
+            
+            if user_id:
+                try:
+                    user_obj = User.objects.get(id=user_id)
+                    
+                    # Update staff status
+                    new_staff_status = 'modal_staff' in request.POST
+                    if user_obj.is_superuser != new_staff_status:
+                        user_obj.is_superuser = new_staff_status
+                        user_obj.is_staff = new_staff_status
+                        user_obj.save()
+                        
+                        # Log the change
+                        AuditLog.log_action(
+                            user=request.user,
+                            action='user_profile_updated',
+                            description=f'Updated staff status for user {user_obj.username} to {new_staff_status}',
+                            target_user=user_obj,
+                            ip_address=request.META.get('REMOTE_ADDR'),
+                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                            additional_data={
+                                'old_staff_status': not new_staff_status,
+                                'new_staff_status': new_staff_status
+                            }
+                        )
+                    
+                    # Update blog posting permission
+                    new_blog_status = 'modal_blog' in request.POST
+                    if user_obj.profile.can_post_blog != new_blog_status:
+                        user_obj.profile.can_post_blog = new_blog_status
+                        user_obj.profile.save()
+                        
+                        # Log the change
+                        AuditLog.log_action(
+                            user=request.user,
+                            action='user_profile_updated',
+                            description=f'Updated blog posting permission for user {user_obj.username} to {new_blog_status}',
+                            target_user=user_obj,
+                            ip_address=request.META.get('REMOTE_ADDR'),
+                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                            additional_data={
+                                'old_blog_status': not new_blog_status,
+                                'new_blog_status': new_blog_status
+                            }
+                        )
+                    
+                    # Update groups
+                    selected_group_ids = request.POST.getlist('modal_groups')
+                    current_groups = set(user_obj.group_roles.all().values_list('group_id', flat=True))
+                    new_groups = set(int(gid) for gid in selected_group_ids if gid.isdigit())
+                    
+                    # Find groups to add and remove
+                    groups_to_add = new_groups - current_groups
+                    groups_to_remove = current_groups - new_groups
+                    
+                    # Remove groups
+                    if groups_to_remove:
+                        GroupRole.objects.filter(user=user_obj, group_id__in=groups_to_remove).delete()
+                    
+                    # Add groups
+                    for group_id in groups_to_add:
+                        try:
+                            group = Group.objects.get(id=group_id)
+                            GroupRole.objects.create(user=user_obj, group=group)
+                        except Group.DoesNotExist:
+                            continue
+                    
+                    if groups_to_add or groups_to_remove:
+                        # Log the change
+                        AuditLog.log_action(
+                            user=request.user,
+                            action='user_profile_updated',
+                            description=f'Updated groups for user {user_obj.username}',
+                            target_user=user_obj,
+                            ip_address=request.META.get('REMOTE_ADDR'),
+                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                            additional_data={
+                                'groups_added': list(groups_to_add),
+                                'groups_removed': list(groups_to_remove)
+                            }
+                        )
+                    
+                    messages.success(request, f'User {user_obj.username} has been updated successfully.', extra_tags='admin_notification')
+                    
+                except User.DoesNotExist:
+                    messages.error(request, 'User not found.', extra_tags='admin_notification')
+                except Exception as e:
+                    messages.error(request, f'Error updating user: {str(e)}', extra_tags='admin_notification')
+            else:
+                messages.error(request, 'User ID is required.', extra_tags='admin_notification')
+            
+            return redirect(build_redirect_url(tab='users'))
+
+        # Default redirect if no POST action matched
+        return redirect(build_redirect_url())
 
     context = {
         'users_to_promote': users_to_promote,
         'all_groups': paginated_groups,
+        'all_users': all_users,  # Add this for ban form
         'group_form': group_form,
         'rename_group_forms': rename_group_forms,
         'user_profile_forms': user_profile_forms,
@@ -1438,3 +1985,33 @@ def custom_logout(request):
     logout(request)
     messages.success(request, "You have been successfully logged out.")
     return redirect('home')
+
+@require_GET
+@login_required
+def get_user_avatar(request, user_id):
+    """
+    Get user avatar data for Tom Select dropdowns
+    """
+    try:
+        user = User.objects.get(id=user_id)
+        profile = user.profile
+        
+        if profile.profile_picture_base64:
+            return JsonResponse({
+                'success': True,
+                'avatar': profile.profile_picture_base64,
+                'has_pfp': True
+            })
+        else:
+            return JsonResponse({
+                'success': True,
+                'avatar': None,
+                'has_pfp': False,
+                'initials': profile.get_initials(),
+                'color': profile.get_avatar_color()
+            })
+    except User.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'User not found'
+        })

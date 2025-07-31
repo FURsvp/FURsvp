@@ -182,7 +182,20 @@ class BannedUser(models.Model):
         verbose_name_plural = "Banned Users"
 
     def __str__(self):
-        return f'{self.user.username} banned from {self.group.name}'
+        if self.group:
+            return f'{self.user.username} banned from {self.group.name}'
+        else:
+            return f'{self.user.username} banned site-wide'
+    
+    @classmethod
+    def is_user_banned(cls, user, group=None):
+        """
+        Check if a user is banned (site-wide or from a specific group)
+        """
+        if group:
+            return cls.objects.filter(user=user, group=group).exists()
+        else:
+            return cls.objects.filter(user=user, group__isnull=True).exists()
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
@@ -208,3 +221,14 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+# Add method to User model to check if banned
+def user_is_banned(self, group=None):
+    """
+    Check if this user is banned (site-wide or from a specific group)
+    """
+    from .models import BannedUser
+    return BannedUser.is_user_banned(self, group)
+
+# Add the method to User model
+User.add_to_class('is_banned', user_is_banned)

@@ -45,10 +45,7 @@ def user_groups(request):
             # Get groups where user is a leader
             user_groups = GroupRole.objects.filter(user=request.user).select_related('group').order_by('group__name')
             groups_list = [role.group for role in user_groups]
-            
-            # Debug output (remove this after testing)
-            print(f"DEBUG: User {request.user.username} has {len(groups_list)} groups: {[g.name for g in groups_list]}")
-            
+                        
             # Force refresh by checking the database directly
             from django.db import connection
             connection.ensure_connection()
@@ -59,7 +56,6 @@ def user_groups(request):
                 'user_groups_timestamp': timezone.now().timestamp(),  # Cache busting
             }
         except Exception as e:
-            print(f"DEBUG: Error in user_groups context processor: {e}")
             return {
                 'user_groups': [],
                 'user_groups_count': 0,

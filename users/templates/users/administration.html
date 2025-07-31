@@ -7,7 +7,7 @@
 <style>
 /* Admin Panel Styles */
 .admin-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 2rem 0;
 }
@@ -200,6 +200,14 @@
     color: white;
     font-weight: 700;
     font-size: 1.125rem;
+    overflow: hidden;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .user-details {
@@ -219,127 +227,22 @@
 
 .username {
     color: #6b7280;
-    font-size: 0.675rem;
+    font-size: 0.875rem;
     line-height: 1.4;
 }
 
-.user-details p strong,
-.user-details p b {
-    font-weight: 600;
-    color: #374151;
-}
-
-.user-details p em,
-.user-details p i {
-    font-style: italic;
-}
-
-.user-details p a {
-    color: #667eea;
-    text-decoration: none;
-}
-
-.user-details p a:hover {
-    text-decoration: underline;
-}
-
-.user-details p code {
-    background: #f3f4f6;
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.25rem;
-    font-family: 'Courier New', monospace;
+.user-id {
+    color: #9ca3af;
     font-size: 0.75rem;
+    font-family: monospace;
 }
 
-.group-meta {
-    margin-top: 0.5rem;
-}
-
-.group-meta small {
-    display: flex;
+/* Status Indicators */
+.status-indicator {
+    display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    font-size: 0.75rem;
-    line-height: 1.2;
-}
-
-.group-meta small a {
-    color: #667eea;
-    text-decoration: none;
-}
-
-.group-meta small a:hover {
-    text-decoration: underline;
-}
-
-.group-meta .material-icons {
-    opacity: 0.7;
-}
-
-.admin-badge-toggle {
-    padding: 0.5rem 1rem;
-    border-radius: 0.75rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border: none;
-    cursor: pointer;
-    min-width: 80px;
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.admin-badge-toggle::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.admin-badge-toggle:hover::before {
-    left: 100%;
-}
-
-.admin-badge-toggle:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.admin-badge-toggle:active {
-    transform: translateY(0);
-}
-
-.admin-badge-toggle.yes {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-}
-
-.admin-badge-toggle.yes:hover {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
-}
-
-.admin-badge-toggle.no {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-}
-
-.admin-badge-toggle.no:hover {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
-}
-
-/* Keep original admin-badge for backward compatibility */
-.admin-badge {
-    padding: 0.375rem 0.75rem;
+    padding: 0.25rem 0.5rem;
     border-radius: 0.5rem;
     font-size: 0.75rem;
     font-weight: 600;
@@ -347,943 +250,434 @@
     letter-spacing: 0.05em;
 }
 
-.admin-badge.yes {
+.status-staff {
     background: #dcfce7;
     color: #166534;
 }
 
-.admin-badge.no {
-    background: #fef2f2;
-    color: #dc2626;
+.status-2fa {
+    background: #dbeafe;
+    color: #1e40af;
 }
 
-/* Tom Select Customization */
-.tom-select-custom .ts-wrapper {
+.status-no-2fa {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.last-login {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Permission Controls */
+.permission-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.permission-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.permission-toggle input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 0.25rem;
+    border: 2px solid #d1d5db;
+    cursor: pointer;
+}
+
+.permission-toggle label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+}
+
+/* Tom Select Styling */
+.tom-select-groups {
+    min-width: 200px;
+}
+
+.ts-wrapper {
     border: 2px solid #e2e8f0;
     border-radius: 0.75rem;
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 100;
     background: white;
 }
 
-.tom-select-custom .ts-wrapper.focus {
+.ts-wrapper:focus-within {
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    z-index: 200;
 }
 
-.tom-select-custom .ts-control {
+.ts-control {
+    border: none !important;
+    background: transparent !important;
+    padding: 0.75rem 1rem !important;
+}
+
+.ts-dropdown {
+    border: 2px solid #667eea !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.ts-option {
+    padding: 0.75rem 1rem !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+}
+
+.ts-option:hover {
+    background: #f8fafc !important;
+}
+
+.ts-option.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+}
+
+/* Ban user select specific styling */
+.tom-select-ban {
+    min-width: 300px;
+}
+
+.tom-select-ban .ts-wrapper {
+    min-height: 48px;
+}
+
+.tom-select-ban .ts-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Modal Tom Select styling */
+.tom-select-modal-groups {
+    width: 100%;
+}
+
+.tom-select-modal-groups .ts-wrapper {
+    min-height: 48px;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: white;
+}
+
+.tom-select-modal-groups .ts-wrapper:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.tom-select-modal-groups .ts-control {
     border: none;
     background: transparent;
     padding: 0.75rem 1rem;
-    min-height: 44px;
-    position: relative;
-    z-index: 100;
-    font-size: 0.875rem;
-    color: #374151;
+    min-height: 48px;
 }
 
-.tom-select-custom .ts-dropdown {
-    border: 2px solid #667eea;
-    border-radius: 1rem;
-    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
-    background: white;
-    position: absolute !important;
-    z-index: 99999 !important;
-    max-height: 300px;
-    overflow-y: auto;
-    margin-top: 8px;
-    padding: 0.5rem 0;
-}
-
-.tom-select-custom .ts-dropdown .option {
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    border-bottom: 1px solid #f1f5f9;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #374151;
-    margin: 0 0.5rem;
-    border-radius: 0.5rem;
-}
-
-.tom-select-custom .ts-dropdown .option:hover {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
-}
-
-.tom-select-custom .ts-dropdown .option.selected {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-}
-
-.tom-select-custom .ts-dropdown .option.selected:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-}
-
-/* Selected Items - Admin Badge Theme */
-.tom-select-custom .ts-wrapper .item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 0.5rem 0.75rem;
-    border-radius: 20px;
-    margin: 0.25rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    border: none;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-    transition: all 0.2s ease;
-    max-width: 200px;
-    overflow: hidden;
-}
-
-.tom-select-custom .ts-wrapper .item:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.tom-select-custom .ts-wrapper .item .remove {
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: bold;
-    margin-left: 0.25rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 14px;
-    line-height: 1;
-    padding: 2px;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.tom-select-custom .ts-wrapper .item .remove:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-}
-
-.tom-select-custom .ts-wrapper .item .group-logo {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    flex-shrink: 0;
-}
-
-.tom-select-custom .ts-wrapper .item .group-logo-placeholder {
-    width: 16px;
-    height: 16px;
-    font-size: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    color: white;
-    font-weight: 700;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-    letter-spacing: 0.2px;
-}
-
-/* Dropdown option logos */
-.tom-select-custom .ts-dropdown .option .group-logo {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
+.tom-select-modal-groups .ts-dropdown {
     border: 2px solid #e2e8f0;
-    flex-shrink: 0;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-    position: relative;
-    left: 0;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
 }
 
-.tom-select-custom .ts-dropdown .option .group-logo-placeholder {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-    border: 2px solid #e2e8f0;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
-    color: white;
-    font-weight: 700;
-    box-shadow: 0 3px 6px rgba(102, 126, 234, 0.3);
-    position: relative;
-    left: 0;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    letter-spacing: 0.5px;
-}
-
-/* Input placeholder styling */
-.tom-select-custom .ts-control .item + input {
-    color: #64748b;
-    font-size: 0.875rem;
-}
-
-/* No options message */
-.tom-select-custom .ts-dropdown .no-results {
-    padding: 1rem;
-    text-align: center;
-    color: #64748b;
-    font-style: italic;
-}
-
-/* Ensure table doesn't clip the dropdown */
-.table-responsive {
-    overflow: visible !important;
-}
-
-.user-table {
-    position: relative;
-}
-
-.user-table td {
-    position: relative;
-    overflow: visible;
-}
-
-/* Ensure Tom Select wrapper has proper positioning */
-.tom-select-custom .ts-wrapper {
-    position: relative !important;
-    z-index: 100;
-}
-
-.tom-select-custom .ts-wrapper.focus {
-    z-index: 99998 !important;
-}
-
-.tom-select-custom .ts-dropdown .option {
+.tom-select-modal-groups .ts-dropdown .option {
     padding: 0.75rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    border-bottom: 1px solid #f3f4f6;
-    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-.tom-select-custom .ts-dropdown .option:hover {
-    background-color: #f8fafc;
+.tom-select-modal-groups .ts-dropdown .option:hover {
+    background: #f8fafc;
 }
 
-.tom-select-custom .ts-dropdown .option.selected {
-    background-color: #667eea;
+.tom-select-modal-groups .ts-dropdown .option.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
 }
 
-.group-logo {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    object-fit: cover;
+.tom-select-modal-groups .ts-dropdown .option .group-description {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+/* Notification user select styling */
+.tom-select-notification-users {
+    width: 100%;
+}
+
+.tom-select-notification-users .ts-wrapper {
+    min-height: 48px;
     border: 2px solid #e2e8f0;
-    flex-shrink: 0;
+    border-radius: 0.75rem;
+    background: white;
 }
 
-.group-logo-placeholder {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #667eea;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 10px;
-    font-weight: 600;
+.tom-select-notification-users .ts-wrapper:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.tom-select-notification-users .ts-control {
+    border: none;
+    background: transparent;
+    padding: 0.75rem 1rem;
+    min-height: 48px;
+}
+
+.tom-select-notification-users .ts-dropdown {
     border: 2px solid #e2e8f0;
-    flex-shrink: 0;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
 }
 
-.ts-wrapper .item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #667eea;
+.tom-select-notification-users .ts-dropdown .option {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.tom-select-notification-users .ts-dropdown .option:hover {
+    background: #f8fafc;
+}
+
+.tom-select-notification-users .ts-dropdown .option.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
-    margin: 0.125rem;
-    font-size: 0.75rem;
-}
-
-.ts-wrapper .item .group-logo {
-    width: 32px;
-    height: 32px;
-    border-color: rgba(255, 255, 255, 0.3);
-}
-
-.ts-wrapper .item .group-logo-placeholder {
-    width: 32px;
-    height: 32px;
-    font-size: 8px;
-    border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-    justify-content: flex-end;
-}
-
-/* Individual Action Button Styling */
 .action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    padding: 0;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    border: 2px solid;
-    flex-shrink: 0;
-    box-sizing: border-box;
-}
-
-.action-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.action-btn.btn-outline-primary {
-    border-color: #3b82f6;
-    color: #3b82f6;
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-}
-
-.action-btn.btn-outline-primary:hover {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    border-color: #3b82f6;
-    color: white;
-}
-
-.action-btn.btn-outline-danger {
-    border-color: #ef4444;
-    color: #ef4444;
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-}
-
-.action-btn.btn-outline-danger:hover {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    border-color: #ef4444;
-    color: white;
-}
-
-.action-btn .material-icons {
-    font-size: 18px;
-    line-height: 1;
-}
-
-/* Ensure consistent button heights in forms */
-.d-flex.gap-2 .action-btn {
-    min-height: 36px;
-    max-height: 36px;
-}
-
-.btn-primary-admin {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 0.75rem;
-    padding: 0.875rem 2rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    transition: all 0.3s ease;
-    display: flex;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.btn-primary-admin:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
 }
 
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.btn-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
 /* Pagination */
-.pagination-container {
+.pagination {
     display: flex;
     justify-content: center;
+    gap: 0.5rem;
     margin-top: 2rem;
 }
 
 .pagination .page-link {
-    border: none;
     padding: 0.75rem 1rem;
-    margin: 0 0.25rem;
+    border: 2px solid #e2e8f0;
     border-radius: 0.5rem;
-    color: #667eea;
+    color: #374151;
+    text-decoration: none;
     font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.pagination .page-link:hover {
-    background: #f1f5f9;
-    transform: translateY(-1px);
-}
-
-.pagination .page-item.active .page-link {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.modal {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    z-index: 99999 !important;
-}
-
-.modal-dialog {
-    margin: 0 !important;
-    max-width: 90vw !important;
-    width: auto !important;
-}
-
-.modal-dialog-centered {
-    display: flex !important;
-    align-items: center !important;
-    min-height: calc(100% - 1rem) !important;
-}
-
-.modal-content {
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25) !important;
-    background: white !important;
-    border: none !important;
-    border-radius: 1rem !important;
-    position: relative;
-    z-index: 9999;
-    overflow: hidden;
-}
-
-.modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-    border: none !important;
-    padding: 1.5rem 2rem !important;
-    position: relative;
-}
-
-.modal-header .modal-title {
-    font-size: 1.25rem !important;
-    font-weight: 700 !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.75rem !important;
-}
-
-.modal-header .material-icons {
-    font-size: 1.5rem !important;
-    opacity: 0.9 !important;
-}
-
-.modal-header .btn-close {
-    filter: brightness(0) invert(1) !important;
-    opacity: 0.8 !important;
-    transition: opacity 0.2s ease !important;
-    background: none !important;
-    border: none !important;
-    padding: 0.5rem !important;
-    margin: 0 !important;
-    position: absolute !important;
-    right: 1rem !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-}
-
-.modal-header .btn-close:hover {
-    opacity: 1 !important;
-}
-
-.modal-body {
-    background: white !important;
-    padding: 2rem !important;
-    border: none !important;
-}
-
-.modal-footer {
-    background: white !important;
-    border: none !important;
-    padding: 1.5rem 2rem !important;
-    border-radius: 0 0 1rem 1rem !important;
-    display: flex !important;
-    gap: 1rem !important;
-    justify-content: flex-end !important;
-}
-
-.modal-open {
-    overflow: hidden !important;
-}
-
-.modal.show {
-    display: flex !important;
-    z-index: 99999 !important;
-}
-
-/* Modal Form Styling */
-.modal .form-label {
-    font-weight: 600 !important;
-    color: #374151 !important;
-    margin-bottom: 0.5rem !important;
-    font-size: 0.875rem !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-}
-
-.modal .form-control {
-    border: 2px solid #e2e8f0 !important;
-    border-radius: 0.75rem !important;
-    padding: 0.75rem 1rem !important;
-    font-size: 0.875rem !important;
-    transition: all 0.3s ease !important;
-    background: white !important;
-}
-
-.modal .form-control:focus {
-    border-color: #667eea !important;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
-    outline: none !important;
-}
-
-.modal .btn {
-    border-radius: 0.75rem !important;
-    padding: 0.75rem 1.5rem !important;
-    font-weight: 600 !important;
-    font-size: 0.875rem !important;
-    transition: all 0.3s ease !important;
-    border: none !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-}
-
-.modal .btn-secondary {
-    background: #f3f4f6 !important;
-    color: #374151 !important;
-}
-
-.modal .btn-secondary:hover {
-    background: #e5e7eb !important;
-    transform: translateY(-1px) !important;
-}
-
-.modal .btn-primary-admin {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-}
-
-.modal .btn-primary-admin:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3) !important;
-}
-
-/* Modal User List Styling */
-.modal #userList {
-    border: 2px solid #e2e8f0 !important;
-    border-radius: 0.75rem !important;
-    background: #f8fafc !important;
-    transition: all 0.3s ease !important;
-}
-
-.modal #userList:focus-within {
-    border-color: #667eea !important;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
-}
-
-.modal .user-selection-item {
-    background: white !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-    padding: 0.75rem !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer !important;
-}
-
-.modal .user-selection-item:hover {
-    background: #f8fafc !important;
-    border-color: #667eea !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1) !important;
-}
-
-.modal .user-selection-item.selected {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-    border-color: #667eea !important;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2) !important;
-}
-
-.modal .user-selection-item.selected:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3) !important;
-}
-
-/* Modal Styling - Clean and Modern */
-.modal {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    z-index: 99999 !important;
-}
-
-.modal-dialog {
-    margin: 0 !important;
-    max-width: 500px !important;
-    width: 90% !important;
-}
-
-.modal-dialog-centered {
-    display: flex !important;
-    align-items: center !important;
-    min-height: calc(100% - 1rem) !important;
-}
-
-.modal-content {
-    border: none !important;
-    border-radius: 1rem !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-    background: white !important;
-    overflow: hidden !important;
-}
-
-.modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-    border-bottom: none !important;
-    padding: 1.5rem 2rem !important;
-}
-
-.modal-header .modal-title {
-    font-size: 1.25rem !important;
-    font-weight: 700 !important;
-    color: white !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.75rem !important;
-}
-
-.modal-header .material-icons {
-    font-size: 1.5rem !important;
-    color: white !important;
-}
-
-.modal-header .btn-close {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: none !important;
-    border-radius: 50% !important;
-    width: 32px !important;
-    height: 32px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.2s ease !important;
-}
-
-.modal-header .btn-close:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
-    transform: scale(1.1) !important;
-}
-
-.modal-body {
-    padding: 2rem !important;
-    background: white !important;
-}
-
-.modal-footer {
-    background: #f8fafc !important;
-    border-top: 1px solid #e2e8f0 !important;
-    padding: 1.5rem 2rem !important;
-    display: flex !important;
-    gap: 1rem !important;
-    justify-content: flex-end !important;
-}
-
-.modal.fade .modal-dialog,
-.modal.show .modal-dialog {
-    transform: none !important;
-    transition: none !important;
-}
-
-/* Ensure buttons are visible above table elements */
-.btn {
-    position: relative;
-    z-index: 10;
-}
-
-.user-table td {
-    position: relative;
-}
-
-.user-table td .btn {
-    z-index: 20;
-}
-
-/* User ID Column Styling */
-.user-id {
-    font-family: 'Courier New', monospace;
-    font-weight: 600;
-    color: #6b7280;
-    background: #f3f4f6;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    display: inline-block;
-    min-width: 40px;
-    text-align: center;
-}
-
-/* User Selection Styles */
-.user-selection-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.user-selection-item:hover {
+.pagination .page-link:hover {
     background: #f8fafc;
     border-color: #667eea;
 }
 
-.user-selection-item.selected {
-    background: #667eea;
-    color: white;
-    border-color: #667eea;
-}
-
-.user-selection-item.selected:hover {
-    background: #5a67d8;
-}
-
-.user-selection-checkbox {
-    margin: 0;
-}
-
-.user-selection-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+.pagination .page-item.active .page-link {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-color: #667eea;
     color: white;
-    font-weight: 600;
-    font-size: 0.875rem;
-    flex-shrink: 0;
 }
 
-.user-selection-details h6 {
-    margin: 0;
-    font-size: 0.875rem;
-    font-weight: 600;
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6b7280;
 }
 
-.user-selection-details small {
-    color: inherit;
-    opacity: 0.8;
+.empty-state .material-icons {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
 }
 
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
-    .admin-container {
-        padding: 1rem;
-    }
-    
-    .search-form {
-        flex-direction: column;
-    }
-    
     .user-table {
         font-size: 0.875rem;
     }
     
     .user-table th,
     .user-table td {
-        padding: 0.75rem;
+        padding: 0.75rem 1rem;
+    }
+    
+    .permission-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .search-form {
+        flex-direction: column;
     }
 }
 
-/* Force dropdown to appear above everything */
-.ts-dropdown,
-.tom-select-custom .ts-dropdown {
-    z-index: 999999 !important;
-    position: absolute !important;
+/* Modal styling */
+.modal-content {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
-/* Lower z-index for buttons to prevent conflicts */
-.btn, .action-btn, .btn-primary-admin {
-    z-index: 1 !important;
+.modal-header {
+    border-bottom: 2px solid #f1f5f9;
+    padding: 1.5rem;
 }
 
-/* Ensure admin panel is above main-content */
-.admin-container {
-    position: relative !important;
-    z-index: 10 !important;
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: #1f2937;
 }
 
-.admin-container * {
-    position: relative !important;
-    z-index: auto !important;
+.modal-body {
+    padding: 1.5rem;
 }
 
-/* Override any main-content interference */
-.main-content {
-    position: relative !important;
-    z-index: 1 !important;
+.modal-footer {
+    border-top: 2px solid #f1f5f9;
+    padding: 1.5rem;
 }
 
-/* Ensure all interactive elements are clickable */
-.admin-nav .nav-link,
-.admin-card,
-.user-table,
-.btn,
-.form-control,
-.modal {
-    position: relative !important;
-    z-index: auto !important;
+/* Modal form styling */
+.modal .form-group {
+    margin-bottom: 1.5rem;
 }
 
-/* Dark mode styles for admin panel */
-.dark-mode .admin-header h1 {
-    color: #f1f5f9 !important;
+.modal .form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: block;
 }
 
-.dark-mode .admin-header p {
-    color: #cbd5e1 !important;
+.modal .permission-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
-.dark-mode .admin-nav .nav-pills {
-    background: #1e293b !important;
-    border-color: #334155 !important;
+.modal .permission-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background: #f8fafc;
+    transition: all 0.2s ease;
 }
 
-.dark-mode .admin-nav .nav-link {
-    color: #cbd5e1 !important;
+.modal .permission-toggle:hover {
+    border-color: #667eea;
+    background: white;
 }
 
-.dark-mode .admin-nav .nav-link:hover {
-    background: #334155 !important;
-    color: #f1f5f9 !important;
+.modal .permission-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #667eea;
 }
 
-.dark-mode .admin-nav .nav-link.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-}
-
-.dark-mode .admin-card {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-}
-
-.dark-mode .admin-card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-}
-
-.dark-mode .admin-card-header h2 {
-    color: white !important;
-}
-
-.dark-mode .admin-card-header p {
-    color: rgba(255, 255, 255, 0.9) !important;
-}
-
-.dark-mode .search-container {
-    background: #334155 !important;
-    border-color: #475569 !important;
-}
-
-.dark-mode .search-input {
-    background: #1e293b !important;
-    border-color: #475569 !important;
-    color: #f1f5f9 !important;
-}
-
-.dark-mode .search-input:focus {
-    border-color: #667eea !important;
-}
-
-.dark-mode .user-table th {
-    background: #334155 !important;
-    color: #f1f5f9 !important;
-    border-bottom-color: #475569 !important;
-}
-
-.dark-mode .user-table td {
-    border-bottom-color: #334155 !important;
-}
-
-.dark-mode .user-table tbody tr:hover {
-    background: #334155 !important;
-}
-
-/* Dark mode modal styles */
-.dark-mode .modal-content {
-    background: #1e293b !important;
-    border: 1px solid #334155 !important;
-}
-
-.dark-mode .modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-}
-
-.dark-mode .modal-body {
-    background: #1e293b !important;
-    color: #f1f5f9 !important;
-}
-
-.dark-mode .modal-footer {
-    background: #334155 !important;
-    border-top-color: #475569 !important;
-}
-
-.dark-mode .user-id {
-    color: #cbd5e1 !important;
-    background: #334155 !important;
+.modal .permission-toggle label {
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    margin: 0;
 }
 </style>
+
+<!-- Tom Select CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="profile-container">
+<div class="admin-container">
     <!-- Header -->
     <div class="admin-header">
         <h1>
-            <i class="material-icons align-middle me-2">admin_panel_settings</i>
+            <span class="material-icons">admin_panel_settings</span>
             Administration Panel
             </h1>
         <p>Manage users, groups, and platform settings</p>
@@ -1291,127 +685,93 @@
 
     <!-- Navigation -->
     <div class="admin-nav">
-        <ul class="nav nav-pills justify-content-center" id="adminTabs" role="tablist">
+        <ul class="nav nav-pills" id="adminTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="users-tab" data-bs-toggle="pill" data-bs-target="#users" type="button" role="tab">
-                    <i class="material-icons">people</i>
+                    <span class="material-icons">people</span>
                     Users
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                 <button class="nav-link" id="groups-tab" data-bs-toggle="pill" data-bs-target="#groups" type="button" role="tab">
-                    <i class="material-icons">group_add</i>
+                    <span class="material-icons">groups</span>
                     Groups
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                 <button class="nav-link" id="bans-tab" data-bs-toggle="pill" data-bs-target="#bans" type="button" role="tab">
-                    <i class="material-icons">gavel</i>
+                    <span class="material-icons">gavel</span>
                     Bans
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                <button class="nav-link" id="banner-tab" data-bs-toggle="pill" data-bs-target="#banner" type="button" role="tab">
-                    <i class="material-icons">campaign</i>
-                    Banner
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
                 <button class="nav-link" id="notify-tab" data-bs-toggle="pill" data-bs-target="#notify" type="button" role="tab">
-                    <i class="material-icons">notifications</i>
+                    <span class="material-icons">notifications</span>
                     Notifications
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit" type="button" role="tab" aria-controls="audit" aria-selected="false">
-                    <i class="material-icons">history</i>
+                <button class="nav-link" id="audit-tab" data-bs-toggle="pill" data-bs-target="#audit" type="button" role="tab">
+                    <span class="material-icons">history</span>
                     Audit Log
                     </button>
                 </li>
-                {% if user.profile.can_post_blog %}
                 <li class="nav-item" role="presentation">
                 <button class="nav-link" id="blog-tab" data-bs-toggle="pill" data-bs-target="#blog" type="button" role="tab">
-                    <i class="material-icons">rss_feed</i>
+                    <span class="material-icons">article</span>
                     Blog
                     </button>
                 </li>
-                {% endif %}
             </ul>
     </div>
 
-    <!-- Content -->
-            <div class="tab-content" id="adminTabsContent">
+    <!-- Tab Content -->
+    <div class="tab-content" id="adminTabContent">
         <!-- Users Tab -->
         <div class="tab-pane fade show active" id="users" role="tabpanel">
             <div class="admin-card">
                 <div class="admin-card-header">
                     <h2>
-                        <i class="material-icons">people</i>
+                        <span class="material-icons">people</span>
                         User Management
                     </h2>
-                    <p>Manage user accounts, permissions, and group assignments</p>
+                    <p>Manage user permissions, groups, and account settings</p>
                 </div>
                 <div class="admin-card-body">
                     <!-- Search -->
                     <div class="search-container">
                         <form method="get" class="search-form">
-                            <input type="text" 
-                                   name="user_search" 
-                                   value="{{ user_search }}" 
-                                   class="search-input" 
-                                   placeholder="Search users by name, username, or email...">
+                            <input type="hidden" name="tab" value="users">
+                            <input type="text" name="user_search" value="{{ user_search }}" class="search-input" placeholder="Search users by username, email, or display name...">
                             <button type="submit" class="search-btn">
-                                <i class="material-icons">search</i>
+                                <span class="material-icons">search</span>
                                 Search
                                 </button>
-                                {% if user_search %}
-                            <a href="?{% if request.GET.group_search %}group_search={{ request.GET.group_search }}{% endif %}" 
-                               class="btn btn-outline-secondary">
-                                <i class="material-icons">clear</i>
-                                Clear
-                                </a>
-                                {% endif %}
                         </form>
                     </div>
+
                                         <!-- Users Table -->
-                    <form method="post" id="userProfileForm">
-                        {% csrf_token %}
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div>
-                                <h3 class="mb-0">Users</h3>
-                                <p class="text-muted mb-0">Manage user permissions and group assignments</p>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button type="submit" name="promote_users_submit" class="btn btn-primary-admin">
-                                    <i class="material-icons">save</i>
-                                    Save Changes
-                                </button>
-                            </div>
-                        </div>
+                    {% if users_to_promote %}
                         <div class="table-responsive">
                             <table class="user-table">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>User</th>
-                                        <th>Email</th>
-                                        <th>Staff</th>
-                                        <th>Groups</th>
+                                        <th>Status</th>
+                                        <th>Last Login</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for user_obj in users_to_promote %}
-                                    <tr>
-                                        <td>
-                                            <span class="user-id">{{ user_obj.id }}</span>
-                                        </td>
+                                    <tr data-user-id="{{ user_obj.id }}" 
+                                        data-staff="{{ user_obj.is_superuser|yesno:'true,false' }}"
+                                        data-blog-permission="{{ user_obj.profile.can_post_blog|yesno:'true,false' }}">
                                         <td>
                                             <div class="user-info">
-                                                <div class="user-avatar">
+                                                <div class="user-avatar" {% if not user_obj.profile.profile_picture_base64 %}style="background-color: {{ user_obj.profile.get_avatar_color }};"{% endif %}>
                                                     {% if user_obj.profile.profile_picture_base64 %}
-                                                        <img src="{{ user_obj.profile.profile_picture_base64 }}" 
-                                                             alt="{{ user_obj.profile.get_display_name }}"
-                                                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                                        <img src="{{ user_obj.profile.profile_picture_base64 }}" alt="{{ user_obj.profile.get_display_name }}">
                                                     {% else %}
                                                         {{ user_obj.profile.get_initials }}
                                                     {% endif %}
@@ -1419,47 +779,56 @@
                                                 <div class="user-details">
                                                     <div class="user-name">
                                                         {{ user_obj.profile.get_display_name }}
-                                                        {% verified_checkmark user_obj %}
+                                                        {% if user_obj.is_superuser %}
+                                                            <span class="material-icons verified-checkmark" style="color: #10b981; font-size: 1rem;">verified</span>
+                                                        {% endif %}
                                                     </div>
                                                     <div class="username">@{{ user_obj.username }}</div>
+                                                    <div class="user-id">ID: {{ user_obj.id }}</div>
+                                                    <!-- Hidden group data for JavaScript -->
+                                                    {% for group in user_obj.group_roles.all %}
+                                                        <span data-group-id="{{ group.group.id }}" style="display: none;"></span>
+                                                    {% endfor %}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{{ user_obj.email }}</td>
                                         <td>
-                                            <button type="button" 
-                                                    class="admin-badge-toggle {% if user_obj.is_superuser %}yes{% else %}no{% endif %}" 
-                                                    data-user-id="{{ user_obj.id }}"
-                                                    data-current-status="{% if user_obj.is_superuser %}admin{% else %}user{% endif %}"
-                                                    title="Click to toggle admin status">
-                                                {{ user_obj.is_superuser|yesno:"Yes,No" }}
-                                            </button>
+                                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                                {% if user_obj.is_superuser %}
+                                                    <span class="status-indicator status-staff">
+                                                        <span class="material-icons" style="font-size: 0.75rem;">verified</span>
+                                                        Staff
+                                                    </span>
+                                                {% endif %}
+                                                {% if user_obj.totpdevice_set.exists %}
+                                                    <span class="status-indicator status-2fa">
+                                                        <span class="material-icons" style="font-size: 0.75rem;">security</span>
+                                                        2FA Enabled
+                                                    </span>
+                                                {% else %}
+                                                    <span class="status-indicator status-no-2fa">
+                                                        <span class="material-icons" style="font-size: 0.75rem;">warning</span>
+                                                        No 2FA
+                                                    </span>
+                                                {% endif %}
+                                            </div>
                                         </td>
                                         <td>
-                                            {% with profile_form=user_profile_forms|get_item:user_obj.id %}
-                                                                                            <select name="{{ profile_form.admin_groups.name }}" 
-                                                    id="admin_groups_{{ user_obj.id }}" 
-                                                    class="tom-select-groups tom-select-custom" 
-                                                    multiple 
-                                                    data-user-id="{{ user_obj.id }}">
-                                                    {% for group in profile_form.admin_groups.field.queryset %}
-                                                        <option value="{{ group.id }}" 
-                                                                {% if group in profile_form.admin_groups.initial %}selected{% endif %}
-                                                                data-logo="{{ group.logo_base64|default:'' }}"
-                                                                data-name="{{ group.name }}">
-                                                            {{ group.name }}
-                                                        </option>
-                                                    {% endfor %}
-                                                </select>
-                                            {% endwith %}
+                                            <div class="last-login">
+                                                {% if user_obj.last_login %}
+                                                    {{ user_obj.last_login|date:"M j, Y g:i A" }}
+                                                {% else %}
+                                                    Never
+                                                {% endif %}
+                                            </div>
                                         </td>
-                                    </tr>
-                                    {% empty %}
-                                    <tr>
-                                        <td colspan="5" class="text-center py-5">
-                                            <i class="material-icons d-block mb-3" style="font-size: 3rem; color: #9ca3af;">person_off</i>
-                                            <h4 class="text-muted">No users found</h4>
-                                            <p class="text-muted">Try adjusting your search criteria</p>
+                                        <td>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <button class="action-btn btn-primary" onclick="editUser({{ user_obj.id }})">
+                                                    <span class="material-icons">edit</span>
+                                                    Edit
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -1468,60 +837,32 @@
                         </div>
 
                         <!-- Pagination -->
-                        {% if users_to_promote.paginator.num_pages > 1 %}
-                        <div class="pagination-container">
-                            <nav aria-label="User pagination">
-                                <ul class="pagination">
+                        {% if users_to_promote.has_other_pages %}
+                            <nav class="pagination">
                                 {% if users_to_promote.has_previous %}
-                                <li class="page-item">
-                                        <a class="page-link" href="?user_page=1{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">
-                                            <i class="material-icons">first_page</i>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                        <a class="page-link" href="?user_page={{ users_to_promote.previous_page_number }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">
-                                            <i class="material-icons">chevron_left</i>
-                                    </a>
-                                </li>
+                                    <a href="?tab=users&user_page={{ users_to_promote.previous_page_number }}{% if user_search %}&user_search={{ user_search }}{% endif %}" class="page-link">Previous</a>
                                 {% endif %}
                                     
                                 {% for num in users_to_promote.paginator.page_range %}
                                     {% if users_to_promote.number == num %}
-                                            <li class="page-item active">
-                                                <span class="page-link">{{ num }}</span>
-                                            </li>
+                                        <span class="page-link active">{{ num }}</span>
                                     {% elif num > users_to_promote.number|add:'-3' and num < users_to_promote.number|add:'3' %}
-                                            <li class="page-item">
-                                                <a class="page-link" href="?user_page={{ num }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">{{ num }}</a>
-                                            </li>
+                                        <a href="?tab=users&user_page={{ num }}{% if user_search %}&user_search={{ user_search }}{% endif %}" class="page-link">{{ num }}</a>
                                     {% endif %}
                                 {% endfor %}
                                     
                                 {% if users_to_promote.has_next %}
-                                <li class="page-item">
-                                        <a class="page-link" href="?user_page={{ users_to_promote.next_page_number }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">
-                                            <i class="material-icons">chevron_right</i>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                        <a class="page-link" href="?user_page={{ users_to_promote.paginator.num_pages }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">
-                                            <i class="material-icons">last_page</i>
-                                    </a>
-                                </li>
+                                    <a href="?tab=users&user_page={{ users_to_promote.next_page_number }}{% if user_search %}&user_search={{ user_search }}{% endif %}" class="page-link">Next</a>
                                 {% endif %}
-                            </ul>
                         </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="empty-state">
+                            <span class="material-icons">people_outline</span>
+                            <h4>No users found</h4>
+                            <p>Try adjusting your search criteria</p>
                         </div>
                         {% endif %}
-
-                        <!-- Action Buttons -->
-                        <div class="action-buttons">
-                            <button type="submit" name="promote_users_submit" class="btn btn-primary-admin">
-                                <i class="material-icons">save</i>
-                                Save Changes
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
@@ -1531,41 +872,34 @@
             <div class="admin-card">
                 <div class="admin-card-header">
                     <h2>
-                        <i class="material-icons">group_add</i>
+                        <span class="material-icons">groups</span>
                         Group Management
                     </h2>
-                    <p>Create, edit, and manage event groups and their settings</p>
+                    <p>Create, edit, and manage event groups</p>
                 </div>
                 <div class="admin-card-body">
                     <!-- Search -->
                     <div class="search-container">
                         <form method="get" class="search-form">
-                            <input type="text" 
-                                   name="group_search" 
-                                   value="{{ group_search }}" 
-                                   class="search-input" 
-                                   placeholder="Search groups...">
+                            <input type="hidden" name="tab" value="groups">
+                            <input type="text" name="group_search" value="{{ group_search }}" class="search-input" placeholder="Search groups...">
                             <button type="submit" class="search-btn">
-                                <i class="material-icons">search</i>
+                                <span class="material-icons">search</span>
                                 Search
                                 </button>
-                                {% if group_search %}
-                            <a href="?{% if request.GET.user_search %}user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}" 
-                               class="btn btn-outline-secondary">
-                                <i class="material-icons">clear</i>
-                                Clear
-                                </a>
-                                {% endif %}
                         </form>
                     </div>
 
-                    <!-- Create Group Button -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h3 class="mb-0">Groups</h3>
-                        <button type="button" class="btn btn-primary-admin" data-bs-toggle="modal" data-bs-target="#createGroupModal">
-                            <i class="material-icons">add_circle</i>
+                    <!-- Create New Group -->
+                    <div class="search-container">
+                        <form method="post" class="search-form">
+                            {% csrf_token %}
+                            <input type="text" name="new_group_name" class="search-input" placeholder="Enter new group name..." required>
+                            <button type="submit" name="create_group_submit" class="search-btn">
+                                <span class="material-icons">add</span>
                             Create Group
                         </button>
+                        </form>
                     </div>
 
                     <!-- Groups Table -->
@@ -1585,45 +919,29 @@
                                         <div class="user-info">
                                             <div class="user-avatar">
                                                 {% if group.logo_base64 %}
-                                                    <img src="data:image/png;base64,{{ group.logo_base64 }}" 
-                                                         alt="{{ group.name }}"
-                                                         style="width: 100%; height: 90%; object-fit: cover; border-radius: 50%;">
+                                                        <img src="data:image/png;base64,{{ group.logo_base64 }}" alt="{{ group.name }}">
                                                 {% else %}
-                                                    <i class="material-icons">group</i>
+                                                        <span class="material-icons">group</span>
                                                 {% endif %}
                                             </div>
                                             <div class="user-details">
-                                                <h4>{{ group.name }}</h4>
-                                                <p>{{ group.description|safe|truncatechars_html:80|default:"No description" }}</p>
-                                                {% if group.contact_email %}
-                                                <div class="group-meta">
-                                                    <small class="text-muted">
-                                                        <i class="material-icons" style="font-size: 0.75rem;">email</i>
-                                                        {{ group.contact_email }}
-                                                    </small>
-                                                </div>
-                                                {% endif %}
+                                                    <div class="user-name">{{ group.name }}</div>
+                                                    <div class="username">{{ group.description|default:"No description"|truncatechars:80|escape }}</div>
                                             </div>
                                         </div>
                                         </td>
                                         <td>
-                                        <form method="post" class="d-flex gap-2 mb-2">
+                                            <form method="post" style="display: flex; gap: 0.5rem; align-items: center;">
                                                 {% csrf_token %}
-                                                {% with rename_form=rename_group_forms|get_item:group.id %}
-                                                <input type="text" 
-                                                       name="{{ rename_form.name.name }}" 
-                                                       value="{{ group.name }}" 
-                                                       class="form-control" 
-                                                       style="min-width: 300px; max-width: 400px;"
-                                                       placeholder="Enter new group name">
-                                                {% endwith %}
-                                            <button type="submit" name="rename_group_{{ group.id }}" class="btn btn-sm btn-outline-primary action-btn">
-                                                    <i class="material-icons">edit</i>
+                                                <input type="text" name="rename_{{ group.id }}" value="{{ group.name }}" class="form-control" style="min-width: 200px;">
+                                                <button type="submit" name="rename_group_{{ group.id }}" class="action-btn btn-primary" title="Edit group name">
+                                                    <span class="material-icons">edit</span>
                                                 </button>
                                                 <input type="hidden" name="group_id" value="{{ group.id }}">
-                                            <button type="submit" name="delete_group_submit" class="btn btn-sm btn-outline-danger action-btn" 
-                                                    onclick="return confirm('Are you sure you want to delete group \'{{ group.name }}\'?');">
-                                                    <i class="material-icons">delete</i>
+                                                <button type="submit" name="delete_group_submit" class="action-btn btn-danger" 
+                                                        onclick="return confirm('Are you sure you want to delete group \'{{ group.name }}\'?');"
+                                                        title="Delete group">
+                                                    <span class="material-icons">delete</span>
                                                 </button>
                                             </form>
                                         </td>
@@ -1632,312 +950,441 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Pagination -->
+                        {% if all_groups.has_other_pages %}
+                            <nav class="pagination">
+                                {% if all_groups.has_previous %}
+                                    <a href="?tab=groups&group_page={{ all_groups.previous_page_number }}{% if group_search %}&group_search={{ group_search }}{% endif %}" class="page-link">Previous</a>
+                                {% endif %}
+                                
+                                {% for num in all_groups.paginator.page_range %}
+                                    {% if all_groups.number == num %}
+                                        <span class="page-link active">{{ num }}</span>
+                                    {% elif num > all_groups.number|add:'-3' and num < all_groups.number|add:'3' %}
+                                        <a href="?tab=groups&group_page={{ num }}{% if group_search %}&group_search={{ group_search }}{% endif %}" class="page-link">{{ num }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if all_groups.has_next %}
+                                    <a href="?tab=groups&group_page={{ all_groups.next_page_number }}{% if group_search %}&group_search={{ group_search }}{% endif %}" class="page-link">Next</a>
+                                {% endif %}
+                            </nav>
+                        {% endif %}
                                 {% else %}
-                    <div class="text-center py-5">
-                        <i class="material-icons d-block mb-3" style="font-size: 3rem; color: #9ca3af;">group_off</i>
-                        <h4 class="text-muted">No groups found</h4>
-                        <p class="text-muted">Create your first group to get started</p>
+                        <div class="empty-state">
+                            <span class="material-icons">group_off</span>
+                            <h4>No groups found</h4>
+                            <p>Create your first group to get started</p>
                         </div>
                     {% endif %}
                 </div>
                         </div>
                     </div>
 
-        <!-- Other tabs will be added here -->
+        <!-- Bans Tab -->
         <div class="tab-pane fade" id="bans" role="tabpanel">
             <div class="admin-card">
                 <div class="admin-card-header">
                     <h2>
-                        <i class="material-icons">gavel</i>
+                        <span class="material-icons">gavel</span>
                         Ban Management
                     </h2>
-                    <p>Manage user bans and platform moderation</p>
+                    <p>Manage site-wide user bans</p>
                         </div>
                 <div class="admin-card-body">
-                    <p class="text-muted">Ban management functionality coming soon...</p>
+                    <!-- Ban User Form -->
+                    <div class="search-container">
+                        <form method="post" class="search-form">
+                            {% csrf_token %}
+                            <select name="ban_user_id" id="banUserSelect" class="tom-select-ban" required>
+                                <option value="">Select user to ban...</option>
+                                {% for user_obj in all_users %}
+                                                                <option value="{{ user_obj.id }}" 
+                                    data-username="@{{ user_obj.username }}"
+                                    data-display-name="{{ user_obj.profile.get_display_name }}"
+                                    data-avatar-color="{{ user_obj.profile.get_avatar_color }}"
+                                    data-has-pfp="{% if user_obj.profile.profile_picture_base64 %}true{% else %}false{% endif %}"
+                                    data-search="{{ user_obj.profile.get_display_name }} {{ user_obj.username }}">
+                                {{ user_obj.profile.get_display_name }} (@{{ user_obj.username }})
+                            </option>
+                                {% endfor %}
+                            </select>
+                            <input type="text" name="ban_reason" class="search-input" placeholder="Ban reason..." required>
+                            <button type="submit" name="ban_user_submit" class="search-btn">
+                                <span class="material-icons">gavel</span>
+                                Ban User
+                            </button>
+                        </form>
                     </div>
-                    </div>
-                </div>
 
-        <div class="tab-pane fade" id="banner" role="tabpanel">
-            <div class="admin-card">
-                <div class="admin-card-header">
-                    <h2>
-                        <i class="material-icons">campaign</i>
-                        Site Banner
-                    </h2>
-                    <p>Manage site-wide announcements and banners</p>
+                    <!-- Banned Users Table -->
+                    {% if all_banned_users %}
+                        <div class="table-responsive">
+                            <table class="user-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Banned By</th>
+                                        <th>Reason</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ban in all_banned_users %}
+                                    <tr>
+                                        <td>
+                                            <div class="user-info">
+                                                <div class="user-avatar" {% if not ban.user.profile.profile_picture_base64 %}style="background-color: {{ ban.user.profile.get_avatar_color }};"{% endif %}>
+                                                    {% if ban.user.profile.profile_picture_base64 %}
+                                                        <img src="{{ ban.user.profile.profile_picture_base64 }}" alt="{{ ban.user.profile.get_display_name }}">
+                                                    {% else %}
+                                                        {{ ban.user.profile.get_initials }}
+                                                    {% endif %}
+                    </div>
+                                                <div class="user-details">
+                                                    <div class="user-name">{{ ban.user.profile.get_display_name }}</div>
+                                                    <div class="username">@{{ ban.user.username }}</div>
+                </div>
                                     </div>
-                <div class="admin-card-body">
-                    <p class="text-muted">Site banner management coming soon...</p>
+                                        </td>
+                                        <td>
+                                            {% if ban.banned_by %}
+                                                {{ ban.banned_by.profile.get_display_name }}
+                                            {% else %}
+                                                System
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ ban.reason|default:"No reason provided" }}</td>
+                                        <td>{{ ban.banned_at|date:"M j, Y g:i A" }}</td>
+                                        <td>
+                                            <form method="post" style="display: inline;">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="unban_user_id" value="{{ ban.user.id }}">
+                                                <button type="submit" name="unban_user_submit" class="action-btn btn-success">
+                                                    <span class="material-icons">undo</span>
+                                                    Unban
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                                 </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <span class="material-icons">gavel</span>
+                            <h4>No banned users</h4>
+                            <p>All users are currently in good standing</p>
+                        </div>
+                    {% endif %}
+                </div>
                                 </div>
                                 </div>
                                 
+        <!-- Notifications Tab -->
         <div class="tab-pane fade" id="notify" role="tabpanel">
             <div class="admin-card">
                 <div class="admin-card-header">
                     <h2>
-                        <i class="material-icons">notifications</i>
+                        <span class="material-icons">notifications</span>
                         Send Notifications
                     </h2>
-                    <p>Send notifications to users and manage communication</p>
+                    <p>Send notifications to users, organizers, or everyone</p>
                                 </div>
                 <div class="admin-card-body">
-                    <p class="text-muted">Notification system coming soon...</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="form-label">Recipients</label>
+                            <select name="notification_recipients" class="form-control" required>
+                                <option value="">Select recipients...</option>
+                                <option value="all">All Users</option>
+                                <option value="organizers">Event Organizers</option>
+                                <option value="selected">Selected Users</option>
+                            </select>
                 </div>
+                        
+                        <div class="form-group" id="user-selection" style="display: none;">
+                            <label class="form-label">Select Users</label>
+                            <select name="selected_users" id="notificationUserSelect" class="tom-select-notification-users" multiple>
+                                {% for user_obj in all_users %}
+                                    <option value="{{ user_obj.id }}" 
+                                            data-username="@{{ user_obj.username }}"
+                                            data-display-name="{{ user_obj.profile.get_display_name }}"
+                                            data-avatar-color="{{ user_obj.profile.get_avatar_color }}"
+                                            data-has-pfp="{% if user_obj.profile.profile_picture_base64 %}true{% else %}false{% endif %}"
+                                            data-search="{{ user_obj.profile.get_display_name }} {{ user_obj.username }}">
+                                        {{ user_obj.profile.get_display_name }} (@{{ user_obj.username }})
+                                    </option>
+                                {% endfor %}
+                            </select>
                         </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea name="notification_message" class="form-control form-textarea" placeholder="Enter your notification message..." required></textarea>
                     </div>
                     
-        {% if user.profile.can_post_blog %}
-        <div class="tab-pane fade" id="blog" role="tabpanel">
-            <div class="admin-card">
-                <div class="admin-card-header">
-                    <h2>
-                        <i class="material-icons">rss_feed</i>
-                        Blog Management
-                    </h2>
-                    <p>Create and manage blog posts and announcements</p>
+                        <div class="form-group">
+                            <label class="form-label">Link (Optional)</label>
+                            <input type="url" name="notification_link" class="form-control" placeholder="https://...">
                         </div>
-                <div class="admin-card-body">
-                    <p class="text-muted">Blog management functionality coming soon...</p>
+                        
+                        <button type="submit" name="send_notification" class="action-btn btn-primary">
+                            <span class="material-icons">send</span>
+                            Send Notification
+                        </button>
+                    </form>
                                         </div>
                                     </div>
                                 </div>
-        {% endif %}
 
         <!-- Audit Log Tab -->
-                <div class="tab-pane fade" id="audit" role="tabpanel" aria-labelledby="audit-tab">
+        <div class="tab-pane fade" id="audit" role="tabpanel">
             <div class="admin-card">
                 <div class="admin-card-header">
                     <h2>
-                        <i class="material-icons">history</i>
+                        <span class="material-icons">history</span>
                         Audit Log
                     </h2>
-                    <p>View and monitor administrative actions and changes</p>
+                    <p>View system activity and administrative actions</p>
                                 </div>
                 <div class="admin-card-body">
-                    <!-- Audit Log Filters -->
+                    <!-- Search -->
                     <div class="search-container">
                         <form method="get" class="search-form">
-                            <input type="text" 
-                                   name="audit_search" 
-                                   value="{{ audit_search }}" 
-                                   class="search-input" 
-                                   placeholder="Search audit logs...">
-                            <input type="text" 
-                                   name="audit_user_filter" 
-                                   value="{{ audit_user_filter }}" 
-                                   class="search-input" 
-                                   placeholder="Filter by username...">
-                            <select name="audit_action_filter" class="search-input">
+                            <input type="hidden" name="tab" value="audit">
+                            <input type="text" name="audit_search" value="{{ audit_search }}" class="search-input" placeholder="Search audit log...">
+                            <select name="audit_action_filter" class="form-control">
                                         <option value="">All Actions</option>
                                         {% for action_code, action_name in audit_actions %}
                                             <option value="{{ action_code }}" {% if audit_action_filter == action_code %}selected{% endif %}>{{ action_name }}</option>
                                         {% endfor %}
                                     </select>
                             <button type="submit" class="search-btn">
-                                <i class="material-icons">filter_list</i>
-                                Filter
+                                <span class="material-icons">search</span>
+                                Search
                                     </button>
                             </form>
                     </div>
 
                     <!-- Audit Log Table -->
+                    {% if audit_logs %}
                     <div class="table-responsive">
                         <table class="user-table">
                             <thead>
                                 <tr>
-                                    <th>Timestamp</th>
                                     <th>User</th>
                                     <th>Action</th>
                                     <th>Description</th>
-                                    <th>Group</th>
-                                    <th>Event</th>
-                                    <th>IP Address</th>
+                                        <th>Timestamp</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for log_entry in audit_logs %}
+                                    {% for log in audit_logs %}
                                 <tr>
                                     <td>
-                                        <small class="text-muted">{{ log_entry.timestamp|date:"Y-m-d H:i:s" }}</small>
-                                    </td>
-                                    <td>
-                                        {% if log_entry.user %}
-                                            <span class="fw-medium">{{ log_entry.user.username }}</span>
-                                            {% if log_entry.target_user and log_entry.target_user != log_entry.user %}
-                                                <small class="text-muted d-block">→ {{ log_entry.target_user.username }}</small>
-                                            {% endif %}
+                                            {% if log.user %}
+                                                <div class="user-info">
+                                                    <div class="user-avatar" {% if not log.user.profile.profile_picture_base64 %}style="background-color: {{ log.user.profile.get_avatar_color }};"{% endif %}>
+                                                        {% if log.user.profile.profile_picture_base64 %}
+                                                            <img src="{{ log.user.profile.profile_picture_base64 }}" alt="{{ log.user.profile.get_display_name }}">
                                         {% else %}
-                                            <span class="text-muted">System</span>
+                                                            {{ log.user.profile.get_initials }}
                                         {% endif %}
-                                    </td>
-                                    <td>
-                                        <span class="admin-badge yes">
-                                            {{ log_entry.get_action_display }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="text-wrap" style="max-width: 300px;">
-                                            {{ log_entry.description }}
                                         </div>
-                                    </td>
-                                    <td>
-                                        {% if log_entry.group %}
-                                            <span class="admin-badge yes">
-                                                {{ log_entry.group.name }}
-                                            </span>
+                                                    <div class="user-details">
+                                                        <div class="user-name">{{ log.user.profile.get_display_name }}</div>
+                                                        <div class="username">@{{ log.user.username }}</div>
+                                                    </div>
+                                                </div>
                                         {% else %}
-                                            <span class="text-muted">-</span>
+                                                System
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {% if log_entry.event %}
-                                            <span class="admin-badge yes">
-                                                {{ log_entry.event.title }}
-                                            </span>
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
+                                            <span class="status-indicator status-staff">{{ log.get_action_display }}</span>
                                     </td>
-                                    <td>
-                                        <small class="text-muted">{{ log_entry.ip_address|default:"-" }}</small>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="7" class="text-center py-5">
-                                        <i class="material-icons d-block mb-3" style="font-size: 3rem; color: #9ca3af;">history</i>
-                                        <h4 class="text-muted">No audit log entries found</h4>
-                                        <p class="text-muted">No audit log entries match your search criteria</p>
-                                    </td>
+                                        <td>{{ log.description }}</td>
+                                        <td>{{ log.timestamp|date:"M j, Y g:i A" }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Audit Log Pagination -->
-                    {% if audit_logs.paginator.num_pages > 1 %}
-                    <div class="pagination-container">
-                        <nav aria-label="Audit log pagination">
-                            <ul class="pagination">
+                        <!-- Pagination -->
+                        {% if audit_logs.has_other_pages %}
+                            <nav class="pagination">
                             {% if audit_logs.has_previous %}
-                            <li class="page-item">
-                                    <a class="page-link" href="?audit_page=1{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}">
-                                        <i class="material-icons">first_page</i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                    <a class="page-link" href="?audit_page={{ audit_logs.previous_page_number }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}">
-                                        <i class="material-icons">chevron_left</i>
-                                </a>
-                            </li>
+                                    <a href="?tab=audit&audit_page={{ audit_logs.previous_page_number }}{% if audit_search %}&audit_search={{ audit_search }}{% endif %}{% if audit_action_filter %}&audit_action_filter={{ audit_action_filter }}{% endif %}" class="page-link">Previous</a>
                             {% endif %}
                                 
                             {% for num in audit_logs.paginator.page_range %}
                                 {% if audit_logs.number == num %}
-                                        <li class="page-item active">
-                                            <span class="page-link">{{ num }}</span>
-                                        </li>
+                                        <span class="page-link active">{{ num }}</span>
                                 {% elif num > audit_logs.number|add:'-3' and num < audit_logs.number|add:'3' %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?audit_page={{ num }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}">{{ num }}</a>
-                                        </li>
+                                        <a href="?tab=audit&audit_page={{ num }}{% if audit_search %}&audit_search={{ audit_search }}{% endif %}{% if audit_action_filter %}&audit_action_filter={{ audit_action_filter }}{% endif %}" class="page-link">{{ num }}</a>
                                 {% endif %}
                             {% endfor %}
                                 
                             {% if audit_logs.has_next %}
-                            <li class="page-item">
-                                    <a class="page-link" href="?audit_page={{ audit_logs.next_page_number }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}">
-                                        <i class="material-icons">chevron_right</i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                    <a class="page-link" href="?audit_page={{ audit_logs.paginator.num_pages }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}">
-                                        <i class="material-icons">last_page</i>
-                                </a>
-                            </li>
+                                    <a href="?tab=audit&audit_page={{ audit_logs.next_page_number }}{% if audit_search %}&audit_search={{ audit_search }}{% endif %}{% if audit_action_filter %}&audit_action_filter={{ audit_action_filter }}{% endif %}" class="page-link">Next</a>
                             {% endif %}
-                        </ul>
                     </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="empty-state">
+                            <span class="material-icons">history</span>
+                            <h4>No audit log entries</h4>
+                            <p>No administrative actions have been recorded yet</p>
                     </div>
+                    {% endif %}
+        </div>
+                            </div>
+                            </div>
+
+        <!-- Blog Tab -->
+        <div class="tab-pane fade" id="blog" role="tabpanel">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2>
+                        <span class="material-icons">article</span>
+                        Blog Posts
+                    </h2>
+                    <p>Create and manage Bluesky blog posts</p>
+            </div>
+                <div class="admin-card-body">
+                    <!-- Create Blog Post -->
+            <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="blog_title" class="form-control" placeholder="Enter blog post title..." required>
+                    </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Content</label>
+                            <textarea name="blog_content" class="form-control form-textarea" placeholder="Write your blog post content..." required></textarea>
+                </div>
+                        
+                        <button type="submit" name="create_blog_post" class="action-btn btn-primary">
+                            <span class="material-icons">post_add</span>
+                            Post to Bluesky
+                    </button>
+                    </form>
+
+                    <!-- Recent Blog Posts -->
+                    {% if bluesky_posts %}
+                        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Recent Posts</h3>
+                        <div class="table-responsive">
+                            <table class="user-table">
+                                <thead>
+                                    <tr>
+                                        <th>Post</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for post in bluesky_posts %}
+                                    <tr>
+                                        <td>
+                                            <div class="user-details">
+                                                <div class="user-name">{{ post.post.text|truncatechars:100 }}</div>
+                                                <div class="username">{{ post.post.uri }}</div>
+                </div>
+                                        </td>
+                                        <td>{{ post.post.indexedAt|date:"M j, Y g:i A" }}</td>
+                                        <td>
+                                            <form method="post" style="display: inline;">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="delete_post_uri" value="{{ post.post.uri }}">
+                                                <button type="submit" name="delete_blog_post" class="action-btn btn-danger" 
+                                                        onclick="return confirm('Are you sure you want to delete this post?');">
+                                                    <span class="material-icons">delete</span>
+                                                    Delete
+                                                </button>
+            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <span class="material-icons">article</span>
+                            <h4>No blog posts</h4>
+                            <p>Create your first blog post to get started</p>
+                        </div>
                     {% endif %}
                 </div>
             </div>
         </div>
-                            </div>
-                            </div>
-
-<!-- Create Group Modal -->
-<div class="modal fade" id="createGroupModal" tabindex="-1" aria-labelledby="createGroupModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createGroupModalLabel">
-                    <i class="material-icons">add_circle</i>
-                    Create New Group
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post">
-                        {% csrf_token %}
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="new_group_name" class="form-label">Group Name</label>
-                        <input type="text" class="form-control" id="new_group_name" name="new_group_name" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="create_group_submit" class="btn btn-primary-admin">
-                        <i class="material-icons">add</i>
-                        Create Group
-                    </button>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
 
-<!-- Add User to Group Modal -->
-<div class="modal fade" id="addUserToGroupModal" tabindex="-1" aria-labelledby="addUserToGroupModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addUserToGroupModalLabel">
-                    <i class="material-icons">person_add</i>
-                    Add User to Group
+                <h5 class="modal-title" id="editUserModalLabel">
+                    <span class="material-icons">edit</span>
+                    Edit User
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="post">
+            <form method="post" id="editUserForm">
+                {% csrf_token %}
                 <div class="modal-body">
-                        <div class="mb-3">
-                        <label class="form-label">Group</label>
-                        <input type="text" class="form-control" id="selectedGroupName" readonly>
-                        <input type="hidden" id="selectedGroupId" name="add_user_group_id">
+                    <div class="user-info mb-4">
+                        <div class="user-avatar" id="modalUserAvatar" style="width: 64px; height: 64px;">
+                            <!-- User avatar will be populated by JavaScript -->
                         </div>
-                        <div class="mb-3">
-                        <label for="userSearch" class="form-label">Search Users</label>
-                        <input type="text" class="form-control" id="userSearch" placeholder="Search by username, email, or display name...">
+                        <div class="user-details">
+                            <div class="user-name" id="modalUserName"></div>
+                            <div class="username" id="modalUserUsername"></div>
+                            <div class="user-id" id="modalUserId"></div>
                         </div>
-                    <div class="mb-3">
-                        <label class="form-label">Select Users to Add</label>
-                        <div id="userList" class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
-                            <div class="text-center text-muted">
-                                <i class="material-icons">search</i>
-                                <p>Search for users above to add them to the group</p>
                                         </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Permissions</label>
+                        <div class="permission-controls">
+                            <div class="permission-toggle">
+                                <input type="checkbox" id="modal_staff" name="modal_staff">
+                                <label for="modal_staff">Staff (Superuser)</label>
                                     </div>
+                            <div class="permission-toggle">
+                                <input type="checkbox" id="modal_blog" name="modal_blog">
+                                <label for="modal_blog">Can Post Blog</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Groups</label>
+                        <select name="modal_groups" id="modalGroups" class="tom-select-modal-groups" multiple>
+                            {% for group in all_groups %}
+                                <option value="{{ group.id }}" 
+                                        data-name="{{ group.name }}"
+                                        data-description="{{ group.description|default:'' }}">
+                                    {{ group.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
                                 </div>
                     </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="add_users_to_group" class="btn btn-primary-admin">
-                        <i class="material-icons">add</i>
-                        Add Selected Users
+                    <button type="submit" name="update_user_modal" class="btn btn-primary">
+                        <span class="material-icons">save</span>
+                        Save Changes
                     </button>
                 </div>
             </form>
@@ -1945,243 +1392,378 @@
         </div>
     </div>
 
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<!-- Tom Select JS -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Tom Select for group pickers
+    // Initialize Tom Select for group selection
     const groupSelects = document.querySelectorAll('.tom-select-groups');
-    
     groupSelects.forEach(function(select) {
-        if (select) {
             new TomSelect(select, {
                     plugins: ['remove_button'],
                     maxItems: null,
-                valueField: 'value',
-                labelField: 'text',
-                searchField: ['text'],
-                    create: false,
-                    render: {
-                        option: function(data, escape) {
-                        const logo = data.dataset.logo;
-                        const name = data.dataset.name;
-                        
-                        if (logo) {
-                            return `<div class="option-with-logo">
-                                <img src="data:image/png;base64,${logo}" alt="${escape(name)}" class="group-logo">
-                                <span>${escape(name)}</span>
-                            </div>`;
-                    } else {
-                            return `<div class="option-with-logo">
-                                <div class="group-logo-placeholder">${escape(name.charAt(0).toUpperCase())}</div>
-                                    <span>${escape(name)}</span>
-                                </div>`;
-                            }
-                        },
-                        item: function(data, escape) {
-                        const logo = data.dataset.logo;
-                        const name = data.dataset.name;
-                        
-                        if (logo) {
-                            return `<div class="item-with-logo">
-                                <img src="data:image/png;base64,${logo}" alt="${escape(name)}" class="group-logo">
-                                <span>${escape(name)}</span>
-                            </div>`;
-            } else {
-                            return `<div class="item-with-logo">
-                                <div class="group-logo-placeholder">${escape(name.charAt(0).toUpperCase())}</div>
-                                    <span>${escape(name)}</span>
-                                </div>`;
-                        }
-                    }
-                }
-            });
-        }
-    });
-
-    // Enhanced Modal Functionality
-    const modals = document.querySelectorAll('.modal');
-    
-    modals.forEach(function(modal) {
-        // Prevent modal from closing when clicking inside
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                e.stopPropagation();
-            }
+            placeholder: 'Select groups...'
         });
-
-        // Add smooth animations
-        modal.addEventListener('show.bs.modal', function() {
-            document.body.classList.add('modal-open');
-        });
-
-        modal.addEventListener('hidden.bs.modal', function() {
-            document.body.classList.remove('modal-open');
     });
-});
-
-    // Admin Badge Toggle Functionality
-    const adminBadgeToggles = document.querySelectorAll('.admin-badge-toggle');
     
-    adminBadgeToggles.forEach(function(badge) {
-        badge.addEventListener('click', async function(e) {
-            e.preventDefault();
-            
-            const userId = this.dataset.userId;
-            const currentStatus = this.dataset.currentStatus;
-            const newStatus = currentStatus === 'admin' ? 'user' : 'admin';
-            const newText = newStatus === 'admin' ? 'Admin' : 'User';
-            
-            // Show confirmation dialog
-            const confirmMessage = currentStatus === 'admin' 
-                ? `Are you sure you want to remove admin privileges from this user?`
-                : `Are you sure you want to grant admin privileges to this user?`;
-            
-            if (!confirm(confirmMessage)) {
-                return;
+        // Initialize Tom Select for ban user selection with avatars
+    const banUserSelect = document.getElementById('banUserSelect');
+    if (banUserSelect) {
+        // Cache for avatars
+        const avatarCache = new Map();
+        
+        // Function to fetch avatar
+        async function fetchAvatar(userId) {
+            if (avatarCache.has(userId)) {
+                return avatarCache.get(userId);
             }
             
             try {
-                // Show loading state
-                const originalText = this.textContent;
-                this.textContent = 'Updating...';
-                this.disabled = true;
-                
-                // Send AJAX request
-                const response = await fetch('/users/administration/toggle_admin/', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken'),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        user_id: userId,
-                        new_status: newStatus
-                    })
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        // Update the badge
-                        this.textContent = newText;
-                        this.dataset.currentStatus = newStatus;
-                        this.className = `admin-badge-toggle ${newStatus === 'admin' ? 'yes' : 'no'}`;
-                        
-                        // Show success message
-                        showNotification('Admin status updated successfully!', 'success');
-                    } else {
-                        throw new Error(result.error || 'Failed to update admin status');
-                    }
-                } else {
-                    throw new Error('Network error');
-                }
+                const response = await fetch(`/users/avatar/${userId}/`);
+                const data = await response.json();
+                avatarCache.set(userId, data);
+                return data;
             } catch (error) {
-                console.error('Error updating admin status:', error);
-                this.textContent = originalText;
-                showNotification('Failed to update admin status. Please try again.', 'error');
-            } finally {
-                this.disabled = false;
+                console.error('Error fetching avatar:', error);
+                return null;
             }
-        });
-    });
-
-    // Enhanced form validation for modals
-    const modalForms = document.querySelectorAll('.modal form');
-    
-    modalForms.forEach(function(form) {
-        form.addEventListener('submit', function(e) {
-            const requiredFields = form.querySelectorAll('[required]');
-            let isValid = true;
+        }
+        
+        // Function to create avatar HTML
+        function createAvatarHtml(avatarData, size = 24) {
+            if (avatarData && avatarData.has_pfp && avatarData.avatar) {
+                return `<img src="${avatarData.avatar}" alt="Profile" style="width: ${size}px; height: ${size}px; border-radius: 50%; object-fit: cover;">`;
+            } else {
+                const initials = avatarData ? avatarData.initials : 'U';
+                const color = avatarData ? avatarData.color : '#667eea';
+                return `<div style="width: ${size}px; height: ${size}px; border-radius: 50%; background-color: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: ${size * 0.5}px; font-weight: bold;">${initials}</div>`;
+            }
+        }
+        
+        // Pre-load avatars for all options
+        async function preloadAvatars() {
+            const options = banUserSelect.querySelectorAll('option[value]');
+            const promises = [];
             
-            requiredFields.forEach(function(field) {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.classList.add('is-invalid');
-                } else {
-                    field.classList.remove('is-invalid');
+            for (const option of options) {
+                const userId = option.value;
+                if (userId && !avatarCache.has(userId)) {
+                    promises.push(fetchAvatar(userId));
                 }
-            });
+            }
             
-            if (!isValid) {
-                e.preventDefault();
-                // Show error message
-                const errorDiv = form.querySelector('.alert-danger') || document.createElement('div');
-                errorDiv.className = 'alert alert-danger mt-3';
-                errorDiv.textContent = 'Please fill in all required fields.';
-                
-                if (!form.querySelector('.alert-danger')) {
-                    form.insertBefore(errorDiv, form.firstChild);
+            await Promise.all(promises);
+        }
+        
+        // Initialize Tom Select with synchronous render functions
+        const tomSelect = new TomSelect(banUserSelect, {
+            render: {
+                option: function(data, escape) {
+                    // Get data from the option element
+                    const option = data.option || data;
+                    const displayName = option.dataset ? option.dataset.displayName : '';
+                    const username = option.dataset ? option.dataset.username : '';
+                    const userId = data.value;
+                    
+                    // Get avatar data from cache (should be pre-loaded)
+                    const avatarData = avatarCache.get(userId);
+                    
+                    // Create avatar HTML
+                    const avatarHtml = createAvatarHtml(avatarData, 24);
+                    
+                    return `<div style="display: flex; align-items: center; gap: 8px;">
+                        ${avatarHtml}
+                        <div>
+                            <div style="font-weight: 600;">${escape(displayName || data.text)}</div>
+                            <div style="font-size: 12px; color: #6b7280;">${escape(username)}</div>
+                        </div>
+                    </div>`;
+                },
+                item: function(data, escape) {
+                    // Get data from the option element
+                    const option = data.option || data;
+                    const displayName = option.dataset ? option.dataset.displayName : '';
+                    const userId = data.value;
+                    
+                    // Get avatar data from cache
+                    const avatarData = avatarCache.get(userId);
+                    
+                    // Create avatar HTML for selected item
+                    const avatarHtml = createAvatarHtml(avatarData, 20);
+                    
+                    return `<div style="display: flex; align-items: center; gap: 6px;">
+                        ${avatarHtml}
+                        <span>${escape(displayName || data.text)}</span>
+                    </div>`;
+                }
+            },
+            placeholder: 'Select user to ban...',
+            create: false,
+            maxItems: 1,
+            closeAfterSelect: true,
+            sortField: 'text',
+            searchField: ['text', 'data-search']
+        });
+        
+        // Pre-load avatars after Tom Select is initialized
+        preloadAvatars().then(() => {
+            // Refresh the dropdown to show avatars
+            tomSelect.refreshOptions();
+        });
+    }
+    
+    // Initialize Tom Select for notification user selection with avatars
+    const notificationUserSelect = document.getElementById('notificationUserSelect');
+    if (notificationUserSelect) {
+        // Cache for avatars (shared with ban user select)
+        const avatarCache = new Map();
+        
+        // Function to fetch avatar (reuse from ban user select)
+        async function fetchAvatar(userId) {
+            if (avatarCache.has(userId)) {
+                return avatarCache.get(userId);
+            }
+            
+            try {
+                const response = await fetch(`/users/avatar/${userId}/`);
+                const data = await response.json();
+                avatarCache.set(userId, data);
+                return data;
+            } catch (error) {
+                console.error('Error fetching avatar:', error);
+                return null;
+            }
+        }
+        
+        // Function to create avatar HTML
+        function createAvatarHtml(avatarData, size = 24) {
+            if (avatarData && avatarData.has_pfp && avatarData.avatar) {
+                return `<img src="${avatarData.avatar}" alt="Profile" style="width: ${size}px; height: ${size}px; border-radius: 50%; object-fit: cover;">`;
+                } else {
+                const initials = avatarData ? avatarData.initials : 'U';
+                const color = avatarData ? avatarData.color : '#667eea';
+                return `<div style="width: ${size}px; height: ${size}px; border-radius: 50%; background-color: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: ${size * 0.5}px; font-weight: bold;">${initials}</div>`;
+            }
+        }
+        
+        // Pre-load avatars for all options
+        async function preloadAvatars() {
+            const options = notificationUserSelect.querySelectorAll('option[value]');
+            const promises = [];
+            
+            for (const option of options) {
+                const userId = option.value;
+                if (userId && !avatarCache.has(userId)) {
+                    promises.push(fetchAvatar(userId));
+                }
+            }
+            
+            await Promise.all(promises);
+        }
+        
+        // Initialize Tom Select with synchronous render functions
+        const notificationTomSelect = new TomSelect(notificationUserSelect, {
+            render: {
+                option: function(data, escape) {
+                    // Get data from the option element
+                    const option = data.option || data;
+                    const displayName = option.dataset ? option.dataset.displayName : '';
+                    const username = option.dataset ? option.dataset.username : '';
+                    const userId = data.value;
+                    
+                    // Get avatar data from cache (should be pre-loaded)
+                    const avatarData = avatarCache.get(userId);
+                    
+                    // Create avatar HTML
+                    const avatarHtml = createAvatarHtml(avatarData, 24);
+                    
+                    return `<div style="display: flex; align-items: center; gap: 8px;">
+                        ${avatarHtml}
+                        <div>
+                            <div style="font-weight: 600;">${escape(displayName || data.text)}</div>
+                            <div style="font-size: 12px; color: #6b7280;">${escape(username)}</div>
+                        </div>
+                    </div>`;
+                },
+                item: function(data, escape) {
+                    // Get data from the option element
+                    const option = data.option || data;
+                    const displayName = option.dataset ? option.dataset.displayName : '';
+                    const userId = data.value;
+                    
+                    // Get avatar data from cache
+                    const avatarData = avatarCache.get(userId);
+                    
+                    // Create avatar HTML for selected item
+                    const avatarHtml = createAvatarHtml(avatarData, 20);
+                    
+                    return `<div style="display: flex; align-items: center; gap: 6px;">
+                        ${avatarHtml}
+                        <span>${escape(displayName || data.text)}</span>
+                    </div>`;
+                }
+            },
+            placeholder: 'Select users...',
+            create: false,
+            maxItems: null,
+            closeAfterSelect: false,
+            sortField: 'text',
+            searchField: ['text', 'data-search']
+        });
+        
+        // Pre-load avatars after Tom Select is initialized
+        preloadAvatars().then(() => {
+            // Refresh the dropdown to show avatars
+            notificationTomSelect.refreshOptions();
+        });
+    }
+    
+    // Initialize modal Tom Select when modal is shown
+    document.getElementById('editUserModal').addEventListener('shown.bs.modal', function() {
+        const modalGroupsSelect = document.getElementById('modalGroups');
+        if (modalGroupsSelect && !modalGroupsSelect.tomselect) {
+            new TomSelect(modalGroupsSelect, {
+                plugins: ['remove_button'],
+                maxItems: null,
+                placeholder: 'Select groups...',
+                render: {
+                    option: function(data, escape) {
+                        const name = data.dataset.name;
+                        const description = data.dataset.description;
+                        
+                        let descriptionHtml = '';
+                        if (description) {
+                            descriptionHtml = `<div class="group-description">${escape(description)}</div>`;
+                        }
+                        
+                        return `<div>
+                            <div style="font-weight: 600;">${escape(name)}</div>
+                            ${descriptionHtml}
+                        </div>`;
+                    },
+                    item: function(data, escape) {
+                        const name = data.dataset.name;
+                        return `<span>${escape(name)}</span>`;
                 }
             }
                             });
-                        });
-
-    // Auto-focus on first input in modals
-    modals.forEach(function(modal) {
-        modal.addEventListener('shown.bs.modal', function() {
-            const firstInput = modal.querySelector('input:not([type="hidden"]), textarea, select');
-            if (firstInput) {
-                firstInput.focus();
-            }
-        });
+        }
     });
 
-});
-</script>
+    // Handle notification recipient selection
+    const recipientSelect = document.querySelector('select[name="notification_recipients"]');
+    const userSelection = document.getElementById('user-selection');
+    
+    if (recipientSelect) {
+        recipientSelect.addEventListener('change', function() {
+            if (this.value === 'selected') {
+                userSelection.style.display = 'block';
+                } else {
+                userSelection.style.display = 'none';
+            }
+        });
+    }
 
-<script>
-// Helper Functions - Global scope
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Set active tab based on URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab');
+    if (activeTab) {
+        const tabButton = document.querySelector(`[data-bs-target="#${activeTab}"]`);
+        if (tabButton) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+            
+            // Add active class to current tab
+            tabButton.classList.add('active');
+            const targetPane = document.getElementById(activeTab);
+            if (targetPane) {
+                targetPane.classList.add('show', 'active');
             }
         }
     }
-    return cookieValue;
-}
+    
+    // Update URL when tabs are clicked
+    document.querySelectorAll('.nav-link[data-bs-toggle="pill"]').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const target = this.getAttribute('data-bs-target');
+            const tabName = target.replace('#', '');
+            
+            // Update URL with tab parameter
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('tab', tabName);
+            
+            // Preserve other parameters (page, search, etc.)
+            const currentParams = new URLSearchParams(window.location.search);
+            currentParams.forEach((value, key) => {
+                if (key !== 'tab') {
+                    currentUrl.searchParams.set(key, value);
+                }
+            });
+            
+            // Update URL without page reload
+            window.history.pushState({}, '', currentUrl);
+        });
+    });
+});
 
-function showNotification(message, type = 'info') {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
-    notification.style.cssText = `
-        top: 20px;
-        right: 20px;
-        z-index: 999999;
-        min-width: 300px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        border: none;
-        border-radius: 0.75rem;
-    `;
+// Global variables for user data
+let userData = {};
+
+function editUser(userId) {
+    // Get user data from the table row
+    const userRow = document.querySelector(`tr[data-user-id="${userId}"]`);
+    if (!userRow) return;
     
-    notification.innerHTML = `
-        <div class="d-flex align-items-center">
-            <i class="material-icons me-2">
-                ${type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info'}
-            </i>
-            <span>${message}</span>
-            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-        </div>
-    `;
+    // Extract user data
+    const userAvatar = userRow.querySelector('.user-avatar');
+    const userName = userRow.querySelector('.user-name');
+    const username = userRow.querySelector('.username');
+    const userStatus = userRow.querySelector('.status-staff');
+    const user2fa = userRow.querySelector('.status-2fa');
     
-    // Add to page
-    document.body.appendChild(notification);
+    // Populate modal
+    document.getElementById('modalUserAvatar').innerHTML = userAvatar.innerHTML;
+    document.getElementById('modalUserName').textContent = userName.textContent.replace('✓', '').trim();
+    document.getElementById('modalUserUsername').textContent = username.textContent;
+    document.getElementById('modalUserId').textContent = `ID: ${userId}`;
     
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
-    }, 5000);
+    // Set permissions
+    document.getElementById('modal_staff').checked = userStatus !== null;
+    document.getElementById('modal_blog').checked = userRow.querySelector('[data-blog-permission="true"]') !== null;
+    
+    // Set groups (this will be handled by the backend)
+    const modalGroupsSelect = document.getElementById('modalGroups');
+    if (modalGroupsSelect.tomselect) {
+        modalGroupsSelect.tomselect.clear();
+        // Get current groups from the user data
+        const currentGroups = userRow.querySelectorAll('[data-group-id]');
+        currentGroups.forEach(group => {
+            modalGroupsSelect.tomselect.addItem(group.dataset.groupId);
+        });
+    }
+    
+    // Add user ID to form
+    const form = document.getElementById('editUserForm');
+    let userIdInput = form.querySelector('input[name="edit_user_id"]');
+    if (!userIdInput) {
+        userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'edit_user_id';
+        form.appendChild(userIdInput);
+    }
+    userIdInput.value = userId;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+    modal.show();
 }
 </script>
-{% endblock %}
 {% endblock %}
