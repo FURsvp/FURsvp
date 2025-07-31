@@ -350,7 +350,7 @@ def event_detail(request, event_id):
             messages.error(request, 'You must be logged in to RSVP.')
             return redirect('login')
             
-        if event.is_cancelled:
+        if event.status == 'cancelled':
             messages.error(request, 'This event has been cancelled.')
             return redirect('home')
             

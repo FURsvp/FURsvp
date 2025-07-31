@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from .forms import UserRegisterForm, UserProfileForm, UserGroupManagementForm, AssistantAssignmentForm, UserPublicProfileForm, UserPasswordChangeForm
+from .forms import UserRegisterForm, UserProfileForm, UserGroupManagementForm, UserPermissionForm, AssistantAssignmentForm, UserPublicProfileForm, UserPasswordChangeForm
 from events.models import Group, RSVP, Event
 from events.forms import GroupForm, RenameGroupForm
 from .models import Profile, GroupDelegation, BannedUser, Notification, GroupRole, AuditLog
@@ -439,6 +439,7 @@ def administration(request):
     group_form = GroupForm()
     rename_group_forms = {group.id: RenameGroupForm(instance=group) for group in all_groups}
     user_profile_forms = {user_obj.id: UserGroupManagementForm(user_obj, prefix=f'profile_{user_obj.id}') for user_obj in all_users}
+    user_permission_forms = {user_obj.id: UserPermissionForm(user_obj, prefix=f'permission_{user_obj.id}') for user_obj in all_users}
     all_banned_users = BannedUser.objects.all().select_related('user', 'group', 'banned_by', 'organizer').order_by('-banned_at')
 
     # Get audit log entries with filtering
@@ -506,44 +507,85 @@ def administration(request):
         if 'promote_users_submit' in request.POST:
             success_count = 0
             error_count = 0
+            
+            # Only process users that have form data submitted
             for user_obj in users_to_promote:
-                try:
-                    user_obj.profile.refresh_from_db()
-                    profile_form = UserGroupManagementForm(user_obj, request.POST, prefix=f'profile_{user_obj.id}')
-                    if profile_form.is_valid():
-                        old_data = {
-                            'admin_groups': list(user_obj.group_roles.all().values_list('group__name', flat=True))
-                        }
-                        profile_form.save()
-                        new_data = {
-                            'admin_groups': list(user_obj.group_roles.all().values_list('group__name', flat=True))
-                        }
+                form_prefix = f'profile_{user_obj.id}'
+                permission_prefix = f'permission_{user_obj.id}'
+                form_field_name = f'{form_prefix}-admin_groups'
+                permission_field_name = f'{permission_prefix}-is_superuser'
+                
+                # Check if this user's form data was actually submitted
+                if form_field_name in request.POST or permission_field_name in request.POST:
+                    try:
+                        user_obj.profile.refresh_from_db()
+                        profile_form = UserGroupManagementForm(user_obj, request.POST, prefix=form_prefix)
+                        permission_form = UserPermissionForm(user_obj, request.POST, prefix=permission_prefix)
                         
-                        # Log the profile update
-                        AuditLog.log_action(
-                            user=request.user,
-                            action='user_profile_updated',
-                            description=f'Updated profile for user {user_obj.username}',
-                            target_user=user_obj,
-                            ip_address=request.META.get('REMOTE_ADDR'),
-                            user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                            additional_data={
-                                'old_data': old_data,
-                                'new_data': new_data,
-                                'changes': 'Profile groups updated'
-                            }
-                        )
-                        success_count += 1
-                    else:
+                        profile_valid = profile_form.is_valid()
+                        permission_valid = permission_form.is_valid()
+                        
+                        if profile_valid and permission_valid:
+                            # Get current state before saving
+                            old_groups = list(user_obj.group_roles.all().values_list('group__name', flat=True))
+                            old_is_superuser = user_obj.is_superuser
+                            old_can_post_blog = user_obj.profile.can_post_blog if hasattr(user_obj, 'profile') else False
+                            
+                            # Save the forms
+                            profile_form.save()
+                            permission_form.save()
+                            
+                            # Get state after saving
+                            new_groups = list(user_obj.group_roles.all().values_list('group__name', flat=True))
+                            new_is_superuser = user_obj.is_superuser
+                            new_can_post_blog = user_obj.profile.can_post_blog if hasattr(user_obj, 'profile') else False
+                            
+                            # Log changes if anything changed
+                            changes = []
+                            if old_groups != new_groups:
+                                changes.append(f'Groups: {old_groups} → {new_groups}')
+                            if old_is_superuser != new_is_superuser:
+                                changes.append(f'Admin: {old_is_superuser} → {new_is_superuser}')
+                            if old_can_post_blog != new_can_post_blog:
+                                changes.append(f'Blog: {old_can_post_blog} → {new_can_post_blog}')
+                            
+                            if changes:
+                                AuditLog.log_action(
+                                    user=request.user,
+                                    action='user_profile_updated',
+                                    description=f'Updated permissions for user {user_obj.username}',
+                                    target_user=user_obj,
+                                    ip_address=request.META.get('REMOTE_ADDR'),
+                                    user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                                    additional_data={
+                                        'old_data': {
+                                            'admin_groups': old_groups,
+                                            'is_superuser': old_is_superuser,
+                                            'can_post_blog': old_can_post_blog
+                                        },
+                                        'new_data': {
+                                            'admin_groups': new_groups,
+                                            'is_superuser': new_is_superuser,
+                                            'can_post_blog': new_can_post_blog
+                                        },
+                                        'changes': '; '.join(changes)
+                                    }
+                                )
+                                success_count += 1
+                            else:
+                                # No changes, but forms were valid
+                                success_count += 1
+                        else:
+                            error_count += 1
+                            messages.error(request, f'Invalid form data for {user_obj.username}: {profile_form.errors}', extra_tags='admin_notification')
+                    except Exception as e:
                         error_count += 1
-                except Exception as e:
-                    error_count += 1
-                    messages.error(request, f'Error updating profile for {user_obj.username}: {str(e)}', extra_tags='admin_notification')
+                        messages.error(request, f'Error updating groups for {user_obj.username}: {str(e)}', extra_tags='admin_notification')
 
             if success_count > 0:
-                messages.success(request, f'Successfully updated {success_count} user profiles.', extra_tags='admin_notification')
+                messages.success(request, f'Successfully processed {success_count} user group assignments.', extra_tags='admin_notification')
             if error_count > 0:
-                messages.error(request, f'Failed to update {error_count} user profiles.', extra_tags='admin_notification')
+                messages.error(request, f'Failed to process {error_count} user group assignments.', extra_tags='admin_notification')
 
             # Preserve current tab
             current_tab = request.GET.get('tab', 'users')
@@ -767,6 +809,7 @@ def administration(request):
         'group_form': group_form,
         'rename_group_forms': rename_group_forms,
         'user_profile_forms': user_profile_forms,
+        'user_permission_forms': user_permission_forms,
         'all_banned_users': all_banned_users,
         'user_search': user_search,
         'group_search': group_search,
@@ -782,6 +825,12 @@ def administration(request):
         'bluesky_posts_paginator': bluesky_posts_paginator,
     }
     
+    # Always use the AJAX template for better performance
+    # Get the current tab from GET parameters or default to users
+    current_tab = request.GET.get('tab', 'users')
+    # Add the tab to the context for the AJAX template
+    context['current_tab'] = current_tab
+    # Return the AJAX template (which contains the full page structure)
     return render(request, 'users/administration.html', context)
 
 @require_POST
@@ -1326,3 +1375,10 @@ def approve_all_logged_in_users():
         if hasattr(user, 'profile') and not user.profile.is_verified:
             user.profile.is_verified = True
             user.profile.save()
+
+@login_required
+def custom_logout(request):
+    """Custom logout view that accepts GET requests"""
+    logout(request)
+    messages.success(request, "You have been successfully logged out.")
+    return redirect('home')

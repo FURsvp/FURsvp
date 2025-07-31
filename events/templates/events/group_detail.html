@@ -1,6 +1,6 @@
 {% extends 'events/base.html' %}
-{% load static %}
 {% load users_extras %}
+{% load static %}
 {% load tz %}
 
 {% block title %}{{ group.name }} - FURsvp{% endblock %}
@@ -101,7 +101,7 @@
                                                 </div>
                                             {% endif %}
                                         </div>
-                                        <div class="group-leader-name">{{ role.user.profile.get_display_name }}</div>
+                                        <div class="group-leader-name">{{ role.user.profile.get_display_name }}{% verified_checkmark role.user %}</div>
                                         {% if role.custom_label %}
                                             <div class="group-leader-label">{{ role.custom_label }}</div>
                                         {% endif %}
@@ -959,7 +959,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 {{ role.user.profile.get_initials }}
                                             </div>
                                         {% endif %}
-                                        <span>{{ role.user.profile.get_display_name }}</span>
+                                        <span>{{ role.user.profile.get_display_name }}{% verified_checkmark role.user %}</span>
                                     </td>
                                     <form method="post" class="edit-leader-form" action="">
                                         {% csrf_token %}
@@ -1308,53 +1308,89 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 .modern-card {
-    border-radius: 1.25rem;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
-    background: #f8fafc;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    background: white;
     overflow: hidden;
     margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.modern-card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+}
+
 .modern-card-header {
-    padding: 1.2rem 2rem;
+    padding: 1.5rem 2rem;
     font-size: 1.25rem;
     font-weight: 700;
     color: #fff;
     display: flex;
     align-items: center;
     border-bottom: none;
+    position: relative;
+    overflow: hidden;
 }
+
+.modern-card-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    opacity: 0.9;
+}
+
+.modern-card-header > * {
+    position: relative;
+    z-index: 1;
+}
+
 .modern-card-header.about {
-    background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
+
 .modern-card-header.leadership {
-    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
+
 .modern-card-header.events {
-    background: linear-gradient(90deg, #42f56c 0%, #66f43f 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
+
 .modern-card-header.tg {
-    background: linear-gradient(90deg, #f59e42 0%, #f43f5e 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
+
 .modern-card-header.past {
-    background: linear-gradient(90deg, #64748b 0%, #a1a1aa 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
+
 .modern-card-body {
     padding: 2rem 2.5rem 1.5rem 2.5rem;
-    background: #f8fafc;
-    color: #222;
+    background: white;
+    color: #374151;
     font-size: 1.08rem;
+    line-height: 1.6;
 }
 .modern-event-card {
-    border-radius: 1rem;
-    background: #fff;
-    box-shadow: 0 2px 12px rgba(59,130,246,0.08);
-    transition: box-shadow 0.18s, transform 0.12s;
+    border-radius: var(--border-radius-lg);
+    background: white;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-bottom: 1.2rem;
-    padding: 1.2rem 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
 }
+
 .modern-event-card:hover {
-    box-shadow: 0 6px 24px rgba(59,130,246,0.16);
-    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    border-color: #cbd5e1;
 }
 .fancy-post-card {
   transition: box-shadow 0.18s, transform 0.12s;
@@ -1384,23 +1420,28 @@ document.addEventListener('DOMContentLoaded', function() {
 /* Prettified toggle and action buttons */
 .pretty-toggle-btn {
   border: none;
-  border-radius: 1.2rem;
-  padding: 0.7rem 2.2rem;
-  font-size: 1.13rem;
+  border-radius: var(--border-radius-lg);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
-  box-shadow: 0 2px 12px rgba(59,130,246,0.10);
-  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-right: 0.7rem;
   outline: none;
   cursor: pointer;
 }
+
+.pretty-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
 .pretty-toggle-btn.active, .pretty-toggle-btn:focus {
-  background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
-  color: #fff;
-  box-shadow: 0 4px 18px rgba(59,130,246,0.18);
-  transform: translateY(-2px) scale(1.04);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 .pretty-toggle-btn.outline {
   background: #f8fafc;
@@ -1416,35 +1457,38 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 .pretty-action-btn {
   border: none;
-  border-radius: 1.2rem;
-  padding: 0.7rem 2.2rem;
-  font-size: 1.13rem;
+  border-radius: var(--border-radius-lg);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(90deg, #ff7e5f 0%, #feb47b 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
-  box-shadow: 0 2px 12px rgba(255,126,95,0.10);
-  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-bottom: 1.2rem;
   outline: none;
   display: inline-block;
 }
+
 .pretty-action-btn:hover, .pretty-action-btn:focus {
-  background: linear-gradient(90deg, #feb47b 0%, #ff7e5f 100%);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
   color: #fff;
-  box-shadow: 0 4px 18px rgba(255,126,95,0.18);
-  transform: translateY(-2px) scale(1.04);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 /* Leadership management button styling */
 .edit-group-btn[data-bs-target="#leadershipModal"] {
-    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
-    box-shadow: 0 2px 12px rgba(99,102,241,0.10);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .edit-group-btn[data-bs-target="#leadershipModal"]:hover, 
 .edit-group-btn[data-bs-target="#leadershipModal"]:focus {
-    background: linear-gradient(90deg, #7c3aed 0%, #a78bfa 100%);
-    transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 4px 18px rgba(99,102,241,0.18);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .group-leader-card {

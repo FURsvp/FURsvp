@@ -54,6 +54,26 @@
 
     .btn.btn-primary.btn-lg {
         width: 100%;
+        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
+        color: #fff !important;
+        font-weight: 800;
+        border: none;
+        border-radius: 2em;
+        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
+        padding: 0.9em 0;
+        font-size: 1.18rem;
+        transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.7em;
+    }
+
+    .btn.btn-primary.btn-lg:hover, .btn.btn-primary.btn-lg:focus {
+        background: linear-gradient(90deg, #1a2f9a 0%, #0e7490 100%);
+        color: #fff !important;
+        box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
+        transform: scale(1.03);
     }
 
     .login-error-box {

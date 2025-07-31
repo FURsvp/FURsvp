@@ -2,6 +2,18 @@
 {% block title %}Login - FURsvp{% endblock %}
 {% load widget_tweaks %}
 {% block content %}
+<!-- Breadcrumbs -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <div class="modern-breadcrumbs">
+        <a href="{% url 'home' %}">
+            <i class="material-icons">home</i>
+            Home
+        </a>
+        <span class="breadcrumb-chevron">›</span>
+        <span class="breadcrumb-current">Login</span>
+    </div>
+</nav>
+
 <style>
 .input-group .form-control:focus {
     box-shadow: 0 0 0 2px #b3d1f7;

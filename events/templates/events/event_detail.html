@@ -3,34 +3,49 @@
 {% block title %}{{ event.title }} - FURsvp{% endblock %}
 {% load widget_tweaks %}
 
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
 {% block content %}
-<div class="container">
+<div class="container py-4">
     <!-- Status Alerts -->
     {% if event.status == 'cancelled' %}
-    <div class="alert alert-danger mb-4">
-        <span class="material-icons me-2">event_busy</span>
-        This event has been cancelled.
+    <div class="modern-alert alert-danger mb-4">
+        <div class="alert-content">
+            <i class="material-icons me-2">event_busy</i>
+            <span>This event has been cancelled.</span>
+        </div>
     </div>
     {% elif user_rsvp and event.status != 'cancelled' %}
         {% if user_rsvp.status == 'confirmed' %}
-        <div class="alert alert-success mb-4">
-            <span class="material-icons me-2">check_circle</span>
-            You are currently Confirmed for this event.
+        <div class="modern-alert alert-success mb-4">
+            <div class="alert-content">
+                <i class="material-icons me-2">check_circle</i>
+                <span>You are currently <strong>Confirmed</strong> for this event.</span>
+            </div>
         </div>
         {% elif user_rsvp.status == 'maybe' %}
-        <div class="alert alert-warning mb-4">
-            <span class="material-icons me-2">help</span>
-            You are currently a Maybe for this event.
+        <div class="modern-alert alert-warning mb-4">
+            <div class="alert-content">
+                <i class="material-icons me-2">help</i>
+                <span>You are currently a <strong>Maybe</strong> for this event.</span>
+            </div>
         </div>
         {% elif user_rsvp.status == 'not_attending' %}
-        <div class="alert alert-danger mb-4">
-            <span class="material-icons me-2">cancel</span>
-            You are Not Going to this event.
+        <div class="modern-alert alert-danger mb-4">
+            <div class="alert-content">
+                <i class="material-icons me-2">cancel</i>
+                <span>You are <strong>Not Going</strong> to this event.</span>
+            </div>
         </div>
         {% elif user_rsvp.status == 'waitlisted' %}
-        <div class="alert alert-warning mb-4">
-            <span class="material-icons me-2">hourglass_empty</span>
-            You are currently Waitlisted for this event. You will be notified if a spot opens up.
+        <div class="modern-alert alert-warning mb-4">
+            <div class="alert-content">
+                <i class="material-icons me-2">hourglass_empty</i>
+                <span>You are currently <strong>Waitlisted</strong> for this event. You will be notified if a spot opens up.</span>
+            </div>
         </div>
         {% endif %}
     {% endif %}
@@ -50,26 +65,100 @@
         </div>
     </nav>
 
-    <!-- Event Header -->
-    <div class="card bg-gradient-primary text-white mb-4">
-        <div class="card-body p-4">
-            <h1 class="display-5 mb-2 fw-bold">{{ event.title }}</h1>
-            {% if event.age_restriction == 'mature' %}
-            <span class="badge bg-warning text-dark">
-                <span class="material-icons me-1">warning</span> 21+
-            </span>
-            {% elif event.age_restriction == 'adult' %}
-            <span class="badge bg-warning text-dark">
-                <span class="material-icons me-1">warning</span> 18+
-            </span>
-            {% endif %}
+    <!-- Event Hero Section -->
+    <div class="event-hero-section mb-5">
+        <div class="event-hero-card">
+            <div class="event-hero-content">
+                <div class="event-main-info">
+                    <div class="event-title-section">
+                        <h1 class="event-title">{{ event.title }}</h1>
+                        <div class="event-badges">
+                            {% if event.age_restriction == 'mature' %}
+                            <span class="event-badge age-badge">
+                                <i class="material-icons me-1">warning</i> 21+
+                            </span>
+                            {% elif event.age_restriction == 'adult' %}
+                            <span class="event-badge age-badge">
+                                <i class="material-icons me-1">warning</i> 18+
+                            </span>
+                            {% endif %}
+                            {% if event_has_passed %}
+                            <span class="event-badge past-badge">
+                                <i class="material-icons me-1">schedule</i> Past Event
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                                            <div class="event-details">
+                            <div class="event-detail-item">
+                                <i class="material-icons">calendar_today</i>
+                                <span>{{ event.date }}</span>
+                            </div>
+                            <div class="event-detail-item">
+                                <i class="material-icons">schedule</i>
+                                <span>{{ event.start_time|time:"g:i A" }}{% if event.end_time %} - {{ event.end_time|time:"g:i A" }}{% endif %}</span>
+                            </div>
+                        </div>
+                </div>
+                <div class="event-organizer-section">
+                    <div class="organizer-card">
+                        <h3 class="organizer-title">
+                            <i class="material-icons me-2">group</i>
+                            Meet Your Organizer
+                        </h3>
+                        <div class="organizer-info">
+                            <div class="organizer-group">
+                                {% if event.group.logo_base64 %}
+                                <div class="group-logo">
+                                    <img src="data:image/png;base64,{{ event.group.logo_base64 }}" alt="{{ event.group.name }} logo" class="group-logo-img">
+                                </div>
+                                {% endif %}
+                                <div class="organizer-name">{{ event.group.name }}</div>
+                            </div>
+                            <a href="{% url 'group_detail' event.group.id %}" class="organizer-link">
+                                <i class="material-icons me-1">arrow_forward</i>
+                                View Group
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    {% if event_has_passed %}
-    <div class="alert alert-secondary mb-4">
-        <span class="material-icons me-2">info</span>
-        This event has passed.
+    <!-- Map Section -->
+    {% if event.address %}
+    <div class="map-section mb-5">
+        <div class="modern-card">
+            <div class="modern-card-header map-header">
+                <h2 class="mb-0 d-flex align-items-center">
+                    <i class="material-icons me-2">map</i> Event Location
+                </h2>
+            </div>
+            <div class="modern-card-body">
+                <div class="map-container">
+                    <div id="event-map" class="event-map"></div>
+                    <div class="map-info">
+                        <div class="location-details">
+                            <h3 class="location-title">
+                                <i class="material-icons me-2">location_on</i>
+                                Event Venue
+                            </h3>
+                            <p class="location-address">{{ event.address }}</p>
+                            {% if event.city %}
+                            <p class="location-city">{{ event.city }}{% if event.state %}, {{ event.state }}{% endif %}{% if event.zip_code %} {{ event.zip_code }}{% endif %}</p>
+                            {% endif %}
+                        </div>
+                        <div class="map-actions">
+                            <a href="https://maps.google.com/maps?q={{ event.address|urlencode }}" target="_blank" class="map-action-btn">
+                                <i class="material-icons me-2">open_in_new</i>
+                                Open in Google Maps
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     {% endif %}
 
@@ -78,240 +167,248 @@
         <!-- Event Details (Left) -->
         <div class="col-lg-8">
             <!-- Event Information -->
-            <div class="card shadow-custom mb-4">
-                <div class="card-header bg-gradient-primary text-white">
+            <div class="modern-card mb-4">
+                <div class="modern-card-header event-info">
                     <h2 class="mb-0 d-flex align-items-center">
-                        <span class="material-icons me-2">info</span> Event Information
+                        <i class="material-icons me-2">info</i> Event Information
                     </h2>
                 </div>
-                <div class="card-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="material-icons text-primary me-2">group</span>
-                                <strong class="text-primary">Group:</strong>
-                                <span class="ms-2">
-                                    <a href="{% url 'group_detail' event.group.id %}" class="text-decoration-none">
-                                        {{ event.group.name }}
-                                    </a>
-                                </span>
-                            </div>
+                <div class="modern-card-body">
+                    {% if event.capacity %}
+                    <div class="capacity-info mb-4">
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" style="width: {% widthratio confirmed_rsvps_count event.capacity 100 %}%"></div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="material-icons text-primary me-2">calendar_today</span>
-                                <strong class="text-primary">Date:</strong>
-                                <span class="ms-2">{{ event.date }}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-{% if event.capacity %}6{% else %}12{% endif %}">
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="material-icons text-primary me-2">schedule</span>
-                                <strong class="text-primary">Time:</strong>
-                                <span class="ms-2">
-                                    {{ event.start_time|time:"g:i A" }}
-                                    {% if event.end_time %}
-                                    - {{ event.end_time|time:"g:i A" }}
-                                    {% endif %}
-                                </span>
-                            </div>
-                        </div>
-                        {% if event.capacity %}
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="material-icons text-primary me-2">group</span>
-                                <strong class="text-primary">Capacity:</strong>
-                                <span class="ms-2">{{ confirmed_rsvps_count }} / {{ event.capacity }} Confirmed</span>
-                                {% if waitlisted_rsvps_count %}
-                                <span class="ms-2 text-warning">
-                                    <span class="material-icons align-middle">queue</span> {{ waitlisted_rsvps_count }} Waitlisted
-                                </span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endif %}
-                        <div class="col-12">
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="material-icons text-primary me-2">location_on</span>
-                                <strong class="text-primary">Location:</strong>
-                                <span class="ms-2">{{ location_display_string }}</span>
-                            </div>
-                        </div>
-                        <div class="col-12 mt-4">
-                            <div class="mb-3">
-                                <strong class="text-primary d-flex align-items-center">
-                                    <span class="material-icons me-2">info</span> Description:
-                                </strong>
-                            </div>
-                            <div>{{ event.description|safe }}</div>
-                            {% if event.accessibility_details %}
-                            <div class="mt-3">
-                                <strong class="text-primary d-flex align-items-center">
-                                    <span class="material-icons me-2">accessible</span> Accessibility:
-                                </strong>
-                                <span>{{ event.accessibility_details|linebreaksbr }}</span>
-                            </div>
+                        <div class="capacity-text">
+                            <span class="capacity-current">{{ confirmed_rsvps_count }}</span>
+                            <span class="capacity-separator">/</span>
+                            <span class="capacity-total">{{ event.capacity }}</span>
+                            <span class="capacity-label">Confirmed</span>
+                            {% if waitlisted_rsvps_count %}
+                            <span class="waitlist-count">
+                                <i class="material-icons">queue</i> {{ waitlisted_rsvps_count }} Waitlisted
+                            </span>
                             {% endif %}
                         </div>
                     </div>
+                    {% endif %}
+                    
+                    <div class="event-description mb-4">
+                        <h3 class="description-title">
+                            <i class="material-icons me-2">description</i> Description
+                        </h3>
+                        <div class="description-content">{{ event.description|safe }}</div>
+                    </div>
+                    
+                    {% if event.accessibility_details %}
+                    <div class="accessibility-section">
+                        <h3 class="accessibility-title">
+                            <i class="material-icons me-2">accessible</i> Accessibility
+                        </h3>
+                        <div class="accessibility-content">{{ event.accessibility_details|linebreaksbr }}</div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
             <!-- Attendees Section -->
             {% if can_view_attendee_list or rsvp_groups.confirmed|length > 0 or rsvp_groups.waitlisted|length > 0 or rsvp_groups.maybe|length > 0 or rsvp_groups.not_attending|length > 0 %}
-            <div class="card shadow-custom mb-4">
-                <div class="card-header bg-gradient-success text-white">
+            <div class="modern-card mb-4">
+                <div class="modern-card-header attendees">
                     <h2 class="mb-0 d-flex align-items-center">
-                        <span class="material-icons me-2">groups</span> Attendees
-                        <span class="badge bg-light text-dark ms-2">{{ confirmed_rsvps_count }}</span>
+                        <i class="material-icons me-2">groups</i> Attendees
+                        <span class="attendee-count">{{ confirmed_rsvps_count }}</span>
                     </h2>
                 </div>
-                <div class="card-body p-4">
+                <div class="modern-card-body">
                     {% if not can_view_attendee_list %}
-                    <div class="alert alert-info mb-3">
-                        The attendee list is hidden. You can only see your own RSVP.
+                    <div class="modern-alert alert-info mb-4">
+                        <div class="alert-content">
+                            <i class="material-icons me-2">visibility_off</i>
+                            <span>The attendee list is hidden. You can only see your own RSVP.</span>
+                        </div>
                     </div>
                     {% endif %}
 
                     <!-- Confirmed RSVPs -->
-                    <div class="mb-4">
-                        <h4 class="h6 text-success mb-3 d-flex align-items-center">
-                            <span class="material-icons me-1">check_circle</span> Confirmed ({{ confirmed_rsvps_count }})
-                        </h4>
-                        <div class="list-group">
+                    <div class="attendee-section mb-4">
+                        <h3 class="attendee-section-title confirmed">
+                            <i class="material-icons me-2">check_circle</i> Confirmed
+                            <span class="attendee-count">({{ confirmed_rsvps_count }})</span>
+                        </h3>
+                        <div class="attendee-list">
                             {% for rsvp_data in rsvp_groups.confirmed %}
                             {% with rsvp=rsvp_data.rsvp %}
-                            <div class="list-group-item d-flex align-items-center">
+                            <div class="attendee-item">
                                 {% if rsvp.user %}
-                                <div class="me-3">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
-                                {% if can_view_contact_info %}
-                                <a href="#" class="text-body js-open-contact-modal" data-bs-toggle="modal"
-                                    data-bs-target="#contactInfoModal"
-                                    data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                    data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                    data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                    data-user-id="{{ rsvp.user.id }}">
-                                    {{ rsvp.user.profile.get_display_name }}
-                                </a>
+                                <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
+                                <div class="attendee-info">
+                                    {% if can_view_contact_info %}
+                                    <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                        data-bs-target="#contactInfoModal"
+                                        data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                        data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                        data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                        data-user-id="{{ rsvp.user.id }}">
+                                        {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                                    </a>
+                                    {% else %}
+                                    <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                                    {% endif %}
+                                </div>
                                 {% else %}
-                                {{ rsvp.user.profile.get_display_name }}
-                                {% endif %}
-                                {% else %}
-                                <span class="material-icons text-muted me-3">person</span>
-                                <span class="text-body">{{ rsvp.name }}</span>
+                                <div class="attendee-avatar">
+                                    <i class="material-icons">person</i>
+                                </div>
+                                <div class="attendee-info">
+                                    <span class="attendee-name">{{ rsvp.name }}</span>
+                                </div>
                                 {% endif %}
                             </div>
                             {% endwith %}
                             {% empty %}
-                            <div class="list-group-item text-muted">No confirmed RSVPs yet</div>
+                            <div class="empty-attendees">
+                                <i class="material-icons">group_off</i>
+                                <span>No confirmed RSVPs yet</span>
+                            </div>
                             {% endfor %}
                         </div>
                     </div>
 
                     <!-- Maybe RSVPs -->
-                    <div class="mb-4">
-                        <h4 class="h6 text-warning mb-3 d-flex align-items-center">
-                            <span class="material-icons me-1">help</span> Maybe ({{ rsvp_groups.maybe|length }})
-                        </h4>
-                        <div class="list-group">
+                    <div class="attendee-section mb-4">
+                        <h3 class="attendee-section-title maybe">
+                            <i class="material-icons me-2">help</i> Maybe
+                            <span class="attendee-count">({{ rsvp_groups.maybe|length }})</span>
+                        </h3>
+                        <div class="attendee-list">
                             {% for rsvp_data in rsvp_groups.maybe %}
                             {% with rsvp=rsvp_data.rsvp %}
-                            <div class="list-group-item d-flex align-items-center">
+                            <div class="attendee-item">
                                 {% if rsvp.user %}
-                                <div class="me-3">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
-                                {% if can_view_contact_info %}
-                                <a href="#" class="text-body js-open-contact-modal" data-bs-toggle="modal"
-                                    data-bs-target="#contactInfoModal"
-                                    data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                    data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                    data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                    data-user-id="{{ rsvp.user.id }}">
-                                    {{ rsvp.user.profile.get_display_name }}
-                                </a>
+                                <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
+                                <div class="attendee-info">
+                                    {% if can_view_contact_info %}
+                                    <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                        data-bs-target="#contactInfoModal"
+                                        data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                        data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                        data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                        data-user-id="{{ rsvp.user.id }}">
+                                        {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                                    </a>
+                                    {% else %}
+                                    <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                                    {% endif %}
+                                </div>
                                 {% else %}
-                                {{ rsvp.user.profile.get_display_name }}
-                                {% endif %}
-                                {% else %}
-                                <span class="material-icons text-muted me-3">person</span>
-                                <span class="text-body">{{ rsvp.name }}</span>
+                                <div class="attendee-avatar">
+                                    <i class="material-icons">person</i>
+                                </div>
+                                <div class="attendee-info">
+                                    <span class="attendee-name">{{ rsvp.name }}</span>
+                                </div>
                                 {% endif %}
                             </div>
                             {% endwith %}
                             {% empty %}
-                            <div class="list-group-item text-muted">No maybes yet</div>
+                            <div class="empty-attendees">
+                                <i class="material-icons">help_outline</i>
+                                <span>No maybes yet</span>
+                            </div>
                             {% endfor %}
                         </div>
                     </div>
 
                     <!-- Not Attending -->
-                    <div class="mb-4">
-                        <h4 class="h6 text-danger mb-3 d-flex align-items-center">
-                            <span class="material-icons me-1">cancel</span> Not Attending ({{ rsvp_groups.not_attending|length }})
-                        </h4>
-                        <div class="list-group">
+                    <div class="attendee-section mb-4">
+                        <h3 class="attendee-section-title not-attending">
+                            <i class="material-icons me-2">cancel</i> Not Attending
+                            <span class="attendee-count">({{ rsvp_groups.not_attending|length }})</span>
+                        </h3>
+                        <div class="attendee-list">
                             {% for rsvp_data in rsvp_groups.not_attending %}
                             {% with rsvp=rsvp_data.rsvp %}
-                            <div class="list-group-item d-flex align-items-center">
+                            <div class="attendee-item">
                                 {% if rsvp.user %}
-                                <div class="me-3">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
-                                {% if can_view_contact_info %}
-                                <a href="#" class="text-body js-open-contact-modal" data-bs-toggle="modal"
-                                    data-bs-target="#contactInfoModal"
-                                    data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                    data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                    data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                    data-user-id="{{ rsvp.user.id }}">
-                                    {{ rsvp.user.profile.get_display_name }}
-                                </a>
+                                <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
+                                <div class="attendee-info">
+                                    {% if can_view_contact_info %}
+                                    <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                        data-bs-target="#contactInfoModal"
+                                        data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                        data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                        data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                        data-user-id="{{ rsvp.user.id }}">
+                                        {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                                    </a>
+                                    {% else %}
+                                    <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                                    {% endif %}
+                                </div>
                                 {% else %}
-                                {{ rsvp.user.profile.get_display_name }}
-                                {% endif %}
-                                {% else %}
-                                <span class="material-icons text-muted me-3">person</span>
-                                <span class="text-body">{{ rsvp.name }}</span>
+                                <div class="attendee-avatar">
+                                    <i class="material-icons">person</i>
+                                </div>
+                                <div class="attendee-info">
+                                    <span class="attendee-name">{{ rsvp.name }}</span>
+                                </div>
                                 {% endif %}
                             </div>
                             {% endwith %}
                             {% empty %}
-                            <div class="list-group-item text-muted">No one has declined yet</div>
+                            <div class="empty-attendees">
+                                <i class="material-icons">sentiment_satisfied</i>
+                                <span>No one has declined yet</span>
+                            </div>
                             {% endfor %}
                         </div>
                     </div>
 
                     <!-- Waitlisted -->
                     {% if event.waitlist_enabled %}
-                    <div class="mb-4">
-                        <h4 class="h6 text-warning mb-3 d-flex align-items-center">
-                            <span class="material-icons me-1">queue</span> Waitlisted ({{ waitlisted_rsvps_count }})
-                        </h4>
-                        <div class="list-group">
+                    <div class="attendee-section mb-4">
+                        <h3 class="attendee-section-title waitlisted">
+                            <i class="material-icons me-2">queue</i> Waitlisted
+                            <span class="attendee-count">({{ waitlisted_rsvps_count }})</span>
+                        </h3>
+                        <div class="attendee-list">
                             {% for rsvp_data in rsvp_groups.waitlisted %}
                             {% with rsvp=rsvp_data.rsvp %}
                             {% if rsvp.status == 'waitlisted' %}
-                            <div class="list-group-item d-flex align-items-center">
+                            <div class="attendee-item">
                                 {% if rsvp.user %}
-                                <div class="me-3">{{ rsvp.user.profile|get_avatar_sized_html:32|safe }}</div>
-                                {% if can_view_contact_info %}
-                                <a href="#" class="text-body js-open-contact-modal" data-bs-toggle="modal"
-                                    data-bs-target="#contactInfoModal"
-                                    data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                    data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                    data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                    data-user-id="{{ rsvp.user.id }}">
-                                    {{ rsvp.user.profile.get_display_name }}
-                                </a>
+                                <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
+                                <div class="attendee-info">
+                                    {% if can_view_contact_info %}
+                                    <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                        data-bs-target="#contactInfoModal"
+                                        data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                        data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                        data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                        data-user-id="{{ rsvp.user.id }}">
+                                        {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                                    </a>
+                                    {% else %}
+                                    <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                                    {% endif %}
+                                </div>
                                 {% else %}
-                                {{ rsvp.user.profile.get_display_name }}
-                                {% endif %}
-                                {% else %}
-                                <span class="material-icons text-muted me-3">person</span>
-                                <span class="text-body">{{ rsvp.name }}</span>
+                                <div class="attendee-avatar">
+                                    <i class="material-icons">person</i>
+                                </div>
+                                <div class="attendee-info">
+                                    <span class="attendee-name">{{ rsvp.name }}</span>
+                                </div>
                                 {% endif %}
                             </div>
                             {% endif %}
                             {% endwith %}
                             {% empty %}
-                            <div class="list-group-item text-muted">No one on waitlist yet</div>
+                            <div class="empty-attendees">
+                                <i class="material-icons">queue</i>
+                                <span>No one on waitlist yet</span>
+                            </div>
                             {% endfor %}
                         </div>
                     </div>
@@ -725,6 +822,7 @@
 
 {% block extra_js %}
 {{ block.super }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Contact Info Modal
@@ -812,6 +910,73 @@
             }, 400);
         }
 
+        // Initialize Leaflet Map
+        function initializeMap() {
+            const mapElement = document.getElementById('event-map');
+            if (!mapElement) return;
+
+            const address = '{{ event.address|escapejs }}';
+            if (!address) return;
+
+            // Clear any existing content
+            mapElement.innerHTML = '';
+
+            // Try to get coordinates using Nominatim (OpenStreetMap's geocoding service)
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        const lat = parseFloat(data[0].lat);
+                        const lon = parseFloat(data[0].lon);
+                        
+                        // Initialize Leaflet map
+                        const map = L.map('event-map').setView([lat, lon], 17);
+                        
+                        // Add custom styled tile layer with themed appearance
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            className: 'themed-tiles'
+                        }).addTo(map);
+                        
+                        // Add custom marker
+                        const customIcon = L.divIcon({
+                            className: 'custom-marker',
+                            html: '<div class="marker-pin"><i class="material-icons">location_on</i></div>',
+                            iconSize: [40, 40],
+                            iconAnchor: [20, 40],
+                            popupAnchor: [0, -40]
+                        });
+                        
+                        L.marker([lat, lon], {icon: customIcon})
+                            .addTo(map)
+                            .bindPopup('<div class="marker-popup"><strong>Event Location</strong><br>' + address + '</div>');
+                        
+                    } else {
+                        // Fallback: show a message if geocoding fails
+                        mapElement.innerHTML = `
+                            <div class="map-error">
+                                <i class="material-icons">location_off</i>
+                                <p>Unable to display map for this location</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.log('Could not geocode address, showing error message');
+                    mapElement.innerHTML = `
+                        <div class="map-error">
+                            <i class="material-icons">location_off</i>
+                            <p>Unable to display map for this location</p>
+                        </div>
+                    `;
+                });
+        }
+
+        // Initialize map when page loads
+        if (document.getElementById('event-map')) {
+            initializeMap();
+        }
+
         // Geolocation and address autocomplete
         var useLocationBtn = document.getElementById('useLocationBtn');
         if (useLocationBtn) {
@@ -836,4 +1001,848 @@
         }
     });
 </script>
+
+<style>
+/* Modern Event Detail Page Styling */
+
+/* Modern Alerts */
+.modern-alert {
+    border-radius: var(--border-radius-lg);
+    border: none;
+    padding: 1rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-alert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    opacity: 0.1;
+}
+
+.modern-alert.alert-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.modern-alert.alert-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.modern-alert.alert-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.modern-alert.alert-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+.alert-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+}
+
+/* Event Hero Section */
+.event-hero-section {
+    margin-bottom: 3rem;
+}
+
+.event-hero-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--border-radius-xl);
+    padding: 4rem 3rem;
+    color: white;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.event-hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.2;
+}
+
+.event-hero-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    pointer-events: none;
+}
+
+    .event-hero-content {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    .event-main-info {
+        flex: 1;
+    }
+
+    .event-title-section {
+        margin-bottom: 2rem;
+    }
+
+    .event-title {
+        font-size: 3rem;
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        line-height: 1.1;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        letter-spacing: -0.02em;
+    }
+
+    .event-badges {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .event-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius-lg);
+        font-size: 0.875rem;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .age-badge {
+        background: rgba(245, 158, 11, 0.9);
+        color: white;
+    }
+
+    .past-badge {
+        background: rgba(107, 114, 128, 0.9);
+        color: white;
+    }
+
+    .event-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .event-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--border-radius-lg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.2s ease;
+    }
+
+    .event-detail-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(4px);
+    }
+
+    .event-detail-item i {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        color: #fbbf24;
+    }
+
+    /* Organizer Section */
+    .event-organizer-section {
+        min-width: 280px;
+    }
+
+    .organizer-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--border-radius-xl);
+        padding: 1.5rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .organizer-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .organizer-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .organizer-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--border-radius-lg);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .group-logo {
+        flex-shrink: 0;
+    }
+
+    .group-logo-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .organizer-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        flex: 1;
+    }
+
+    .organizer-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: var(--border-radius-lg);
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+    }
+
+    .organizer-link:hover {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+    }
+
+/* Modern Cards */
+.modern-card {
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    background: white;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modern-card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+}
+
+.modern-card-header {
+    padding: 1.5rem 2rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-card-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    opacity: 0.9;
+}
+
+.modern-card-header > * {
+    position: relative;
+    z-index: 1;
+}
+
+.modern-card-header.event-info {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.modern-card-header.attendees {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.modern-card-body {
+    padding: 2rem 2.5rem 1.5rem 2.5rem;
+    background: white;
+    color: #374151;
+    font-size: 1.08rem;
+    line-height: 1.6;
+}
+
+/* Capacity Bar */
+.capacity-info {
+    background: #f8fafc;
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+}
+
+.capacity-bar {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.capacity-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.capacity-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.capacity-current {
+    color: #10b981;
+    font-size: 1.25rem;
+}
+
+.capacity-separator {
+    color: #6b7280;
+}
+
+.capacity-total {
+    color: #374151;
+    font-size: 1.25rem;
+}
+
+.capacity-label {
+    color: #6b7280;
+    margin-left: 0.5rem;
+}
+
+.waitlist-count {
+    margin-left: auto;
+    color: #f59e0b;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Event Description */
+.event-description {
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 2rem;
+}
+
+.description-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.description-content {
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+.accessibility-section {
+    padding-top: 2rem;
+}
+
+.accessibility-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.accessibility-content {
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+/* Attendee Sections */
+.attendee-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--border-radius-lg);
+    font-size: 0.875rem;
+    margin-left: 1rem;
+}
+
+.attendee-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+    .attendee-section-title.confirmed {
+        color: #10b981;
+    }
+
+    .attendee-section-title.maybe {
+        color: #f59e0b;
+    }
+
+    .attendee-section-title.not-attending {
+        color: #ef4444;
+    }
+
+    .attendee-section-title.waitlisted {
+        color: #f59e0b;
+    }
+
+    /* Enhanced empty state styling */
+    .empty-attendees {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 2rem;
+        color: #9ca3af;
+        font-style: italic;
+        background: #f8fafc;
+        border-radius: var(--border-radius-lg);
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+
+    .empty-attendees:hover {
+        background: #f1f5f9;
+        transform: translateY(-1px);
+    }
+
+    .empty-attendees i {
+        font-size: 1.5rem;
+        opacity: 0.7;
+    }
+
+.attendee-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.attendee-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.attendee-item:hover {
+    background: #f1f5f9;
+    transform: translateX(4px);
+}
+
+.attendee-avatar {
+    flex-shrink: 0;
+}
+
+.attendee-avatar i {
+    font-size: 2rem;
+    color: #9ca3af;
+}
+
+.attendee-info {
+    flex: 1;
+}
+
+.attendee-name {
+    font-weight: 600;
+    color: #1f2937;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.attendee-name:hover {
+    color: #667eea;
+}
+
+.empty-attendees {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.empty-attendees i {
+    font-size: 1.5rem;
+}
+
+/* Map Section */
+.map-section {
+    margin-bottom: 3rem;
+}
+
+.modern-card-header.map-header {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.map-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+    .event-map {
+        height: 400px;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Custom Leaflet Map Styling */
+    .leaflet-container {
+        font-family: "Baloo 2", sans-serif;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+    }
+
+    /* Themed Map Tiles - Apply filters to make them match site theme */
+    .themed-tiles {
+        filter: hue-rotate(220deg) saturate(0.8) brightness(0.9) contrast(1.1);
+    }
+
+
+    /* Custom Zoom Controls */
+    .leaflet-control-zoom {
+        border: none !important;
+        box-shadow: var(--shadow-lg) !important;
+        border-radius: var(--border-radius-lg) !important;
+        overflow: hidden;
+    }
+
+    .leaflet-control-zoom a {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 700 !important;
+        font-size: 1.2rem !important;
+        width: 40px !important;
+        height: 40px !important;
+        line-height: 40px !important;
+        text-align: center !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .leaflet-control-zoom a:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: var(--shadow-xl) !important;
+    }
+
+    .leaflet-control-zoom a:first-child {
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
+    }
+
+    .leaflet-control-zoom a:last-child {
+        border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg) !important;
+    }
+
+    .leaflet-bottom.leaflet-right {
+        display: none !important;
+    }
+
+
+    .leaflet-control-attribution a {
+        color: white !important;
+        text-decoration: none !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .leaflet-control-attribution a:hover {
+        color: #fbbf24 !important;
+        text-decoration: underline !important;
+        transform: scale(1.05) !important;
+    }
+
+    /* Custom Popup Styling */
+    .leaflet-popup-content-wrapper {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border-radius: var(--border-radius-lg) !important;
+        box-shadow: var(--shadow-xl) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        backdrop-filter: blur(10px) !important;
+    }
+
+    .leaflet-popup-content {
+        color: white !important;
+        font-family: "Baloo 2", sans-serif !important;
+        font-weight: 500 !important;
+        margin: 1rem !important;
+    }
+
+    .leaflet-popup-tip {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .leaflet-popup-close-button {
+        color: white !important;
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .leaflet-popup-close-button:hover {
+        color: #fbbf24 !important;
+        transform: scale(1.2) !important;
+    }
+
+    /* Custom Marker Styling */
+    .custom-marker {
+        background: transparent;
+        border: none;
+    }
+
+    .marker-pin {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5), 0 4px 12px rgba(0, 0, 0, 0.15);
+        border: 4px solid white;
+        animation: marker-pulse 2s infinite;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .marker-pin::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%);
+        border-radius: 50%;
+    }
+
+    .marker-pin i {
+        color: white;
+        font-size: 20px;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+    }
+
+    @keyframes marker-pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        50% {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+    }
+
+    /* Custom Popup Styling */
+    .marker-popup {
+        font-family: "Baloo 2", sans-serif;
+        text-align: center;
+        padding: 0.5rem;
+    }
+
+    .marker-popup strong {
+        color: #667eea;
+        font-weight: 700;
+    }
+
+    /* Map Error State */
+    .map-error {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #9ca3af;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .map-error i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .map-error p {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+.map-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.location-details {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid #e2e8f0;
+}
+
+.location-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.location-address {
+    font-size: 1.1rem;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.location-city {
+    font-size: 1rem;
+    color: #6b7280;
+    margin-bottom: 0;
+}
+
+.map-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.map-action-btn {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius-lg);
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+}
+
+.map-action-btn:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .event-hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .event-title {
+        font-size: 2rem;
+    }
+    
+    .event-organizer-section {
+        min-width: auto;
+    }
+    
+    .event-badges {
+        justify-content: center;
+    }
+    
+    .modern-card-body {
+        padding: 1.5rem;
+    }
+    
+    .attendee-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .map-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .event-map {
+        height: 300px;
+    }
+}
+</style>
 {% endblock %}

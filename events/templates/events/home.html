@@ -62,7 +62,7 @@
                             </a>
                             {% elif user.is_authenticated %}
                             <a href="{% url 'groups_list' %}" class="btn btn-primary btn-lg me-3">
-                                <span class="material-icons me-2">group_add</span> Join Groups
+                                <span class="material-icons me-2">event</span> View Events
                             </a>
                             {% else %}
                             <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-3">

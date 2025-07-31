@@ -1,4 +1,5 @@
 {% load static %}
+{% load users_extras %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -251,17 +252,47 @@
             color: var(--text-secondary);
         }
 
-        /* Special styling for logout */
+        /* Modern logout button styling */
         .dropdown-item.logout-item {
-                color: #dc3545;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            margin-top: 0.5rem;
-            padding-top: 1rem;
+            background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
+            color: white !important;
+            border: none;
+            border-radius: 0.7rem;
+            margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+            padding: 0.8rem 1rem;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.18s ease;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
         }
 
         .dropdown-item.logout-item:hover {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-            color: white;
+            background: linear-gradient(90deg, #c82333 0%, #a71e2a 100%);
+            color: white !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+            text-decoration: none;
+        }
+
+        .dropdown-item.logout-item .material-icons {
+            font-size: 1.2rem;
+        }
+
+        /* Ensure logout button is clickable and properly styled */
+        .dropdown-item.logout-item:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+        }
+
+        /* Fix any potential dropdown styling conflicts */
+        .dropdown-menu .dropdown-item.logout-item {
+            border-radius: 0.7rem;
+            margin: 0.5rem;
+            width: calc(100% - 1rem);
         }
 
         /* Main Content */
@@ -603,11 +634,11 @@
             align-items: center;
             gap: 0.5rem;
             color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
+            font-size: 1.15rem;
         }
 
         .footer-stats .stat-item .material-icons {
-                font-size: 1rem;
+                font-size: 1.4rem;
         }
 
         @media (max-width: 768px) {
@@ -750,6 +781,61 @@
         .dark-mode .modern-breadcrumbs a:hover {
             color: white;
         }
+
+        /* Verified Checkmark Styles */
+        .verified-checkmark {
+            vertical-align: middle;
+            filter: drop-shadow(0 1px 2px rgba(16, 185, 129, 0.3));
+            transition: all 0.2s ease;
+        }
+
+        .verified-checkmark:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.4));
+        }
+
+        /* User name with verified checkmark */
+        .user-name-with-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Custom tooltip styles */
+        .verified-checkmark {
+            position: relative;
+            cursor: help;
+        }
+
+        .verified-checkmark::after {
+            content: "FURsvp Staff";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: "Baloo 2";
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 1000;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 16px rgba(85, 255, 0, 0.45);
+            min-width: 140px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .verified-checkmark:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -811,7 +897,7 @@
                                                 {% endif %}
                     </div>
                                             <div class="user-details">
-                                                <div class="user-name">{{ user.profile.get_display_name }}</div>
+                                                <div class="user-name">{{ user.profile.get_display_name }}{% verified_checkmark user %}</div>
                                                 <div class="user-role">
                                                     {% if user.is_superuser %}
                                                         FURsvp Staff
@@ -960,7 +1046,7 @@
                                 </span>
                                 <span class="stat-item">
                                     <span class="material-icons">people</span>
-                                    <span>{{ global_users_count }} FURsvp Staff</span>
+                                    <span>{{ global_users_count }} Users</span>
                                 </span>
     </div>
             </div>

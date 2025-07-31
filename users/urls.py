@@ -8,7 +8,7 @@ urlpatterns = [
     path('register/success/', views.registration_success, name='registration_success'),
     path('pending-approval/', views.pending_approval, name='pending_approval'),
     path('login/', views.custom_login, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+    path('logout/', views.custom_logout, name='logout'),
     path('profile/', views.profile, name='profile'),
     path('administration/', views.administration, name='administration'),
     path('<int:user_id>/ban/', views.ban_user, name='ban_user'),

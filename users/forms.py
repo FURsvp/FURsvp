@@ -92,32 +92,26 @@ class UserProfileForm(forms.ModelForm):
 
 class UserGroupManagementForm(forms.Form):
     """Form specifically for managing user groups in the administration panel"""
-    admin_groups = forms.CharField(
+    admin_groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
         required=False,
         label="Groups",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Type group names separated by commas...'
+        widget=forms.SelectMultiple(attrs={
+            'class': 'tom-select-groups tom-select-custom',
+            'multiple': True
         })
     )
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
-        # Set initial value to comma-separated group names
+        # Set initial value to user's groups
         user_groups = Group.objects.filter(group_roles__user=user)
-        group_names = ', '.join([group.name for group in user_groups])
-        self.fields['admin_groups'].initial = group_names
+        self.fields['admin_groups'].initial = user_groups
 
     def save(self):
         """Only handle group assignments, don't touch profile data"""
-        admin_groups_text = self.cleaned_data.get('admin_groups', '')
-        
-        # Parse comma-separated group names
-        group_names = [name.strip() for name in admin_groups_text.split(',') if name.strip()]
-        
-        # Find groups by name
-        groups = Group.objects.filter(name__in=group_names)
+        groups = self.cleaned_data.get('admin_groups', Group.objects.none())
         
         # Clear existing group roles
         GroupRole.objects.filter(user=self.user).delete()
@@ -125,6 +119,41 @@ class UserGroupManagementForm(forms.Form):
         # Add new GroupRoles
         for group in groups:
             GroupRole.objects.create(user=self.user, group=group)
+
+class UserPermissionForm(forms.Form):
+    """Form for assigning permissions to users"""
+    is_superuser = forms.BooleanField(
+        required=False,
+        label="Admin/Staff",
+        help_text="Full administrative access"
+    )
+    can_post_blog = forms.BooleanField(
+        required=False,
+        label="Can Post Blog",
+        help_text="Can create blog posts on Bluesky"
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+        # Set initial values
+        self.fields['is_superuser'].initial = user.is_superuser
+        self.fields['can_post_blog'].initial = user.profile.can_post_blog if hasattr(user, 'profile') else False
+
+    def save(self):
+        """Save permission changes"""
+        is_superuser = self.cleaned_data.get('is_superuser', False)
+        can_post_blog = self.cleaned_data.get('can_post_blog', False)
+        
+        # Update user permissions
+        if self.user.is_superuser != is_superuser:
+            self.user.is_superuser = is_superuser
+            self.user.save()
+        
+        # Update profile permissions
+        if hasattr(self.user, 'profile') and self.user.profile.can_post_blog != can_post_blog:
+            self.user.profile.can_post_blog = can_post_blog
+            self.user.profile.save()
 
 class UserPublicProfileForm(forms.ModelForm):
     clear_profile_picture = forms.BooleanField(required=False, label="Remove Profile Picture")
