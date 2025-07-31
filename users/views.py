@@ -389,19 +389,29 @@ def administration(request):
             if error_count > 0:
                 messages.error(request, f'Failed to update {error_count} user profiles.', extra_tags='admin_notification')
 
-            return redirect('administration')
+            # Preserve current tab
+            current_tab = request.GET.get('tab', 'users')
+            return redirect(f'{reverse("administration")}?tab={current_tab}')
         
         elif 'create_group_submit' in request.POST:
-            group_form = GroupForm(request.POST)
-            if group_form.is_valid():
+            # Only process group creation, ignore any user profile data
+            group_name = request.POST.get('new_group_name', '').strip()
+            if group_name:
                 try:
-                    group_form.save()
-                    create_notification(request.user, f'You have created a new group: {group_form.instance.name}.', link='/administration')
+                    # Check if group already exists
+                    if Group.objects.filter(name=group_name).exists():
+                        messages.error(request, f'A group named "{group_name}" already exists.', extra_tags='admin_notification')
+                    else:
+                        new_group = Group.objects.create(name=group_name)
+                        create_notification(request.user, f'You have created a new group: {new_group.name}.', link='/administration')
+                        messages.success(request, f'Group "{new_group.name}" created successfully.', extra_tags='admin_notification')
                 except Exception as e:
-                    pass
+                    messages.error(request, f'Error creating group: {str(e)}', extra_tags='admin_notification')
             else:
-                messages.error(request, 'Error creating group: Invalid form data.', extra_tags='admin_notification')
-            return redirect('administration')
+                messages.error(request, 'Group name is required.', extra_tags='admin_notification')
+            # Preserve current tab
+            current_tab = request.GET.get('tab', 'groups')
+            return redirect(f'{reverse("administration")}?tab={current_tab}')
         
         elif any(f'rename_group_{group.id}' in request.POST for group in all_groups):
             for group in all_groups:
@@ -415,6 +425,9 @@ def administration(request):
                             messages.error(request, f'Error renaming group: {str(e)}', extra_tags='admin_notification')
                     else:
                         messages.error(request, f'Error renaming group: Invalid form data.', extra_tags='admin_notification')
+                    # Preserve current tab
+                    current_tab = request.GET.get('tab', 'groups')
+                    return redirect(f'{reverse("administration")}?tab={current_tab}')
                     break
         
         elif 'delete_group_submit' in request.POST:
@@ -429,6 +442,46 @@ def administration(request):
                     messages.error(request, 'Group not found.', extra_tags='admin_notification')
                 except Exception as e:
                     messages.error(request, f'Error deleting group: {str(e)}', extra_tags='admin_notification')
+                # Preserve current tab
+                current_tab = request.GET.get('tab', 'groups')
+                return redirect(f'{reverse("administration")}?tab={current_tab}')
+
+        elif 'add_users_to_group' in request.POST:
+            group_id = request.POST.get('add_user_group_id')
+            selected_users = request.POST.getlist('selected_users')
+            
+            if group_id and selected_users:
+                try:
+                    group = Group.objects.get(id=group_id)
+                    added_count = 0
+                    already_member_count = 0
+                    
+                    for user_id in selected_users:
+                        try:
+                            user = User.objects.get(id=user_id)
+                            # Check if user is already in the group
+                            if not GroupRole.objects.filter(user=user, group=group).exists():
+                                GroupRole.objects.create(user=user, group=group)
+                                added_count += 1
+                            else:
+                                already_member_count += 1
+                        except User.DoesNotExist:
+                            continue
+                    
+                    if added_count > 0:
+                        messages.success(request, f'Successfully added {added_count} user(s) to group "{group.name}".', extra_tags='admin_notification')
+                    if already_member_count > 0:
+                        messages.info(request, f'{already_member_count} user(s) were already members of the group.', extra_tags='admin_notification')
+                    
+                except Group.DoesNotExist:
+                    messages.error(request, 'Group not found.', extra_tags='admin_notification')
+                except Exception as e:
+                    messages.error(request, f'Error adding users to group: {str(e)}', extra_tags='admin_notification')
+            else:
+                messages.error(request, 'Please select a group and at least one user.', extra_tags='admin_notification')
+            # Preserve current tab
+            current_tab = request.GET.get('tab', 'groups')
+            return redirect(f'{reverse("administration")}?tab={current_tab}')
 
         elif 'send_bulk_notification' in request.POST:
             message = request.POST.get('notification_message')
@@ -443,7 +496,9 @@ def administration(request):
             for user in users:
                 Notification.objects.create(user=user, message=full_message, link=link)
             messages.success(request, f'Notification sent to {users.count()} users.')
-            return redirect('administration')
+            # Preserve current tab
+            current_tab = request.GET.get('tab', 'notify')
+            return redirect(f'{reverse("administration")}?tab={current_tab}')
 
         elif request.POST.get('action') == 'update_banner':
             try:                

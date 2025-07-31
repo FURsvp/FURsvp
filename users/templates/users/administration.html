@@ -7,37 +7,422 @@
 <!-- Tom Select CSS -->
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 <style>
-.tom-select-custom .ts-wrapper {
-    border-radius: 0.5rem;
-    border: 2px solid #e2e8f0;
+/* Admin Panel Styles */
+.admin-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.admin-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.admin-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.admin-header p {
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+/* Navigation Tabs */
+.admin-nav {
+    background: white;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.admin-nav .nav-link {
+    border: none;
+    border-radius: 0.75rem;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    color: #64748b;
     transition: all 0.3s ease;
+    margin: 0 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-nav .nav-link:hover {
+    background: #f1f5f9;
+    color: #334155;
+    transform: translateY(-1px);
+}
+
+.admin-nav .nav-link.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Content Cards */
+.admin-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.admin-card-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-card-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-card-body {
+    padding: 2rem;
+}
+
+/* Search Bar */
+.search-container {
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.875rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* User Table */
+.user-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.user-table th {
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 700;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.user-table td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+}
+
+.user-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.user-details h4 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.user-details p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.user-details p strong,
+.user-details p b {
+    font-weight: 600;
+    color: #374151;
+}
+
+.user-details p em,
+.user-details p i {
+    font-style: italic;
+}
+
+.user-details p a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.user-details p a:hover {
+    text-decoration: underline;
+}
+
+.user-details p code {
+    background: #f3f4f6;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+}
+
+.group-meta {
+    margin-top: 0.5rem;
+}
+
+.group-meta small {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+}
+
+.group-meta small a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.group-meta small a:hover {
+    text-decoration: underline;
+}
+
+.group-meta .material-icons {
+    opacity: 0.7;
+}
+
+.admin-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admin-badge.yes {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.admin-badge.no {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* Tom Select Customization */
+.tom-select-custom .ts-wrapper {
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 100;
+    background: white;
 }
 
 .tom-select-custom .ts-wrapper.focus {
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    z-index: 200;
 }
 
 .tom-select-custom .ts-control {
     border: none;
     background: transparent;
-    padding: 0.5rem 0.75rem;
-    min-height: 38px;
+    padding: 0.75rem 1rem;
+    min-height: 44px;
+    position: relative;
+    z-index: 100;
+    font-size: 0.875rem;
+    color: #374151;
 }
 
 .tom-select-custom .ts-dropdown {
-    border-radius: 0.5rem;
     border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     background: white;
+    position: absolute !important;
+    z-index: 9999 !important;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .tom-select-custom .ts-dropdown .option {
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    border-bottom: 1px solid #f1f3f4;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.tom-select-custom .ts-dropdown .option:hover {
+    background-color: #f8fafc;
+}
+
+.tom-select-custom .ts-dropdown .option.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.tom-select-custom .ts-dropdown .option.selected:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.tom-select-custom .ts-wrapper .item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f3f4f6;
+    color: #374151;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    margin: 0.125rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid #e5e7eb;
+}
+
+.tom-select-custom .ts-wrapper .item .remove {
+    color: #6b7280;
+    opacity: 0.7;
+    margin-left: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #e5e7eb;
+    border-radius: 0.25rem;
+    padding: 0.125rem;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.tom-select-custom .ts-wrapper .item .remove:hover {
+    opacity: 1;
+    background: #d1d5db;
+    color: #374151;
+}
+
+.tom-select-custom .ts-wrapper .item .group-logo {
+    width: 16px;
+    height: 16px;
+    border-color: #d1d5db;
+    border-width: 1px;
+}
+
+.tom-select-custom .ts-wrapper .item .group-logo-placeholder {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+    border-color: #d1d5db;
+    border-width: 1px;
+    background: #e5e7eb;
+    color: #6b7280;
+}
+
+/* Ensure table doesn't clip the dropdown */
+.table-responsive {
+    overflow: visible !important;
+}
+
+.user-table {
+    position: relative;
+}
+
+.user-table td {
+    position: relative;
+    overflow: visible;
+}
+
+/* Ensure Tom Select wrapper has proper positioning */
+.tom-select-custom .ts-wrapper {
+    position: relative !important;
+    z-index: 100;
+}
+
+.tom-select-custom .ts-wrapper.focus {
+    z-index: 9998 !important;
+}
+
+.tom-select-custom .ts-dropdown .option {
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid #f3f4f6;
     transition: background-color 0.2s ease;
 }
 
@@ -48,10 +433,6 @@
 .tom-select-custom .ts-dropdown .option.selected {
     background-color: #667eea;
     color: white;
-}
-
-.tom-select-custom .ts-dropdown .option.selected .group-logo {
-    border-color: white;
 }
 
 .group-logo {
@@ -72,7 +453,8 @@
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 12px;
+    font-size: 10px;
+    font-weight: 600;
     border: 2px solid #e2e8f0;
     flex-shrink: 0;
 }
@@ -84,8 +466,9 @@
     background: #667eea;
     color: white;
     padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
+    border-radius: 0.375rem;
     margin: 0.125rem;
+    font-size: 0.75rem;
 }
 
 .ts-wrapper .item .group-logo {
@@ -100,112 +483,309 @@
     font-size: 8px;
     border-color: rgba(255, 255, 255, 0.3);
 }
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-end;
+}
+
+.btn-primary-admin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary-admin:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+/* Pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.pagination .page-link {
+    border: none;
+    padding: 0.75rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: 0.5rem;
+    color: #667eea;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+/* Modal Z-Index Override */
+.modal {
+    z-index: 9999 !important;
+}
+
+.modal-backdrop {
+    z-index: 9998 !important;
+}
+
+/* Ensure buttons are visible above table elements */
+.btn {
+    position: relative;
+    z-index: 10;
+}
+
+.user-table td {
+    position: relative;
+}
+
+.user-table td .btn {
+    z-index: 20;
+}
+
+/* User Selection Styles */
+.user-selection-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.user-selection-item:hover {
+    background: #f8fafc;
+    border-color: #667eea;
+}
+
+.user-selection-item.selected {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.user-selection-item.selected:hover {
+    background: #5a67d8;
+}
+
+.user-selection-checkbox {
+    margin: 0;
+}
+
+.user-selection-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.user-selection-details h6 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.user-selection-details small {
+    color: inherit;
+    opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 1rem;
+    }
+    
+    .search-form {
+        flex-direction: column;
+    }
+    
+    .user-table {
+        font-size: 0.875rem;
+    }
+    
+    .user-table th,
+    .user-table td {
+        padding: 0.75rem;
+    }
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow-sm mb-4">
-        <div class="card-body p-4">
-            <h1 class="display-5 mb-4 text-center">
-                <i class="material-icons align-middle me-2">admin_panel_settings</i> Administration Panel
+<div class="admin-container">
+    <!-- Header -->
+    <div class="admin-header">
+        <h1>
+            <i class="material-icons align-middle me-2">admin_panel_settings</i>
+            Administration Panel
             </h1>
+        <p>Manage users, groups, and platform settings</p>
+    </div>
 
-            <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+    <!-- Navigation -->
+    <div class="admin-nav">
+        <ul class="nav nav-pills justify-content-center" id="adminTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="organizers-tab" data-bs-toggle="tab" data-bs-target="#organizers" type="button" role="tab" aria-controls="organizers" aria-selected="true">
-                        <i class="material-icons align-middle me-1">manage_accounts</i> Users
+                <button class="nav-link active" id="users-tab" data-bs-toggle="pill" data-bs-target="#users" type="button" role="tab">
+                    <i class="material-icons">people</i>
+                    Users
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="groups-tab" data-bs-toggle="tab" data-bs-target="#groups" type="button" role="tab" aria-controls="groups" aria-selected="false">
-                        <i class="material-icons align-middle me-1">group_add</i> Manage Groups
+                <button class="nav-link" id="groups-tab" data-bs-toggle="pill" data-bs-target="#groups" type="button" role="tab">
+                    <i class="material-icons">group_add</i>
+                    Groups
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="bans-tab" data-bs-toggle="tab" data-bs-target="#bans" type="button" role="tab" aria-controls="bans" aria-selected="false">
-                        <i class="material-icons align-middle me-1">gavel</i> Ban Users
+                <button class="nav-link" id="bans-tab" data-bs-toggle="pill" data-bs-target="#bans" type="button" role="tab">
+                    <i class="material-icons">gavel</i>
+                    Bans
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="banner-tab" data-bs-toggle="tab" data-bs-target="#banner" type="button" role="tab" aria-controls="banner" aria-selected="false">
-                        <i class="material-icons align-middle me-1">campaign</i> Site Banner
+                <button class="nav-link" id="banner-tab" data-bs-toggle="pill" data-bs-target="#banner" type="button" role="tab">
+                    <i class="material-icons">campaign</i>
+                    Banner
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="notify-tab" data-bs-toggle="tab" data-bs-target="#notify" type="button" role="tab" aria-controls="notify" aria-selected="false">
-                        <i class="material-icons align-middle me-1">notifications</i> Send Notification
+                <button class="nav-link" id="notify-tab" data-bs-toggle="pill" data-bs-target="#notify" type="button" role="tab">
+                    <i class="material-icons">notifications</i>
+                    Notifications
                     </button>
                 </li>
                 {% if user.profile.can_post_blog %}
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="blogmgmt-tab" data-bs-toggle="tab" data-bs-target="#blogmgmt" type="button" role="tab" aria-controls="blogmgmt" aria-selected="false">
-                        <i class="material-icons align-middle me-1">rss_feed</i> Blog Management
+                <button class="nav-link" id="blog-tab" data-bs-toggle="pill" data-bs-target="#blog" type="button" role="tab">
+                    <i class="material-icons">rss_feed</i>
+                    Blog
                     </button>
                 </li>
                 {% endif %}
             </ul>
+    </div>
 
+    <!-- Content -->
             <div class="tab-content" id="adminTabsContent">
-                <div class="tab-pane fade show active" id="organizers" role="tabpanel" aria-labelledby="organizers-tab">
-                    <h2 class="card-title h4 mb-4 text-primary fw-bold">
-                        <i class="material-icons me-2">people</i> Users
+        <!-- Users Tab -->
+        <div class="tab-pane fade show active" id="users" role="tabpanel">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2>
+                        <i class="material-icons">people</i>
+                        User Management
                     </h2>
-                    <!-- Search Bar for Users -->
-                    <div class="mb-4">
-                        <form method="get" class="d-flex">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
+                </div>
+                <div class="admin-card-body">
+                    <!-- Search -->
+                    <div class="search-container">
+                        <form method="get" class="search-form">
+                            <input type="text" 
+                                   name="user_search" 
+                                   value="{{ user_search }}" 
+                                   class="search-input" 
+                                   placeholder="Search users by name, username, or email...">
+                            <button type="submit" class="search-btn">
                                 <i class="material-icons">search</i>
-                            </span>
-                                <input type="text" name="user_search" value="{{ user_search }}" class="form-control" placeholder="Search users by display name, username, or email...">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="material-icons">search</i> Search
+                                Search
                                 </button>
                                 {% if user_search %}
-                                <a href="?{% if request.GET.group_search %}group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}" class="btn btn-outline-secondary">
-                                    <i class="material-icons">clear</i> Clear
+                            <a href="?{% if request.GET.group_search %}group_search={{ request.GET.group_search }}{% endif %}" 
+                               class="btn btn-outline-secondary">
+                                <i class="material-icons">clear</i>
+                                Clear
                                 </a>
                                 {% endif %}
-                        </div>
                         </form>
                     </div>
-                    <form method="post">
+                                        <!-- Users Table -->
+                    <form method="post" id="userProfileForm">
                         {% csrf_token %}
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h3 class="mb-0">Users</h3>
+                                <p class="text-muted mb-0">Manage user permissions and group assignments</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" name="promote_users_submit" class="btn btn-primary-admin">
+                                    <i class="material-icons">save</i>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle caption-top mb-0" id="usersTable">
+                            <table class="user-table">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">person</i> Username</th>
-                                        <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">email</i> Email</th>
-                                        <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">admin_panel_settings</i> Site Admin</th>
-                                        <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">group</i> Groups</th>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Admin Status</th>
+                                        <th>Groups</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for user_obj in users_to_promote %}
-                                    <tr data-user-id="{{ user_obj.id }}">
+                                    <tr>
                                         <td>
-                                            <span class="fw-medium">{{ user_obj.profile.get_display_name }}</span>
-                                            <small class="text-muted d-block">({{ user_obj.username }})</small>
+                                            <div class="user-info">
+                                                <div class="user-avatar">
+                                                    {% if user_obj.profile.profile_picture_base64 %}
+                                                        <img src="{{ user_obj.profile.profile_picture_base64 }}" 
+                                                             alt="{{ user_obj.profile.get_display_name }}"
+                                                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                                    {% else %}
+                                                        {{ user_obj.profile.get_initials }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="user-details">
+                                                    <h4>{{ user_obj.profile.get_display_name }}</h4>
+                                                    <p>@{{ user_obj.username }}</p>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>{{ user_obj.email }}</td>
                                         <td>
-                                            <span class="badge {% if user_obj.is_superuser %}bg-success{% else %}bg-danger{% endif %} py-2 px-3 rounded-pill fw-normal">
-                                                {{ user_obj.is_superuser|yesno:"Yes,No" }}
+                                            <span class="admin-badge {% if user_obj.is_superuser %}yes{% else %}no{% endif %}">
+                                                {{ user_obj.is_superuser|yesno:"Admin,User" }}
                                             </span>
                                         </td>
                                         <td>
                                             {% with profile_form=user_profile_forms|get_item:user_obj.id %}
-                                                {{ profile_form.profile_picture_base64 }}
-                                                {{ profile_form.discord_username.as_hidden }}
-                                                {{ profile_form.display_name.as_hidden }}
-                                                {{ profile_form.telegram_username.as_hidden }}
-                                                <select name="{{ profile_form.admin_groups.name }}" 
-                                                        id="admin_groups_{{ user_obj.id }}" 
-                                                        class="tom-select-groups" 
-                                                        multiple 
-                                                        data-user-id="{{ user_obj.id }}">
+                                                                                            <select name="{{ profile_form.admin_groups.name }}" 
+                                                    id="admin_groups_{{ user_obj.id }}" 
+                                                    class="tom-select-groups tom-select-custom" 
+                                                    multiple 
+                                                    data-user-id="{{ user_obj.id }}">
                                                     {% for group in profile_form.admin_groups.field.queryset %}
                                                         <option value="{{ group.id }}" 
                                                                 {% if group in profile_form.admin_groups.initial %}selected{% endif %}
@@ -220,1055 +800,610 @@
                                     </tr>
                                     {% empty %}
                                     <tr>
-                                        <td colspan="4" class="text-center py-4 text-muted">
-                                            <i class="material-icons d-block mb-2 fs-1">person_off</i>
-                                            No users found.
+                                        <td colspan="4" class="text-center py-5">
+                                            <i class="material-icons d-block mb-3" style="font-size: 3rem; color: #9ca3af;">person_off</i>
+                                            <h4 class="text-muted">No users found</h4>
+                                            <p class="text-muted">Try adjusting your search criteria</p>
                                         </td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-                        <!-- User Pagination -->
+
+                        <!-- Pagination -->
                         {% if users_to_promote.paginator.num_pages > 1 %}
-                        <nav aria-label="User list pagination" class="mt-4">
-                            <ul class="pagination justify-content-center material-circular-pagination">
+                        <div class="pagination-container">
+                            <nav aria-label="User pagination">
+                                <ul class="pagination">
                                 {% if users_to_promote.has_previous %}
                                 <li class="page-item">
-                                    <a class="page-link material-page-link" href="?user_page=1{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}" aria-label="First">
-                                        <i class="material-icons" style="font-size: 24px;">first_page</i>
+                                        <a class="page-link" href="?user_page=1{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">
+                                            <i class="material-icons">first_page</i>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link material-page-link" href="?user_page={{ users_to_promote.previous_page_number }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}" aria-label="Previous">
-                                        <i class="material-icons" style="font-size: 24px;">chevron_left</i>
+                                        <a class="page-link" href="?user_page={{ users_to_promote.previous_page_number }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">
+                                            <i class="material-icons">chevron_left</i>
                                     </a>
-                                </li>
-                                {% else %}
-                                <li class="page-item disabled">
-                                    <span class="page-link material-page-link disabled">
-                                        <i class="material-icons" style="font-size: 24px;">first_page</i>
-                                    </span>
-                                </li>
-                                <li class="page-item disabled">
-                                    <span class="page-link material-page-link disabled">
-                                        <i class="material-icons" style="font-size: 24px;">chevron_left</i>
-                                    </span>
                                 </li>
                                 {% endif %}
+                                    
                                 {% for num in users_to_promote.paginator.page_range %}
                                     {% if users_to_promote.number == num %}
-                                        <li class="page-item active"><a class="page-link material-page-link active" href="#">{{ num }}</a></li>
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
                                     {% elif num > users_to_promote.number|add:'-3' and num < users_to_promote.number|add:'3' %}
-                                        <li class="page-item"><a class="page-link material-page-link" href="?user_page={{ num }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">{{ num }}</a></li>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?user_page={{ num }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">{{ num }}</a>
+                                            </li>
                                     {% endif %}
                                 {% endfor %}
+                                    
                                 {% if users_to_promote.has_next %}
                                 <li class="page-item">
-                                    <a class="page-link material-page-link" href="?user_page={{ users_to_promote.next_page_number }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}" aria-label="Next">
-                                        <i class="material-icons" style="font-size: 24px;">chevron_right</i>
+                                        <a class="page-link" href="?user_page={{ users_to_promote.next_page_number }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">
+                                            <i class="material-icons">chevron_right</i>
                                     </a>
                                 </li>
                                 <li class="page-item">
-                                    <a class="page-link material-page-link" href="?user_page={{ users_to_promote.paginator.num_pages }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}" aria-label="Last">
-                                        <i class="material-icons" style="font-size: 24px;">last_page</i>
+                                        <a class="page-link" href="?user_page={{ users_to_promote.paginator.num_pages }}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">
+                                            <i class="material-icons">last_page</i>
                                     </a>
-                                </li>
-                                {% else %}
-                                <li class="page-item disabled">
-                                    <span class="page-link material-page-link disabled">
-                                        <i class="material-icons" style="font-size: 24px;">chevron_right</i>
-                                    </span>
-                                </li>
-                                <li class="page-item disabled">
-                                    <span class="page-link material-page-link disabled">
-                                        <i class="material-icons" style="font-size: 24px;">last_page</i>
-                                    </span>
                                 </li>
                                 {% endif %}
                             </ul>
                         </nav>
+                        </div>
                         {% endif %}
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            <button type="submit" name="promote_users_submit" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">
-                                <i class="material-icons me-2">save</i> Update Approval Status
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <button type="submit" name="promote_users_submit" class="btn btn-primary-admin">
+                                <i class="material-icons">save</i>
+                                Save Changes
                             </button>
                         </div>
                     </form>
                 </div>
-                <div class="tab-pane fade" id="groups" role="tabpanel" aria-labelledby="groups-tab">
-                    <h2 class="card-title h4 mb-4 text-primary fw-bold">
-                        <i class="material-icons me-2">groups</i> Manage Groups
+            </div>
+        </div>
+
+        <!-- Groups Tab -->
+        <div class="tab-pane fade" id="groups" role="tabpanel">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2>
+                        <i class="material-icons">group_add</i>
+                        Group Management
                     </h2>
-                    <!-- Search Bar for Groups -->
-                    <div class="mb-4">
-                        <form method="get" class="d-flex">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
+                </div>
+                <div class="admin-card-body">
+                    <!-- Search -->
+                    <div class="search-container">
+                        <form method="get" class="search-form">
+                            <input type="text" 
+                                   name="group_search" 
+                                   value="{{ group_search }}" 
+                                   class="search-input" 
+                                   placeholder="Search groups...">
+                            <button type="submit" class="search-btn">
                                 <i class="material-icons">search</i>
-                            </span>
-                                <input type="text" name="group_search" value="{{ group_search }}" class="form-control" placeholder="Search groups...">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="material-icons">search</i> Search
+                                Search
                                 </button>
                                 {% if group_search %}
-                                <a href="?{% if request.GET.user_search %}user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}" class="btn btn-outline-secondary">
-                                    <i class="material-icons">clear</i> Clear
+                            <a href="?{% if request.GET.user_search %}user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}" 
+                               class="btn btn-outline-secondary">
+                                <i class="material-icons">clear</i>
+                                Clear
                                 </a>
                                 {% endif %}
-                        </div>
                         </form>
                     </div>
-                    <!-- Create New Group Form -->
-                    <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
-                        <button type="button" class="btn btn-success btn-lg rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#createGroupModal">
-                            <i class="material-icons me-2">add_circle</i> Create New Group
+
+                    <!-- Create Group Button -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="mb-0">Groups</h3>
+                        <button type="button" class="btn btn-primary-admin" data-bs-toggle="modal" data-bs-target="#createGroupModal">
+                            <i class="material-icons">add_circle</i>
+                            Create Group
                         </button>
                     </div>
 
-                    <!-- Existing Groups Table -->
+                    <!-- Groups Table -->
                     {% if all_groups %}
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle caption-top mb-0" id="groupsTable">
+                        <table class="user-table">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">label</i> Group Name</th>
-                                        <th scope="col" class="text-secondary" style="width: 480px;">Actions</th>
+                                    <th>Group Name</th>
+                                    <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for group in all_groups %}
                                     <tr>
                                         <td>
-                                            <span class="badge bg-info text-dark py-2 px-3 rounded-pill fw-normal">
-                                                <i class="material-icons me-1" style="font-size: 18px;">group</i>
-                                                {{ group.name }}
-                                            </span>
+                                        <div class="user-info">
+                                            <div class="user-avatar">
+                                                {% if group.logo_base64 %}
+                                                    <img src="data:image/png;base64,{{ group.logo_base64 }}" 
+                                                         alt="{{ group.name }}"
+                                                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                                {% else %}
+                                                    <i class="material-icons">group</i>
+                                                {% endif %}
+                                            </div>
+                                            <div class="user-details">
+                                                <h4>{{ group.name }}</h4>
+                                                <p>{{ group.description|safe|truncatechars_html:80|default:"No description" }}</p>
+                                                {% if group.website or group.contact_email %}
+                                                <div class="group-meta">
+                                                    {% if group.website %}
+                                                    <small class="text-muted">
+                                                        <i class="material-icons" style="font-size: 0.75rem;">link</i>
+                                                        <a href="{{ group.website }}" target="_blank" rel="noopener noreferrer">{{ group.website|truncatechars:30 }}</a>
+                                                    </small>
+                                                    {% endif %}
+                                                    {% if group.contact_email %}
+                                                    <small class="text-muted d-block">
+                                                        <i class="material-icons" style="font-size: 0.75rem;">email</i>
+                                                        {{ group.contact_email }}
+                                                    </small>
+                                                    {% endif %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                         </td>
                                         <td>
-                                            <form method="post" class="d-flex align-items-center gap-2">
+                                        <form method="post" class="d-flex gap-2 mb-2">
                                                 {% csrf_token %}
                                                 {% with rename_form=rename_group_forms|get_item:group.id %}
-                                                    {{ rename_form.name|add_class:"form-control form-control-sm flex-grow-1"|attr:"placeholder:Rename group" }}
+                                                <input type="text" 
+                                                       name="{{ rename_form.name.name }}" 
+                                                       value="{{ group.name }}" 
+                                                       class="form-control" 
+                                                       style="min-width: 300px; max-width: 400px;"
+                                                       placeholder="Enter new group name">
                                                 {% endwith %}
-                                                <button type="submit" name="rename_group_{{ group.id }}" class="btn btn-sm btn-outline-primary rounded-circle" style="width: 38px; height: 38px;">
+                                            <button type="submit" name="rename_group_{{ group.id }}" class="btn btn-sm btn-outline-primary">
                                                     <i class="material-icons">edit</i>
                                                 </button>
                                                 <input type="hidden" name="group_id" value="{{ group.id }}">
-                                                <button type="submit" name="delete_group_submit" class="btn btn-sm btn-outline-danger rounded-circle" style="width: 38px; height: 38px;" onclick="return confirm('Are you sure you want to delete group \'{{ group.name }}\'?');">
+                                            <button type="submit" name="delete_group_submit" class="btn btn-sm btn-outline-danger" 
+                                                    onclick="return confirm('Are you sure you want to delete group \'{{ group.name }}\'?');">
                                                     <i class="material-icons">delete</i>
                                                 </button>
                                             </form>
-                                        </td>
-                                    </tr>
-                                    {% empty %}
-                                    <tr>
-                                        <td colspan="2" class="text-center py-4 text-muted">
-                                            <i class="material-icons d-block mb-2 fs-1">info</i>
-                                            No groups found.
                                         </td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-                        <!-- Group Pagination -->
-                        {% if all_groups.paginator.num_pages > 1 %}
-                        <nav aria-label="Group list pagination" class="mt-4">
-                            <ul class="pagination justify-content-center material-circular-pagination">
-                                {% if all_groups.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link material-page-link" href="?group_page=1{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}" aria-label="First">
-                                        <i class="material-icons" style="font-size: 24px;">first_page</i>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link material-page-link" href="?group_page={{ all_groups.previous_page_number }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}" aria-label="Previous">
-                                        <i class="material-icons" style="font-size: 24px;">chevron_left</i>
-                                    </a>
-                                </li>
                                 {% else %}
-                                <li class="page-item disabled">
-                                    <span class="page-link material-page-link disabled">
-                                        <i class="material-icons" style="font-size: 24px;">first_page</i>
-                                    </span>
-                                </li>
-                                <li class="page-item disabled">
-                                    <span class="page-link material-page-link disabled">
-                                        <i class="material-icons" style="font-size: 24px;">chevron_left</i>
-                                    </span>
-                                </li>
-                                {% endif %}
-                                {% for num in all_groups.paginator.page_range %}
-                                    {% if all_groups.number == num %}
-                                        <li class="page-item active"><a class="page-link material-page-link active" href="#">{{ num }}</a></li>
-                                    {% elif num > all_groups.number|add:'-3' and num < all_groups.number|add:'3' %}
-                                        <li class="page-item"><a class="page-link material-page-link" href="?group_page={{ num }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}">{{ num }}</a></li>
-                                    {% endif %}
-                                {% endfor %}
-                                {% if all_groups.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link material-page-link" href="?group_page={{ all_groups.next_page_number }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}" aria-label="Next">
-                                        <i class="material-icons" style="font-size: 24px;">chevron_right</i>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link material-page-link" href="?group_page={{ all_groups.paginator.num_pages }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}" aria-label="Last">
-                                        <i class="material-icons" style="font-size: 24px;">last_page</i>
-                                    </a>
-                                </li>
-                                {% else %}
-                                <li class="page-item disabled">
-                                    <span class="page-link material-page-link disabled">
-                                        <i class="material-icons" style="font-size: 24px;">chevron_right</i>
-                                    </span>
-                                </li>
-                                <li class="page-item disabled">
-                                    <span class="page-link material-page-link disabled">
-                                        <i class="material-icons" style="font-size: 24px;">last_page</i>
-                                    </span>
-                                </li>
-                                {% endif %}
-                            </ul>
-                        </nav>
-                        {% endif %}
-                    {% else %}
-                        <div class="alert alert-info border-0 rounded-3 text-muted">
-                            <i class="material-icons me-2">info</i>
-                            No groups created yet.
+                    <div class="text-center py-5">
+                        <i class="material-icons d-block mb-3" style="font-size: 3rem; color: #9ca3af;">group_off</i>
+                        <h4 class="text-muted">No groups found</h4>
+                        <p class="text-muted">Create your first group to get started</p>
                         </div>
                     {% endif %}
                 </div>
-                <div class="tab-pane fade" id="bans" role="tabpanel" aria-labelledby="bans-tab">
-                    <h2 class="card-title h4 mb-4 text-primary fw-bold">
-                        <i class="material-icons me-2">group_off</i> Manage Bans
+                        </div>
+                    </div>
+
+        <!-- Other tabs will be added here -->
+        <div class="tab-pane fade" id="bans" role="tabpanel">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2>
+                        <i class="material-icons">gavel</i>
+                        Ban Management
                     </h2>
-
-                    <!-- Site-wide Ban Form -->
-                    <div class="card bg-light border-0 rounded-3 mb-4">
-                        <div class="card-body">
-                            <h3 class="h5 mb-3 text-secondary">
-                                <i class="material-icons me-2">gavel</i> Apply Site-wide Ban
-                            </h3>
-                            <form method="post" id="sitewideBanForm">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="ban">
-                                <input type="hidden" name="ban_type" value="sitewide">
-                                <div class="mb-3">
-                                    <label for="banUsernameInput" class="form-label">
-                                        <i class="material-icons align-middle me-1">person</i> User to Ban (Username)
-                                    </label>
-                                    <select class="form-control" id="banUsernameInput" name="user_id" placeholder="Search for a user..." required></select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="banReasonInput" class="form-label">
-                                        <i class="material-icons align-middle me-1">description</i> Reason (Optional)
-                                    </label>
-                                    <textarea class="form-control" id="banReasonInput" name="reason" rows="3" placeholder="Enter reason for ban"></textarea>
-                                </div>
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-danger btn-lg rounded-pill px-4 shadow-sm">
-                                        <i class="material-icons me-2">gavel</i> Apply Site-wide Ban
-                                    </button>
-                                </div>
-                            </form>
                         </div>
+                <div class="admin-card-body">
+                    <p class="text-muted">Ban management functionality coming soon...</p>
                     </div>
-
-
-                    <!-- Search Bar for Bans -->
-                    <div class="mb-4">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
-                                <i class="material-icons">search</i>
-                            </span>
-                            <input type="text" id="banSearch" class="form-control" placeholder="Search banned users...">
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle caption-top mb-0" id="bansTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">person</i> Banned User</th>
-                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">group</i> Group/Type</th>
-                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">admin_panel_settings</i> Banned By</th>
-                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">description</i> Reason</th>
-                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">event</i> Banned At</th>
-                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">cancel</i> Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for banned_entry in all_banned_users %}
-                                <tr>
-                                    <td>{{ banned_entry.user.profile.get_display_name }}</td>
-                                    <td>
-                                        {% if banned_entry.group %}
-                                            {{ banned_entry.group.name }}
-                                        {% elif banned_entry.organizer %}
-                                            Organizer: {{ banned_entry.organizer.username }}
-                                        {% else %}
-                                            Site-wide
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ banned_entry.banned_by.username|default:"N/A" }}</td>
-                                    <td>{{ banned_entry.reason|default:"No reason provided" }}</td>
-                                    <td>{{ banned_entry.banned_at|date:"Y-m-d H:i" }}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-success rounded-pill px-3 unban-btn"
-                                                data-user-id="{{ banned_entry.user.id }}"
-                                                data-group-id="{{ banned_entry.group.id|default:"" }}"
-                                                data-organizer-id="{{ banned_entry.organizer.id|default:"" }}"
-                                                data-ban-type="{% if banned_entry.group %}group{% elif banned_entry.organizer %}organizer{% else %}sitewide{% endif %}">
-                                            <i class="material-icons me-1">lock_open</i> Unban
-                                        </button>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted">No users currently banned.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="banner" role="tabpanel" aria-labelledby="banner-tab">
-                    <h2 class="card-title h4 mb-4 text-primary fw-bold">
-                        <i class="material-icons me-2">campaign</i> Site Banner Management
+
+        <div class="tab-pane fade" id="banner" role="tabpanel">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2>
+                        <i class="material-icons">campaign</i>
+                        Site Banner
                     </h2>
-                    
-                    <div class="card bg-light border-0 rounded-3 mb-4">
-                        <div class="card-body">
-                            <h3 class="h5 mb-3 text-secondary">
-                                <i class="material-icons me-2">settings</i> Configure Site Banner
-                            </h3>
-                            <form method="post" id="bannerForm">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="update_banner">
-                                
-                                <div class="mb-3">
-                                    <label for="banner_enabled" class="form-label">
-                                        <i class="material-icons align-middle me-1">toggle_on</i> Enable Banner
-                                    </label>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="banner_enabled" name="banner_enabled" {% if banner_enabled %}checked{% endif %}>
-                                        <label class="form-check-label" for="banner_enabled">
-                                            Show banner at the top of the site
-                                        </label>
                                     </div>
+                <div class="admin-card-body">
+                    <p class="text-muted">Site banner management coming soon...</p>
+                                </div>
+                                </div>
                                 </div>
                                 
-                                <div class="mb-3">
-                                    <label for="banner_text" class="form-label">
-                                        <i class="material-icons align-middle me-1">text_fields</i> Banner Text
-                                    </label>
-                                    <textarea class="form-control" id="banner_text" name="banner_text" rows="3" placeholder="Enter banner message...">{{ banner_text|default:'' }}</textarea>
-                                    <div class="form-text">This text will be displayed in the banner at the top of the site.</div>
+        <div class="tab-pane fade" id="notify" role="tabpanel">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2>
+                        <i class="material-icons">notifications</i>
+                        Send Notifications
+                    </h2>
                                 </div>
-                                
-                                <div class="mb-3">
-                                    <label for="banner_type" class="form-label">
-                                        <i class="material-icons align-middle me-1">palette</i> Banner Style
-                                    </label>
-                                    <select class="form-control" id="banner_type" name="banner_type">
-                                        <option value="info" {% if banner_type == 'info' %}selected{% endif %}>Information (Blue)</option>
-                                        <option value="warning" {% if banner_type == 'warning' %}selected{% endif %}>Warning (Yellow)</option>
-                                        <option value="success" {% if banner_type == 'success' %}selected{% endif %}>Success (Green)</option>
-                                        <option value="danger" {% if banner_type == 'danger' %}selected{% endif %}>Danger (Red)</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">
-                                        <i class="material-icons me-2">save</i> Update Banner
-                                    </button>
-                                </div>
-                            </form>
+                <div class="admin-card-body">
+                    <p class="text-muted">Notification system coming soon...</p>
+                </div>
                         </div>
                     </div>
                     
-                    <!-- Banner Preview -->
-                    <div class="card border-0 rounded-3 mb-4">
-                        <div class="card-header bg-light">
-                            <h4 class="h6 mb-0">
-                                <i class="material-icons me-2">visibility</i> Banner Preview
-                            </h4>
+        {% if user.profile.can_post_blog %}
+        <div class="tab-pane fade" id="blog" role="tabpanel">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2>
+                        <i class="material-icons">rss_feed</i>
+                        Blog Management
+                    </h2>
                         </div>
-                        <div class="card-body p-0">
-                            <div id="bannerPreview" class="site-banner" style="display: none; margin: 0; border-radius: 0.5rem;">
-                                <div class="container">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div class="d-flex align-items-center">
-                                            <i class="material-icons me-2">info</i>
-                                            <span id="previewText">Banner preview will appear here</span>
+                <div class="admin-card-body">
+                    <p class="text-muted">Blog management functionality coming soon...</p>
                                         </div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                 </div>
+        {% endif %}
                             </div>
-                            <div id="noBannerPreview" class="text-muted text-center py-4">
-                                <i class="material-icons fs-1 mb-2">visibility_off</i>
-                                <p class="mb-0">Banner is currently disabled</p>
                             </div>
+
+<!-- Create Group Modal -->
+<div class="modal fade" id="createGroupModal" tabindex="-1" aria-labelledby="createGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createGroupModalLabel">
+                    <i class="material-icons me-2">add_circle</i>
+                    Create New Group
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="notify" role="tabpanel" aria-labelledby="notify-tab">
-                    <div class="mb-4 mt-4">
-                        <form method="post" action="{% url 'send_notification' %}" class="row g-2 align-items-end">
+            <form method="post">
                             {% csrf_token %}
-                            <div class="col-md-7">
-                                <label for="user_select" class="form-label fw-bold">Select users to notify</label>
-                                <select id="user_select" name="user_ids" multiple required class="form-control tomselect-user-select">
-                                    <option value="" disabled selected>Please select users</option>
-                                    {% for user_obj in users_to_promote %}
-                                        <option value="{{ user_obj.id }}">{{ user_obj.profile.get_display_name }} ({{ user_obj.email }})</option>
-                                    {% endfor %}
-                                </select>
+                <div class="modal-body">
+                        <div class="mb-3">
+                        <label for="new_group_name" class="form-label">Group Name</label>
+                        <input type="text" class="form-control" id="new_group_name" name="new_group_name" required>
                             </div>
-                            <div class="col-md-3">
-                                <label for="notification_message" class="form-label fw-bold">Message</label>
-                                <input type="text" class="form-control" id="notification_message" name="notification_message" placeholder="Enter notification message..." required>
                             </div>
-                            <div class="col-md-2 d-grid">
-                                <button type="submit" class="btn btn-warning btn-lg rounded-pill shadow-sm mt-4">
-                                    <i class="material-icons me-1">campaign</i> Send
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="create_group_submit" class="btn btn-primary-admin">
+                        <i class="material-icons me-2">add</i>
+                        Create Group
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
-                {% if user.profile.can_post_blog %}
-                <div class="tab-pane fade" id="blogmgmt" role="tabpanel" aria-labelledby="blogmgmt-tab">
-                    <h2 class="card-title h4 mb-4 text-primary fw-bold">
-                        <i class="material-icons me-2">rss_feed</i> Blog Management
-                    </h2>
-                    <form method="post" action="{% url 'post_to_bluesky' %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="id_title" class="form-label">Title</label>
-                            <input type="text" name="title" id="id_title" class="form-control" placeholder="Title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="id_content" class="form-label">Content</label>
-                            <textarea name="content" id="id_content" class="form-control" rows="5" placeholder="Write your blog post here..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="material-icons me-1">send</i> Post to Blog/Bluesky
-                        </button>
-                    </form>
-                    <hr class="my-4">
-                    <h3 class="h5 mb-3 text-secondary fw-bold">
-                        <i class="material-icons me-2">list</i> Recent Blog Posts
-                    </h3>
-                    <div id="bluesky-posts-list">
-                        {% if bluesky_posts %}
-                            {% for post in bluesky_posts %}
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <div class="fw-bold mb-1">{{ post.post.record.text|linebreaksbr }}</div>
-                                        <div class="text-muted small mb-2">
-                                            {{ post.post.record.created_at|date:"F j, Y, g:i A" }}
-                                        </div>
-                                        <form method="post" action="{% url 'delete_bluesky_post' %}" onsubmit="return confirm('Are you sure you want to delete this post?');">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="uri" value="{{ post.post.uri }}">
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="material-icons">delete</i> Delete
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                            {% if bluesky_posts_paginator and bluesky_posts_paginator.num_pages > 1 %}
-                            <nav aria-label="Bluesky blog post pagination" class="mt-3">
-                                <ul class="pagination justify-content-center">
-                                    {% if bluesky_posts.has_previous %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=blogmgmt&blog_page=1" aria-label="First">&laquo;</a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=blogmgmt&blog_page={{ bluesky_posts.previous_page_number }}" aria-label="Previous">&lsaquo;</a>
-                                        </li>
-                                    {% endif %}
-                                    {% for num in bluesky_posts_paginator.page_range %}
-                                        {% if bluesky_posts.number == num %}
-                                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                                        {% elif num > bluesky_posts.number|add:'-3' and num < bluesky_posts.number|add:'3' %}
-                                            <li class="page-item"><a class="page-link" href="?tab=blogmgmt&blog_page={{ num }}">{{ num }}</a></li>
-                                        {% endif %}
-                                    {% endfor %}
-                                    {% if bluesky_posts.has_next %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=blogmgmt&blog_page={{ bluesky_posts.next_page_number }}" aria-label="Next">&rsaquo;</a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=blogmgmt&blog_page={{ bluesky_posts_paginator.num_pages }}" aria-label="Last">&raquo;</a>
-                                        </li>
-                                    {% endif %}
-                                </ul>
-                            </nav>
-                            {% endif %}
-                        {% else %}
-                            <div class="alert alert-info">No recent posts found.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endif %}
             </div>
 
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM Content Loaded. Attempting to initialize TomSelect.');
-        const elements = document.querySelectorAll('select.tomselect-allowed-groups');
-        console.log(`Found ${elements.length} elements with class 'tomselect-allowed-groups'.`);
-        elements.forEach(function(element) {
-            console.log('Initializing TomSelect for element:', element);
-            new TomSelect(element, {
-                plugins: {
-                    remove_button: {
-                        title: 'Remove this item',
-                    }
-                },
-                dropdownParent: 'body',
-                create: false, // Prevent users from creating new options
-                onInitialize: function() {
-                    // Add modern styling to TomSelect elements
-                    this.wrapper.classList.add('form-select-sm', 'rounded-pill', 'shadow-sm');
-                    this.control.classList.add('rounded-pill', 'border-0');
-                    this.dropdown.classList.add('shadow', 'rounded-3', 'border-0');
-                    
-                    // Style the control input
-                    const controlInput = this.control.querySelector('input');
-                    if (controlInput) {
-                        controlInput.classList.add('form-control-sm', 'border-0', 'shadow-none');
-                        controlInput.style.fontSize = '0.875rem';
-                    }
-                    
-                    // Style the wrapper
-                    this.wrapper.style.minHeight = '38px';
-                    this.wrapper.style.border = '1px solid #dee2e6';
-                    this.wrapper.style.backgroundColor = '#fff';
-                    
-                    // Style the dropdown items
-                    const dropdownItems = this.dropdown.querySelectorAll('.option');
-                    dropdownItems.forEach(item => {
-                        item.style.padding = '0.5rem 1rem';
-                        item.style.fontSize = '0.875rem';
-                    });
-                }
-            });
-        });
-
-        // Ban search functionality
-        const banSearch = document.getElementById('banSearch');
-        const bansTable = document.getElementById('bansTable');
-        
-        if (banSearch && bansTable) {
-            banSearch.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                const rows = bansTable.getElementsByTagName('tr');
-                
-                for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header
-                    const row = rows[i];
-                    const userCell = row.querySelector('td:first-child');
-                    const groupCell = row.querySelector('td:nth-child(2)');
-                    
-                    if (userCell && groupCell) {
-                        const userText = userCell.textContent.toLowerCase();
-                        const groupText = groupCell.textContent.toLowerCase();
-                        row.style.display = (userText.includes(searchTerm) || groupText.includes(searchTerm)) ? '' : 'none';
-                    }
-                }
-            });
-        }
-
-        // User search autocomplete for site-wide ban
-        new TomSelect('#banUsernameInput', {
-            valueField: 'id',
-            labelField: 'text',
-            searchField: 'text',
-            create: false,
-            load: function(query, callback) {
-                if (!query.length) return callback();
-                fetch('{% url "user_search_autocomplete" %}?q=' + encodeURIComponent(query))
-                    .then(response => response.json())
-                    .then(data => {
-                        callback(data.results);
-                    }).catch(() => {
-                        callback();
-                    });
-            },
-            onInitialize: function() {
-                this.dropdown.classList.add('shadow', 'rounded-3');
-            }
-        });
-
-        // Handle unban buttons
-        document.querySelectorAll('.unban-btn').forEach(button => {
-            button.addEventListener('click', async function() {
-                const userId = this.dataset.userId;
-                const groupId = this.dataset.groupId;
-                const organizerId = this.dataset.organizerId;
-                const banType = this.dataset.banType;
-                
-                if (!confirm('Are you sure you want to unban this user?')) {
-                    return;
-                }
-
-                const formData = new FormData();
-                formData.append('user_id', userId);
-                formData.append('group_id', groupId);
-                formData.append('organizer_id', organizerId);
-                formData.append('action', 'unban');
-                formData.append('ban_type', banType);
-
-                try {
-                    const url = `/users/${userId}/ban/`;
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken')
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        alert(data.message);
-                        location.reload();
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('An error occurred while processing your request.');
-                }
-            });
-        });
-
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        // Tab persistence logic
-        const adminTabs = document.getElementById('adminTabs');
-        if (adminTabs) {
-            const tabButtons = adminTabs.querySelectorAll('.nav-link');
-            
-            // Function to update URL with tab, pagination, and search state
-            function updateUrlWithState(tabId, userPage, groupPage, userSearch, groupSearch) {
-                const params = new URLSearchParams(window.location.search);
-                if (userPage) params.set('user_page', userPage);
-                if (groupPage) params.set('group_page', groupPage);
-                if (userSearch) params.set('user_search', userSearch);
-                if (groupSearch) params.set('group_search', groupSearch);
-                params.set('tab', tabId);
-                const newUrl = `${window.location.pathname}?${params.toString()}`;
-                window.history.pushState({}, '', newUrl);
-            }
-
-            tabButtons.forEach(button => {
-                button.addEventListener('shown.bs.tab', function (event) {
-                    const tabId = event.target.id;
-                    const currentUserPage = new URLSearchParams(window.location.search).get('user_page');
-                    const currentGroupPage = new URLSearchParams(window.location.search).get('group_page');
-                    const currentUserSearch = new URLSearchParams(window.location.search).get('user_search');
-                    const currentGroupSearch = new URLSearchParams(window.location.search).get('group_search');
-                    
-                    // Store the current state
-                    localStorage.setItem('lastAdminTab', tabId);
-                    if (currentUserPage) localStorage.setItem('lastUserPage', currentUserPage);
-                    if (currentGroupPage) localStorage.setItem('lastGroupPage', currentGroupPage);
-                    if (currentUserSearch) localStorage.setItem('lastUserSearch', currentUserSearch);
-                    if (currentGroupSearch) localStorage.setItem('lastGroupSearch', currentGroupSearch);
-                    
-                    // Update URL with current state
-                    updateUrlWithState(tabId, currentUserPage, currentGroupPage, currentUserSearch, currentGroupSearch);
-                });
-            });
-
-            // Restore state on page load
-            const urlParams = new URLSearchParams(window.location.search);
-            const tabParam = urlParams.get('tab');
-            const userPage = urlParams.get('user_page');
-            const groupPage = urlParams.get('group_page');
-            const userSearch = urlParams.get('user_search');
-            const groupSearch = urlParams.get('group_search');
-            
-            // If we have a tab parameter, use it
-            if (tabParam) {
-                const tabButton = document.getElementById(tabParam);
-                if (tabButton) {
-                    const bsTab = new bootstrap.Tab(tabButton);
-                    bsTab.show();
-                }
-            } else {
-                // Otherwise use the stored tab
-                const lastTab = localStorage.getItem('lastAdminTab');
-                if (lastTab) {
-                    const lastTabButton = document.getElementById(lastTab);
-                    if (lastTabButton) {
-                        const bsTab = new bootstrap.Tab(lastTabButton);
-                        bsTab.show();
-                        
-                        // If we don't have pagination/search params but have stored ones, update URL
-                        if (!userPage && !groupPage && !userSearch && !groupSearch) {
-                            const lastUserPage = localStorage.getItem('lastUserPage');
-                            const lastGroupPage = localStorage.getItem('lastGroupPage');
-                            const lastUserSearch = localStorage.getItem('lastUserSearch');
-                            const lastGroupSearch = localStorage.getItem('lastGroupSearch');
-                            updateUrlWithState(lastTab, lastUserPage, lastGroupPage, lastUserSearch, lastGroupSearch);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Handle site-wide ban form submission via AJAX
-        const sitewideBanForm = document.getElementById('sitewideBanForm');
-        if (sitewideBanForm) {
-            sitewideBanForm.addEventListener('submit', async function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                const formData = new FormData(this); // 'this' refers to the form element
-                const selectedUserId = formData.get('user_id');
-                if (!selectedUserId) {
-                    alert('Please select a user to ban.');
-                    return;
-                }
-
-                try {
-                    const url = `/users/${selectedUserId}/ban/`;
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken')
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        alert(data.message);
-                        // Reload the page to show updated ban list and clear form
-                        location.reload(); 
-                    } else {
-                        // Handle specific error messages from the backend
-                        alert('Error: ' + data.message);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('An unexpected error occurred while applying the ban.');
-                }
-            });
-        }
-
-        // Banner preview functionality
-        const bannerForm = document.getElementById('bannerForm');
-        const bannerEnabled = document.getElementById('banner_enabled');
-        const bannerText = document.getElementById('banner_text');
-        const bannerType = document.getElementById('banner_type');
-        const bannerPreview = document.getElementById('bannerPreview');
-        const noBannerPreview = document.getElementById('noBannerPreview');
-        const previewText = document.getElementById('previewText');
-
-        function updateBannerPreview() {
-            const enabled = bannerEnabled.checked;
-            const text = bannerText.value.trim();
-            const type = bannerType.value;
-
-            if (enabled && text) {
-                // Show banner preview
-                bannerPreview.style.display = 'block';
-                noBannerPreview.style.display = 'none';
-                
-                // Update preview content
-                previewText.textContent = text;
-                
-                // Update banner style - use the same classes as the actual banner
-                bannerPreview.className = `site-banner alert-${type}`;
-                bannerPreview.style.margin = '0';
-                bannerPreview.style.borderRadius = '0.5rem';
-                
-                // Update icon based on type
-                const icon = bannerPreview.querySelector('.material-icons');
-                const iconMap = {
-                    'info': 'info',
-                    'warning': 'warning',
-                    'success': 'check_circle',
-                    'danger': 'error'
-                };
-                icon.textContent = iconMap[type] || 'info';
-            } else {
-                // Hide banner preview
-                bannerPreview.style.display = 'none';
-                noBannerPreview.style.display = 'block';
-            }
-        }
-
-        // Add event listeners for banner preview
-        if (bannerEnabled) {
-            bannerEnabled.addEventListener('change', updateBannerPreview);
-        }
-        if (bannerText) {
-            bannerText.addEventListener('input', updateBannerPreview);
-        }
-        if (bannerType) {
-            bannerType.addEventListener('change', updateBannerPreview);
-        }
-
-        // Initialize banner preview on page load
-        updateBannerPreview();
-
-        // TomSelect for user notification
-        if (window.TomSelect) {
-            new TomSelect('#user_select', {
-                plugins: {
-                    remove_button: {
-                        title: 'Remove this user',
-                    }
-                },
-                dropdownParent: 'body',
-                create: false,
-                maxOptions: 1000,
-                render: {
-                    option: function(data, escape) {
-                        return `<div>${escape(data.text)}</div>`;
-                    }
-                }
-            });
-        }
-    });
-</script>
-
-<!-- Create Group Modal -->
-<div class="modal fade" id="createGroupModal" tabindex="-1" aria-labelledby="createGroupModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-3 shadow">
-            <div class="modal-header bg-primary text-white border-0">
-                <h5 class="modal-title" id="createGroupModalLabel"><i class="material-icons me-2">group_add</i> Create New Group</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Add User to Group Modal -->
+<div class="modal fade" id="addUserToGroupModal" tabindex="-1" aria-labelledby="addUserToGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserToGroupModalLabel">
+                    <i class="material-icons me-2">person_add</i>
+                    Add User to Group
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="post">
-                {% csrf_token %}
-                <div class="modal-body p-4">
+                        {% csrf_token %}
+                <div class="modal-body">
+                        <div class="mb-3">
+                        <label class="form-label">Group</label>
+                        <input type="text" class="form-control" id="selectedGroupName" readonly>
+                        <input type="hidden" id="selectedGroupId" name="add_user_group_id">
+                        </div>
+                        <div class="mb-3">
+                        <label for="userSearch" class="form-label">Search Users</label>
+                        <input type="text" class="form-control" id="userSearch" placeholder="Search by username, email, or display name...">
+                        </div>
                     <div class="mb-3">
-                        <label for="id_name" class="form-label visually-hidden">Group Name</label>
-                        {{ group_form.name|add_class:"form-control form-control-lg"|attr:"placeholder:Enter new group name" }}
+                        <label class="form-label">Select Users to Add</label>
+                        <div id="userList" class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+                            <div class="text-center text-muted">
+                                <i class="material-icons">search</i>
+                                <p>Search for users above to add them to the group</p>
+                                        </div>
+                                    </div>
+                                </div>
                     </div>
-                </div>
-                <div class="modal-footer border-0 pt-0 pe-4 pb-4">
-                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="create_group_submit" class="btn btn-success rounded-pill px-4"><i class="material-icons me-2">add</i> Create Group</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="add_users_to_group" class="btn btn-primary-admin">
+                        <i class="material-icons me-2">add</i>
+                        Add Selected Users
+                    </button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
-</div>
+
+{% block extra_js %}
+<!-- Tom Select JS -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+// Wait for both DOM and TomSelect to be ready
+function initializeTomSelect() {
+    console.log('Initializing Tom Select...');
+    
+    // Check if TomSelect is available
+    if (typeof TomSelect === 'undefined') {
+        console.error('TomSelect is not loaded!');
+        return;
+    }
+    
+    // Find all group selectors
+    const groupSelects = document.querySelectorAll('.tom-select-groups');
+    console.log('Found', groupSelects.length, 'group selectors');
+    
+            groupSelects.forEach(function(select, index) {
+            console.log('Initializing TomSelect for element', index + 1, select);
+            
+            // Validate that the select element has options
+            const options = select.querySelectorAll('option');
+            if (options.length === 0) {
+                console.warn('No options found in select element', index + 1);
+                return;
+            }
+            
+            // Validate option values
+            let hasValidOptions = false;
+            options.forEach(function(option) {
+                if (option.value && option.value.trim() !== '') {
+                    hasValidOptions = true;
+                }
+            });
+            
+            if (!hasValidOptions) {
+                console.warn('No valid options found in select element', index + 1);
+                    return;
+                }
+
+            try {
+                console.log('Creating TomSelect with custom rendering...');
+                const tomSelect = new TomSelect(select, {
+                    plugins: ['remove_button'],
+                    maxItems: null,
+                    create: false,
+                    dropdownParent: 'body',
+                    render: {
+                        option: function(data, escape) {
+                            try {
+                                // Validate data
+                                if (!data || !data.value) {
+                                    return `<div class="option" data-selectable><span>Invalid option</span></div>`;
+                                }
+                                
+                                // Get the original option element to access dataset
+                                const originalOption = this.input.querySelector(`option[value="${data.value}"]`);
+                                const logo = originalOption ? originalOption.getAttribute('data-logo') : '';
+                                const name = originalOption ? originalOption.getAttribute('data-name') : (data.text || 'Unknown');
+                                const initials = name ? name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2) : 'GR';
+                                
+                                let logoHtml = '';
+                                if (logo && typeof logo === 'string' && logo.trim() !== '') {
+                                    logoHtml = `<img src="data:image/png;base64,${logo}" alt="${escape(name)}" class="group-logo">`;
+                    } else {
+                                    logoHtml = `<div class="group-logo-placeholder">${initials}</div>`;
+                    }
+                                
+                                return `<div class="option" data-selectable>
+                                    ${logoHtml}
+                                    <span>${escape(name)}</span>
+                                </div>`;
+                } catch (error) {
+                                console.error('Error rendering option:', error);
+                                return `<div class="option" data-selectable><span>Error loading option</span></div>`;
+                            }
+                        },
+                        item: function(data, escape) {
+                            try {
+                                // Validate data
+                                if (!data || !data.value) {
+                                    return `<div class="item"><span>Invalid item</span></div>`;
+                                }
+                                
+                                // Get the original option element to access dataset
+                                const originalOption = this.input.querySelector(`option[value="${data.value}"]`);
+                                const logo = originalOption ? originalOption.getAttribute('data-logo') : '';
+                                const name = originalOption ? originalOption.getAttribute('data-name') : (data.text || 'Unknown');
+                                const initials = name ? name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2) : 'GR';
+                                
+                                let logoHtml = '';
+                                if (logo && typeof logo === 'string' && logo.trim() !== '') {
+                                    logoHtml = `<img src="data:image/png;base64,${logo}" alt="${escape(name)}" class="group-logo">`;
+            } else {
+                                    logoHtml = `<div class="group-logo-placeholder">${initials}</div>`;
+                                }
+                                
+                                return `<div class="item">
+                                    ${logoHtml}
+                                    <span>${escape(name)}</span>
+                                </div>`;
+                            } catch (error) {
+                                console.error('Error rendering item:', error);
+                                return `<div class="item"><span>Error loading item</span></div>`;
+                                                     }
+                     }
+                     },
+                  onInitialize: function() {
+                    console.log('TomSelect initialized for element', index + 1);
+                    // Add custom class to wrapper
+                    this.wrapper.classList.add('tom-select-custom');
+                }
+            });
+            
+            console.log('TomSelect created successfully for element', index + 1);
+                } catch (error) {
+            console.error('Error initializing TomSelect for element', index + 1, ':', error);
+                }
+            });
+        }
+
+// Try to initialize immediately if DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeTomSelect);
+            } else {
+    // DOM is already ready
+    initializeTomSelect();
+}
+
+// Admin Panel Tab Memory
+document.addEventListener('DOMContentLoaded', function() {
+    // Get URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab') || localStorage.getItem('adminActiveTab') || 'users';
+    
+    // Activate the remembered tab
+    const tabButton = document.querySelector(`[data-bs-target="#${activeTab}"]`);
+    const tabContent = document.getElementById(activeTab);
+    
+    if (tabButton && tabContent) {
+        // Remove active class from all tabs
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+        
+        // Activate the remembered tab
+        tabButton.classList.add('active');
+        tabContent.classList.add('show', 'active');
+    }
+    
+    // Remember tab changes
+    document.querySelectorAll('.nav-link[data-bs-toggle="pill"]').forEach(link => {
+        link.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-bs-target').substring(1);
+            localStorage.setItem('adminActiveTab', targetId);
+            
+            // Update URL without page reload
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('tab', targetId);
+            window.history.replaceState({}, '', newUrl);
+        });
+    });
+});
+
+// Add User to Group Modal Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const addUserModal = document.getElementById('addUserToGroupModal');
+    const userSearch = document.getElementById('userSearch');
+    const userList = document.getElementById('userList');
+    const selectedGroupName = document.getElementById('selectedGroupName');
+    const selectedGroupId = document.getElementById('selectedGroupId');
+    
+    // Handle modal show event
+    addUserModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const groupId = button.getAttribute('data-group-id');
+        const groupName = button.getAttribute('data-group-name');
+        
+        selectedGroupId.value = groupId;
+        selectedGroupName.value = groupName;
+        
+        // Clear previous search
+        userSearch.value = '';
+        userList.innerHTML = `
+            <div class="text-center text-muted">
+                <i class="material-icons">search</i>
+                <p>Search for users above to add them to the group</p>
+            </div>
+        `;
+    });
+    
+    // Handle user search
+    let searchTimeout;
+    userSearch.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+        
+        if (query.length < 2) {
+            userList.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="material-icons">search</i>
+                    <p>Search for users above to add them to the group</p>
+                    </div>
+            `;
+            return;
+        }
+        
+        searchTimeout = setTimeout(function() {
+            // Show loading
+            userList.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="material-icons">hourglass_empty</i>
+                    <p>Searching users...</p>
+                </div>
+            `;
+            
+            // Fetch users via AJAX
+            fetch(`/users/search-autocomplete/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.users && data.users.length > 0) {
+                        userList.innerHTML = data.users.map(user => `
+                            <div class="user-selection-item" data-user-id="${user.id}">
+                                <input type="checkbox" class="user-selection-checkbox" name="selected_users" value="${user.id}">
+                                <div class="user-selection-avatar">
+                                    ${user.initials || 'U'}
+                </div>
+                                <div class="user-selection-details">
+                                    <h6>${user.display_name || user.username}</h6>
+                                    <small>@${user.username}</small>
+        </div>
+    </div>
+                        `).join('');
+                        
+                        // Add click handlers
+                        userList.querySelectorAll('.user-selection-item').forEach(item => {
+                            item.addEventListener('click', function(e) {
+                                if (e.target.type !== 'checkbox') {
+                                    const checkbox = this.querySelector('input[type="checkbox"]');
+                                    checkbox.checked = !checkbox.checked;
+                                    this.classList.toggle('selected', checkbox.checked);
+                                }
+                            });
+                            
+                            const checkbox = item.querySelector('input[type="checkbox"]');
+                            checkbox.addEventListener('change', function() {
+                                item.classList.toggle('selected', this.checked);
+                            });
+                        });
+                    } else {
+                        userList.innerHTML = `
+                            <div class="text-center text-muted">
+                                <i class="material-icons">person_off</i>
+                                <p>No users found matching "${query}"</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching users:', error);
+                    userList.innerHTML = `
+                        <div class="text-center text-muted">
+                            <i class="material-icons">error</i>
+                            <p>Error searching users. Please try again.</p>
+                        </div>
+                    `;
+                });
+        }, 300);
+    });
+});
+
+// Also try after a short delay to ensure everything is loaded
+setTimeout(initializeTomSelect, 100);
+</script>
 {% endblock %}
-
-<style>
-    /* Glassmorphism Card */
-    .admin-glass-card {
-        background: rgba(255,255,255,0.88);
-        border-radius: 1.5rem;
-        box-shadow: 0 8px 32px rgba(59,130,246,0.13);
-        backdrop-filter: blur(6px);
-        padding: 2.5rem 2.2rem 2.2rem 2.2rem;
-        margin-bottom: 2.5rem;
-        border: 1.5px solid #e0e7ef;
-    }
-    .admin-tabs .nav-link {
-        background: linear-gradient(90deg, #e0e7ff 0%, #f0f9ff 100%);
-        color: #223b7b;
-        border: none;
-        border-radius: 2em 2em 0 0;
-        font-weight: 700;
-        font-size: 1.13rem;
-        margin-right: 0.5rem;
-        padding: 0.7em 2em;
-        transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.13s;
-    }
-    .admin-tabs .nav-link.active, .admin-tabs .nav-link:hover {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(59,130,246,0.13);
-        transform: translateY(-2px) scale(1.04);
-    }
-    .admin-section-header {
-        font-size: 2rem;
-        font-weight: 900;
-        color: #223b7b;
-        letter-spacing: 0.01em;
-        margin-bottom: 1.7rem;
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-    }
-    .admin-section-header .material-icons {
-        font-size: 2.1rem;
-        color: #2563eb;
-        margin-right: 0.3rem;
-    }
-    .admin-table {
-        background: #f8fafc;
-        border-radius: 1.1rem;
-        box-shadow: 0 2px 12px rgba(59,130,246,0.07);
-        overflow: hidden;
-    }
-    .admin-table th, .admin-table td {
-        border: none;
-        padding: 1.1rem 1.2rem;
-        vertical-align: middle;
-    }
-    .admin-table thead th {
-        background: #e0e7ff;
-        color: #223b7b;
-        font-weight: 700;
-        font-size: 1.08rem;
-        border-bottom: 2px solid #d1d5db;
-    }
-    .admin-table tbody tr {
-        transition: background 0.18s;
-    }
-    .admin-table tbody tr:hover {
-        background: #e0e7ff;
-    }
-    .admin-search-bar .form-control {
-        background: #f8fafc;
-        border-radius: 2em;
-        border: 1.5px solid #e0e7ef;
-        font-size: 1.13rem;
-        font-weight: 500;
-        color: #223b7b;
-        transition: box-shadow 0.18s, border-color 0.18s;
-    }
-    .admin-search-bar .form-control:focus {
-        box-shadow: 0 0 0 2px #b3d1f7;
-        border-color: #2563eb;
-        background: #fff;
-    }
-    .admin-action-btn {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-        color: #fff !important;
-        font-weight: 700;
-        border: none;
-        border-radius: 2em;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-        padding: 0.7em 2em;
-        font-size: 1.08rem;
-        transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
-        margin-top: 0.2rem;
-        margin-bottom: 0.7rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.7em;
-    }
-    .admin-action-btn:hover, .admin-action-btn:focus {
-        background: linear-gradient(90deg, #1a2f9a 0%, #0e7490 100%);
-        color: #fff !important;
-        box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-        transform: scale(1.03);
-    }
-    .pagination .page-link {
-        padding: 0.7rem 1.3rem;
-        font-size: 1.1rem;
-        min-width: 44px;
-        border-radius: 1.5rem;
-        font-weight: 600;
-        color: #2563eb;
-        background: #f8fafc;
-        border: none;
-        margin: 0 0.2em;
-        transition: background 0.18s, color 0.18s;
-    }
-    .pagination .page-item.active .page-link, .pagination .page-link:hover {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-        color: #fff;
-    }
-    @media (max-width: 600px) {
-        .admin-glass-card {
-            padding: 1.2rem 0.5rem 1.2rem 0.5rem;
-        }
-        .admin-tabs .nav-link {
-            font-size: 1rem;
-            padding: 0.7em 0.7em;
-        }
-        .admin-section-header {
-            font-size: 1.2rem;
-            gap: 0.3rem;
-        }
-    }
-</style>
-
-<style>
-.material-circular-pagination .material-page-link {
-    border-radius: 50% !important;
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    max-width: 44px;
-    max-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #2563eb;
-    background: #fff;
-    border: 2px solid #2563eb;
-    margin: 0 0.18em;
-    box-shadow: 0 2px 8px rgba(59,130,246,0.07);
-    transition: background 0.18s, color 0.18s, border 0.18s;
-}
-.material-circular-pagination .material-page-link.active,
-.material-circular-pagination .material-page-link:focus,
-.material-circular-pagination .material-page-link:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
-    color: #fff;
-    border-color: #2563eb;
-    box-shadow: 0 4px 16px rgba(59,130,246,0.18);
-}
-.material-circular-pagination .page-item.active .material-page-link {
-    background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
-    color: #fff;
-    border-color: #2563eb;
-    box-shadow: 0 4px 16px rgba(59,130,246,0.18);
-}
-.material-circular-pagination .material-page-link i.material-icons {
-    font-size: 24px;
-    vertical-align: middle;
-}
-.material-circular-pagination .page-link {
-    border: none;
-    outline: none;
-}
-.material-circular-pagination .page-item.disabled .material-page-link {
-    background: #f1f5f9;
-    color: #b3b3b3;
-    border-color: #e0e7ef;
-    box-shadow: none;
-    cursor: not-allowed;
-}
-</style>
+{% endblock %}
