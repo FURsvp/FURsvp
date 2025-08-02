@@ -24,7 +24,7 @@
     .page-title-modern {
         font-size: 2.5rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -48,20 +48,20 @@
     }
 
     .stat-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
         color: white;
         padding: 1rem 1.5rem;
         border-radius: 12px;
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
         transition: all 0.3s ease;
     }
 
     .stat-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
     }
 
     .stat-number {
@@ -109,9 +109,9 @@
 
     .search-input-modern:focus {
         outline: none;
-        border-color: #667eea;
+        border-color: #4f46e5;
         background: white;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
     }
 
     .search-input-modern::placeholder {
@@ -133,23 +133,23 @@
     }
 
     .filter-btn-modern:hover {
-        border-color: #667eea;
-        color: #667eea;
+        border-color: #4f46e5;
+        color: #4f46e5;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
     }
 
     .filter-btn-modern.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
         border-color: transparent;
         color: white;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
     }
 
     .filter-btn-modern.active:hover {
-        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        background: linear-gradient(135deg, #4338ca 0%, #6d28d9 50%, #db2777 100%);
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
     }
 
     /* Modern Event List */
@@ -168,11 +168,18 @@
         border: 1px solid rgba(255, 255, 255, 0.8);
         transition: all 0.3s ease;
         position: relative;
+        cursor: pointer;
     }
 
     .event-item-modern:hover {
         transform: translateY(-2px);
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        border-color: #4f46e5;
+    }
+
+    .event-item-modern:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
     .event-item-content {
@@ -182,7 +189,7 @@
     }
 
     .event-date-badge {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
         color: white;
         padding: 1.5rem;
         display: flex;
@@ -274,7 +281,7 @@
 
     .group-logo:hover {
         transform: scale(1.05);
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.2);
     }
 
     .group-logo-img {
@@ -290,7 +297,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
         color: white;
     }
 
@@ -378,28 +385,28 @@
     }
 
     .btn-primary-modern {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
         color: white;
     }
 
     .btn-primary-modern:hover {
-        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        background: linear-gradient(135deg, #4338ca 0%, #6d28d9 50%, #db2777 100%);
         color: white;
         transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
     }
 
     .btn-outline-modern {
         background: white;
-        color: #667eea;
-        border: 2px solid #667eea;
+        color: #4f46e5;
+        border: 2px solid #4f46e5;
     }
 
     .btn-outline-modern:hover {
-        background: #667eea;
+        background: #4f46e5;
         color: white;
         transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
     }
 
     /* Empty State */
@@ -485,7 +492,7 @@
         }
         
         .btn-modern {
-            justify-content: center;
+        justify-content: center;
         }
     }
 
@@ -540,14 +547,14 @@
     <div class="container">
         <!-- Modern Page Header -->
         <div class="page-header-modern">
-            <div class="row align-items-center">
+        <div class="row align-items-center">
                 <div class="col-lg-8">
                     <h1 class="page-title-modern">
                         <span class="material-icons">event</span>
-                        Events
-                    </h1>
+                    Events
+                </h1>
                     <p class="page-subtitle">Discover and join amazing furry events in your area</p>
-                </div>
+            </div>
                 <div class="col-lg-4">
                     <div class="stats-container">
                         <div class="stat-card">
@@ -555,42 +562,42 @@
                             <div>
                                 <div class="stat-number">{{ events.object_list|length }}</div>
                                 <div class="stat-label">Events</div>
-                            </div>
-                        </div>
+                </div>
+            </div>
                         <div class="stat-card">
                             <span class="material-icons">groups</span>
                             <div>
                                 <div class="stat-number">{{ groups_count }}</div>
                                 <div class="stat-label">Groups</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </div>
+    </div>
+    </div>
+            </div>
             </div>
         </div>
 
         <!-- Modern Filters -->
         <div class="filters-modern">
-            <form method="get" action="{% url 'event_index' %}">
-                {% csrf_token %}
+                    <form method="get" action="{% url 'event_index' %}">
+                        {% csrf_token %}
                 
                 <!-- Search Bar -->
                 <div class="filter-group">
                     <label class="filter-label-modern">
-                        <span class="material-icons">search</span>
-                        Search Events
-                    </label>
+                                            <span class="material-icons">search</span>
+                                        Search Events
+                                    </label>
                     <input type="text" name="search" class="form-control search-input-modern" 
-                           placeholder="Search events by title, description, city, or group..." 
-                           value="{{ search_query|escapejs }}">
-                </div>
-
+                                               placeholder="Search events by title, description, city, or group..." 
+                                               value="{{ search_query|escapejs }}">
+                        </div>
+                        
                 <!-- Quick Filters -->
                 <div class="filter-group">
                     <label class="filter-label-modern">
                         <span class="material-icons">filter_list</span>
                         Quick Filters
-                    </label>
+                                    </label>
                     <div class="d-flex gap-2 flex-wrap">
                         <button type="button" class="filter-btn-modern {% if not filter_adult %}active{% endif %}" 
                                 onclick="updateFilter('adult', '')">
@@ -606,9 +613,9 @@
                                 onclick="updateFilter('adult', 'show')">
                             <span class="material-icons">nightlife</span>
                             Adult Events
-                        </button>
-                    </div>
-                </div>
+                                                    </button>
+                                                    </div>
+                                                        </div>
 
                 <!-- Sort Options -->
                 <div class="filter-group">
@@ -631,17 +638,17 @@
                                 onclick="updateFilter('sort', 'location')">
                             <span class="material-icons">location_on</span>
                             Location
-                        </button>
-                    </div>
-                </div>
+                                                        </button>
+                                                    </div>
+                                                    </div>
             </form>
-        </div>
-
+                                            </div>
+                                        
         <!-- Events List -->
         {% if events.object_list %}
             <div class="events-list">
                 {% for event in events.object_list %}
-                    <div class="event-item-modern">
+                    <div class="event-item-modern" onclick="handleEventCardClick(event, '{{ event.id }}')">
                         <div class="event-item-content">
                             <div class="event-date-badge">
                                 <div class="event-day">{{ event.date|date:"j" }}</div>
@@ -650,7 +657,7 @@
                             <div class="event-details">
                                 <div class="event-header">
                                     <div>
-                                        <h3 class="event-title-modern">{{ event.title }}</h3>
+                                        <h3 class="event-title-modern">{{ event.title|decode_html_entities }}</h3>
                                         {% if event.location %}
                                             <div class="event-location">
                                                 <span class="material-icons">location_on</span>
@@ -669,14 +676,14 @@
                                                     </div>
                                                 {% endif %}
                                             </div>
-                                            <div class="group-name">{{ event.group.name }}</div>
+                                            <div class="group-name">{{ event.group.name|decode_html_entities }}</div>
                                         </div>
                                     {% endif %}
                                 </div>
                                 
                                 {% if event.description %}
                                     <div class="event-description">
-                                        {{ event.description|striptags|truncatewords:30 }}
+                                        {{ event.description|striptags|truncatewords:30|decode_html_entities }}
                                     </div>
                                 {% endif %}
                                 
@@ -691,11 +698,11 @@
                                         {% endif %}
                                         
                                         {% if event.group %}
-                                            <span class="event-tag">{{ event.group.name }}</span>
+                                            <span class="event-tag">{{ event.group.name|decode_html_entities }}</span>
                                         {% endif %}
                                     </div>
                                     
-                                    <div class="event-actions">
+                                    <div class="event-actions" onclick="event.stopPropagation()">
                                         <a href="{% url 'event_detail' event.id %}" class="btn btn-modern btn-primary-modern">
                                             <span class="material-icons">visibility</span>
                                             View Details
@@ -718,25 +725,46 @@
             <div class="empty-state">
                 <div class="empty-state-icon">
                     <span class="material-icons">event_busy</span>
-                </div>
+                        </div>
                 <h3 class="empty-state-title">No events found</h3>
                 <p class="empty-state-text">
                     {% if search_query %}
                         No events match your search criteria. Try adjusting your filters.
                     {% else %}
-                        No events are currently available. Check back later or create your own event!
+                        {% if can_create_events %}
+                            No events are currently available. Check back later or create your own event!
+                        {% else %}
+                            No events are currently available. Check back later!
+                        {% endif %}
                     {% endif %}
                 </p>
+                {% if can_create_events %}
                 <a href="{% url 'create_event' %}" class="btn btn-modern btn-primary-modern">
                     <span class="material-icons">add</span>
                     Create Event
                 </a>
-            </div>
+                {% endif %}
+                    </div>
         {% endif %}
-    </div>
-</div>
+                </div>
+            </div>
 
 <script>
+    // Handle event card clicks to navigate to event detail
+    function handleEventCardClick(event, eventId) {
+        // Prevent default behavior if clicking on buttons
+        if (event.target.closest('.event-actions') || 
+            event.target.closest('a') || 
+            event.target.closest('button')) {
+            return;
+        }
+        
+        // Navigate to event detail page
+        if (eventId) {
+            window.location.href = `/event/${eventId}/`;
+        }
+    }
+
     // Modern filter functionality
     function updateFilter(key, value) {
         const url = new URL(window.location);

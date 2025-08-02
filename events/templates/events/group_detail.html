@@ -8,7 +8,95 @@
 {% block extra_css %}
 <!-- Tom Select CSS -->
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<!-- Quill.js CSS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <style>
+/* Event Filters */
+.event-filters {
+    background: #f8fafc;
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+.filter-label-modern {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-input-modern {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    color: #2d3748;
+}
+
+.search-input-modern:focus {
+    outline: none;
+    border-color: #4f46e5;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.filter-btn-modern {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.filter-btn-modern:hover {
+    border-color: #4f46e5;
+    color: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.filter-btn-modern.active {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.filter-btn-modern.active:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 50%, #db2777 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+/* Hidden events */
+.event-card.hidden {
+    display: none;
+}
+
+/* Telegram post clickable styling */
+.telegram-post {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.telegram-post:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 /* Facebook-style Group Page */
 .group-page-container {
     max-width: 1200px;
@@ -814,9 +902,90 @@
                                 <button class="toggle-btn" data-view="list">List View</button>
                         </div>
                             
+                            <!-- Event Filters -->
+                            <div class="event-filters mb-4">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="filter-label-modern">
+                                            <span class="material-icons">search</span>
+                                            Search Events
+                                        </label>
+                                        <input type="text" id="eventSearch" class="form-control search-input-modern" 
+                                               placeholder="Search events by title, description, or location..." 
+                                               onkeyup="filterEvents()">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="filter-label-modern">
+                                            <span class="material-icons">sort</span>
+                                            Sort By
+                                        </label>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <button type="button" class="filter-btn-modern active" 
+                                                    onclick="sortEvents('date', event)">
+                                                <span class="material-icons">calendar_today</span>
+                                                Date
+                                            </button>
+                                            <button type="button" class="filter-btn-modern" 
+                                                    onclick="sortEvents('title', event)">
+                                                <span class="material-icons">title</span>
+                                                Title
+                                            </button>
+                                            <button type="button" class="filter-btn-modern" 
+                                                    onclick="sortEvents('rsvps', event)">
+                                                <span class="material-icons">people</span>
+                                                RSVPs
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="filter-label-modern">
+                                            <span class="material-icons">filter_list</span>
+                                            Filter Events
+                                        </label>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <button type="button" class="filter-btn-modern active" 
+                                                    onclick="filterByType('all', event)">
+                                                <span class="material-icons">all_inclusive</span>
+                                                All Events
+                                            </button>
+                                            <button type="button" class="filter-btn-modern" 
+                                                    onclick="filterByType('upcoming', event)">
+                                                <span class="material-icons">schedule</span>
+                                                Upcoming
+                                            </button>
+                                            <button type="button" class="filter-btn-modern" 
+                                                    onclick="filterByType('full', event)">
+                                                <span class="material-icons">event_busy</span>
+                                                Full Events
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="filter-label-modern">
+                                            <span class="material-icons">view_module</span>
+                                            View Options
+                                        </label>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <button type="button" class="filter-btn-modern active" 
+                                                    onclick="setEventViewMode('grid', event)">
+                                                <span class="material-icons">grid_view</span>
+                                                Grid
+                                            </button>
+                                            <button type="button" class="filter-btn-modern" 
+                                                    onclick="setEventViewMode('list', event)">
+                                                <span class="material-icons">view_list</span>
+                                                List
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div id="eventsGrid" class="events-grid">
                             {% for event in upcoming_events %}
-                                    <div class="event-card">
+                                    <div class="event-card" data-title="{{ event.title|lower }}" data-date="{{ event.date|date:'Y-m-d' }}" data-rsvps="{{ event.confirmed_count|default:0 }}" data-capacity="{{ event.capacity|default:0 }}" data-type="{% if event.capacity and event.confirmed_count >= event.capacity %}full{% else %}upcoming{% endif %}">
                                         <a href="{% url 'event_detail' event.id %}" class="event-title">
                                                     {{ event.title }}
                                                 </a>
@@ -838,7 +1007,7 @@
                             
                             <div id="eventsList" class="events-list" style="display: none;">
                                 {% for event in upcoming_events %}
-                                    <div class="event-card">
+                                    <div class="event-card" data-title="{{ event.title|lower }}" data-date="{{ event.date|date:'Y-m-d' }}" data-rsvps="{{ event.confirmed_count|default:0 }}" data-capacity="{{ event.capacity|default:0 }}" data-type="{% if event.capacity and event.confirmed_count >= event.capacity %}full{% else %}upcoming{% endif %}">
                                         <div class="d-flex justify-content-between align-items-start">
                                         <div>
                                                 <a href="{% url 'event_detail' event.id %}" class="event-title">
@@ -881,7 +1050,12 @@
                     <div class="group-card-body">
                         <div class="telegram-feed">
                             {% for entry in telegram_feed %}
-                                <div class="telegram-post">
+                                <div class="telegram-post" 
+                                     data-title="{{ entry.title|escapejs }}" 
+                                     data-summary="{{ entry.summary|striptags|escapejs }}" 
+                                     data-link="{{ entry.link|escapejs }}" 
+                                     data-date="{% if entry.est_datetime %}{{ entry.est_datetime|date:'M j, Y' }} at {{ entry.est_datetime|time:'g:i A' }}{% else %}{{ entry.published|default:'Unknown date' }}{% endif %}"
+                                     onclick="openAnnouncementModal(this)">
                                     <div class="post-header">
                                         <i class="material-icons">campaign</i>
                                         <span class="post-date">
@@ -893,7 +1067,7 @@
                                         </span>
                                         </div>
                                     <div class="post-content">
-                                        <a href="{{ entry.link }}" target="_blank" class="post-title">{{ entry.title }}</a>
+                                        <span class="post-title">{{ entry.title }}</span>
                                         {% if entry.summary %}
                                             <p class="post-summary">{{ entry.summary|striptags|truncatewords:30 }}</p>
                                         {% endif %}
@@ -955,6 +1129,44 @@
                                         </div>
                                     </div>
                     </div>
+</div>
+
+<!-- Announcement Modal -->
+<div class="modal fade" id="announcementModal" tabindex="-1" aria-labelledby="announcementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title d-flex align-items-center" id="announcementModalLabel">
+                    <span class="material-icons me-2">campaign</span> Announcement
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <strong>Date:</strong>
+                    <span id="modalAnnouncementDate"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Title:</strong>
+                    <h4 id="modalAnnouncementTitle"></h4>
+                </div>
+                <div class="mb-3">
+                    <strong>Content:</strong>
+                    <div id="modalAnnouncementContent" class="mt-2" style="max-height: 400px; overflow-y: auto;"></div>
+                </div>
+                <hr>
+                <div class="text-center">
+                    <a href="#" id="modalAnnouncementLink" target="_blank" class="btn btn-primary">
+                        <span class="material-icons me-2">open_in_new</span>
+                        View on Telegram
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Edit Group Modal -->
@@ -1101,25 +1313,24 @@
     </div>
   </div>
 </div>
-</div>
 
 <!-- Discord Contact Modal -->
 <div class="modal fade" id="discordModal" tabindex="-1" aria-labelledby="discordModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header discord-modal-header">
                 <h5 class="modal-title" id="discordModalTitle">
-                    <i class="material-icons">chat</i>
+                    <span class="material-icons">chat</span>
                     Discord Contact
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="discordUsername" readonly>
-                    <button class="btn btn-outline-primary" type="button" onclick="copyDiscordUsername()">
-                        <i class="material-icons">content_copy</i>
-                        Copy
+                <div class="discord-input-group">
+                    <input type="text" class="form-control discord-input" id="discordUsername" readonly>
+                        <button class="btn discord-copy-btn" type="button" onclick="copyDiscordUsername(event)">
+                        <span class="material-icons">content_copy</span>
+                        <span>Copy</span>
                     </button>
                 </div>
             </div>
@@ -1132,8 +1343,71 @@
 
 <!-- Tom Select JS -->
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
 <script>
+// Initialize Quill.js for edit group modal
+function initQuill() {
+    const isDark = document.body.classList.contains('dark-mode') || 
+                  document.documentElement.classList.contains('dark-mode') ||
+                  window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    const descriptionField = document.querySelector('#editGroupModal textarea[name="description"]');
+    
+    if (!descriptionField) return;
+    
+    // Create Quill container
+    const quillContainer = document.createElement('div');
+    quillContainer.id = 'quill-editor-group';
+    quillContainer.style.height = '300px';
+    descriptionField.parentNode.insertBefore(quillContainer, descriptionField);
+    descriptionField.style.display = 'none';
+    
+    // Initialize Quill
+    const quill = new Quill('#quill-editor-group', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'align': [] }],
+                ['link', 'image'],
+                ['clean']
+            ]
+        },
+        placeholder: 'Describe your group...',
+        readOnly: false
+    });
+    
+    // Set initial content if any
+    if (descriptionField.value) {
+        quill.root.innerHTML = descriptionField.value;
+    }
+    
+    // Sync Quill content with hidden textarea
+    quill.on('text-change', function() {
+        descriptionField.value = quill.root.innerHTML;
+    });
+    
+    // Dark mode support
+    if (isDark) {
+        quillContainer.querySelector('.ql-toolbar').style.backgroundColor = '#2d3748';
+        quillContainer.querySelector('.ql-toolbar').style.borderColor = '#4a5568';
+        quillContainer.querySelector('.ql-container').style.backgroundColor = '#2d3748';
+        quillContainer.querySelector('.ql-container').style.borderColor = '#4a5568';
+        quillContainer.querySelector('.ql-editor').style.color = '#e2e8f0';
+    }
+}
+
+// Initialize Quill when edit group modal is shown
+const editGroupModal = document.getElementById('editGroupModal');
+if (editGroupModal) {
+    editGroupModal.addEventListener('shown.bs.modal', function () {
+        setTimeout(initQuill, 100);
+    });
+}
+
 // Events view toggle
 document.addEventListener('DOMContentLoaded', function() {
     const toggleBtns = document.querySelectorAll('.toggle-btn');
@@ -1301,39 +1575,175 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function copyDiscordUsername() {
+function copyDiscordUsername(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
     const input = document.getElementById('discordUsername');
     const textToCopy = input.value;
+    const button = event.target.closest('button');
     
     // Use modern clipboard API if available, fallback to execCommand
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(textToCopy).then(() => {
-            showCopyFeedback();
+            showCopyFeedback(button);
         }).catch(() => {
             // Fallback to execCommand
             fallbackCopyTextToClipboard(input);
-            showCopyFeedback();
+            showCopyFeedback(button);
         });
     } else {
         // Fallback to execCommand for older browsers
         fallbackCopyTextToClipboard(input);
-        showCopyFeedback();
+        showCopyFeedback(button);
     }
 }
 
 function fallbackCopyTextToClipboard(input) {
     input.select();
     input.setSelectionRange(0, 99999);
-    document.execCommand('copy');
+    try {
+        document.execCommand('copy');
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
 }
 
-function showCopyFeedback() {
-    const btn = event.target.closest('button');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="material-icons">check</i> Copied!';
+function showCopyFeedback(button) {
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<span class="material-icons">check</span><span>Copied!</span>';
+    button.classList.add('copied');
+    
     setTimeout(() => {
-        btn.innerHTML = originalText;
+        button.innerHTML = originalContent;
+        button.classList.remove('copied');
     }, 2000);
+}
+
+// Event filtering and sorting functions
+let currentEventTypeFilter = 'all';
+let currentEventSortBy = 'date';
+let currentEventViewMode = 'grid';
+
+function filterEvents() {
+    const searchTerm = document.getElementById('eventSearch').value.toLowerCase();
+    const eventCards = document.querySelectorAll('.event-card');
+    
+    eventCards.forEach(card => {
+        const title = card.getAttribute('data-title') || '';
+        const type = card.getAttribute('data-type') || '';
+        const matchesSearch = title.includes(searchTerm);
+        const matchesType = currentEventTypeFilter === 'all' || type === currentEventTypeFilter;
+        
+        if (matchesSearch && matchesType) {
+            card.classList.remove('hidden');
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+}
+
+function filterByType(type, event) {
+    currentEventTypeFilter = type;
+    
+    // Update button states
+    document.querySelectorAll('[onclick^="filterByType"]').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    filterEvents();
+}
+
+function sortEvents(sortBy, event) {
+    currentEventSortBy = sortBy;
+    
+    // Update button states
+    document.querySelectorAll('[onclick^="sortEvents"]').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    const eventsGrid = document.getElementById('eventsGrid');
+    const eventsList = document.getElementById('eventsList');
+    
+    [eventsGrid, eventsList].forEach(container => {
+        if (!container) return;
+        
+        const items = Array.from(container.querySelectorAll('.event-card:not(.hidden)'));
+        
+        items.sort((a, b) => {
+            let aValue, bValue;
+            
+            switch(sortBy) {
+                case 'title':
+                    aValue = a.getAttribute('data-title') || '';
+                    bValue = b.getAttribute('data-title') || '';
+                    return aValue.localeCompare(bValue);
+                case 'date':
+                    aValue = a.getAttribute('data-date') || '';
+                    bValue = b.getAttribute('data-date') || '';
+                    return new Date(aValue) - new Date(bValue); // Earliest first
+                case 'rsvps':
+                    aValue = parseInt(a.getAttribute('data-rsvps') || '0');
+                    bValue = parseInt(b.getAttribute('data-rsvps') || '0');
+                    return bValue - aValue; // Most RSVPs first
+                default:
+                    return 0;
+            }
+        });
+        
+        // Re-append sorted items
+        items.forEach(item => container.appendChild(item));
+    });
+}
+
+function setEventViewMode(mode, event) {
+    currentEventViewMode = mode;
+    
+    // Update button states
+    document.querySelectorAll('[onclick^="setEventViewMode"]').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    const eventsGrid = document.getElementById('eventsGrid');
+    const eventsList = document.getElementById('eventsList');
+    
+    if (mode === 'grid') {
+        eventsGrid.style.display = 'grid';
+        eventsList.style.display = 'none';
+    } else {
+        eventsGrid.style.display = 'none';
+        eventsList.style.display = 'block';
+    }
+}
+
+// Announcement modal functionality
+function openAnnouncementModal(element) {
+    const title = element.getAttribute('data-title');
+    const summary = element.getAttribute('data-summary');
+    const link = element.getAttribute('data-link');
+    const date = element.getAttribute('data-date');
+    
+    // Populate modal content
+    document.getElementById('modalAnnouncementTitle').textContent = title;
+    document.getElementById('modalAnnouncementDate').textContent = date;
+    document.getElementById('modalAnnouncementContent').innerHTML = summary;
+    document.getElementById('modalAnnouncementLink').href = link;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('announcementModal'));
+    modal.show();
+    
+    // Ensure modal is properly closed when clicking outside or pressing escape
+    document.getElementById('announcementModal').addEventListener('hidden.bs.modal', function () {
+        // Reset modal content
+        document.getElementById('modalAnnouncementTitle').textContent = '';
+        document.getElementById('modalAnnouncementDate').textContent = '';
+        document.getElementById('modalAnnouncementContent').innerHTML = '';
+        document.getElementById('modalAnnouncementLink').href = '#';
+    });
 }
 </script>
 
@@ -1376,6 +1786,129 @@ function showCopyFeedback() {
 .tom-select-leader .ts-dropdown .option.selected {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+}
+
+/* Discord Modal Styling */
+.discord-modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom: none;
+}
+
+.discord-modal-header .modal-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.discord-modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.discord-modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.discord-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.discord-input {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    background: #f8fafc;
+    color: #2d3748;
+    flex: 1;
+}
+
+.discord-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.discord-copy-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.discord-copy-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+.discord-copy-btn.copied {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modal-footer {
+    border-top: 1px solid #e2e8f0;
+    padding: 1rem 1.5rem;
+}
+
+.modal-footer .btn-secondary {
+    background: #f1f5f9;
+    border: 2px solid #e2e8f0;
+    color: #64748b;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
+/* Announcement Modal Content Styling */
+#modalAnnouncementContent img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 0.5rem 0;
+}
+
+#modalAnnouncementContent {
+    line-height: 1.6;
+    color: #2d3748;
+}
+
+#modalAnnouncementContent p {
+    margin-bottom: 1rem;
+}
+
+#modalAnnouncementContent a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+#modalAnnouncementContent a:hover {
+    text-decoration: underline;
 }
 </style>
 {% endblock %}

@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.defaults import page_not_found
 
 # Swagger UI setup
 from drf_yasg.views import get_schema_view
@@ -43,6 +44,9 @@ urlpatterns = [
     path('api/', include('events.api_urls')),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
+
+# Custom 404 handler
+handler404 = 'events.views.custom_404'
 
 # Serve static and media files in development
 if settings.DEBUG:

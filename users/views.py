@@ -2042,32 +2042,3 @@ def get_user_avatar(request, user_id):
             'success': False,
             'error': 'User not found'
         })
-
-@require_GET
-@login_required
-def get_group_logo(request, group_id):
-    """
-    Get group logo data for Tom Select dropdowns
-    """
-    try:
-        group = Group.objects.get(id=group_id)
-        
-        if group.logo_base64:
-            return JsonResponse({
-                'success': True,
-                'logo': group.logo_base64,
-                'has_logo': True
-            })
-        else:
-            return JsonResponse({
-                'success': True,
-                'logo': None,
-                'has_logo': False,
-                'name': group.name,
-                'description': group.description or ''
-            })
-    except Group.DoesNotExist:
-        return JsonResponse({
-            'success': False,
-            'error': 'Group not found'
-        })

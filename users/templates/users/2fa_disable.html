@@ -2,116 +2,154 @@
 {% block title %}Disable Two-Factor Authentication - FURsvp{% endblock %}
 
 {% block content %}
-<div class="twofa-container">
-    <!-- 2FA Header -->
-    <div class="twofa-header">
-        <h1>
-            <i class="material-icons align-middle me-2">security</i>
-            Disable Two-Factor Authentication
-        </h1>
-        <p>Remove the extra layer of security from your account</p>
-    </div>
-
-    <div class="twofa-card">
-        <div class="twofa-card-header">
-            <h3>
-                <i class="material-icons align-middle me-2">warning</i>
-                Security Warning
-            </h3>
-            <p>This action will reduce your account security</p>
-        </div>
-        
-        <div class="twofa-content">
-            <div class="twofa-warning">
-                <div class="warning-icon">
-                    <i class="material-icons">warning</i>
-                </div>
-                
-                <h4>Are you sure you want to disable 2FA?</h4>
-                <p>
-                    Disabling two-factor authentication will remove the extra layer of security 
-                    from your account. This makes your account more vulnerable to unauthorized access.
-                </p>
-                
-                <div class="warning-details">
-                    <h5>What this means:</h5>
-                    <ul>
-                        <li>Your account will only be protected by your password</li>
-                        <li>Anyone with your password can access your account</li>
-                        <li>You'll need to re-enable 2FA if you want to restore this protection</li>
-                    </ul>
-                </div>
-                
-                <form method="post" class="twofa-form">
-                    {% csrf_token %}
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="material-icons">security</i>
-                            Yes, Disable 2FA
-                        </button>
-                        <a href="{% url 'profile' %}" class="btn btn-secondary">
-                            <i class="material-icons">cancel</i>
-                            Cancel
-                        </a>
+<!-- Modern 2FA Disable Section -->
+<section class="modern-2fa-disable-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="twofa-disable-card">
+                    <!-- Header -->
+                    <div class="twofa-disable-header">
+                        <div class="twofa-disable-badge">
+                            <span class="material-icons">pets</span>
+                            <span>FURsvp</span>
+                        </div>
+                        <h1 class="twofa-disable-title">
+                            Disable Two-Factor Authentication
+                        </h1>
+                        <p class="twofa-disable-subtitle">
+                            Remove the extra layer of security from your account
+                        </p>
                     </div>
-                </form>
+
+                    <!-- Warning Section -->
+                    <div class="warning-section">
+                        <div class="warning-header">
+                            <h3>
+                                <span class="material-icons">warning</span>
+                                Security Warning
+                            </h3>
+                            <p>This action will reduce your account security</p>
+                        </div>
+                        
+                        <div class="warning-content">
+                            <div class="warning-icon">
+                                <span class="material-icons">warning</span>
+                            </div>
+                            
+                            <h3>Are you sure you want to disable 2FA?</h3>
+                            <p class="warning-text">
+                                Disabling two-factor authentication will remove the extra layer of security 
+                                from your account. This makes your account more vulnerable to unauthorized access.
+                            </p>
+                            
+                            <div class="warning-details">
+                                <h4>What this means:</h4>
+                                <ul>
+                                    <li>Your account will only be protected by your password</li>
+                                    <li>Anyone with your password can access your account</li>
+                                    <li>You'll need to re-enable 2FA if you want to restore this protection</li>
+                                </ul>
+                            </div>
+                            
+                            <form method="post" class="twofa-disable-form">
+                                {% csrf_token %}
+                                <div class="form-actions">
+                                    <button type="submit" class="twofa-disable-button danger">
+                                        <span class="material-icons">security</span>
+                                        <span>Yes, Disable 2FA</span>
+                                    </button>
+                                    <a href="{% url 'profile' %}" class="twofa-disable-button secondary">
+                                        <span class="material-icons">cancel</span>
+                                        <span>Cancel</span>
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+</section>
 
-{% block extra_css %}
 <style>
-/* 2FA Container */
-.twofa-container {
-    max-width: 600px;
-    margin: 0 auto;
+/* Modern 2FA Disable Styles */
+.modern-2fa-disable-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
     padding: 2rem 0;
+    background: #f8fafc;
 }
 
-/* 2FA Header */
-.twofa-header {
+.twofa-disable-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.twofa-disable-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.twofa-disable-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.twofa-disable-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(45deg, #ef4444, #dc2626);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.twofa-disable-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.twofa-disable-subtitle {
+    color: #718096;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.warning-section {
+    margin-bottom: 2rem;
+}
+
+.warning-header {
     text-align: center;
     margin-bottom: 2rem;
 }
 
-.twofa-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-}
-
-.twofa-header p {
-    color: #6b7280;
-    font-size: 1.125rem;
-    margin: 0;
-}
-
-/* 2FA Card */
-.twofa-card {
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
-    overflow: hidden;
-}
-
-.twofa-card-header {
-    background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-    color: white;
-    padding: 2rem;
-    text-align: center;
-}
-
-.twofa-card-header h3 {
+.warning-header h3 {
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 600;
+    color: #1a202c;
     margin: 0 0 0.5rem 0;
     display: flex;
     align-items: center;
@@ -119,18 +157,17 @@
     gap: 0.5rem;
 }
 
-.twofa-card-header p {
+.warning-header p {
+    color: #718096;
     margin: 0;
-    opacity: 0.9;
     font-size: 1rem;
 }
 
-/* 2FA Content */
-.twofa-content {
+.warning-content {
+    background: #fef2f2;
+    border-radius: 16px;
     padding: 2rem;
-}
-
-.twofa-warning {
+    border: 1px solid #fecaca;
     text-align: center;
 }
 
@@ -138,55 +175,51 @@
     margin-bottom: 1.5rem;
 }
 
-.warning-icon i {
+.warning-icon .material-icons {
     font-size: 4rem;
-    color: #f59e0b;
+    color: #ef4444;
 }
 
-.twofa-warning h4 {
+.warning-content h3 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1f2937;
+    color: #1a202c;
     margin: 0 0 1rem 0;
 }
 
-.twofa-warning p {
-    color: #6b7280;
+.warning-text {
+    color: #4a5568;
     font-size: 1rem;
     line-height: 1.6;
-    margin: 0 0 2rem 0;
+    margin-bottom: 2rem;
 }
 
 .warning-details {
-    background: #fef3c7;
-    border: 1px solid #f59e0b;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
     text-align: left;
+    margin-bottom: 2rem;
 }
 
-.warning-details h5 {
+.warning-details h4 {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #92400e;
+    color: #1a202c;
     margin: 0 0 1rem 0;
 }
 
 .warning-details ul {
-    color: #92400e;
+    color: #4a5568;
+    font-size: 1rem;
+    line-height: 1.6;
     margin: 0;
     padding-left: 1.5rem;
 }
 
 .warning-details li {
     margin-bottom: 0.5rem;
-    line-height: 1.5;
 }
 
-/* Form Styling */
-.twofa-form {
-    margin-top: 2rem;
+.twofa-disable-form {
+    margin-top: 1rem;
 }
 
 .form-actions {
@@ -196,58 +229,88 @@
     flex-wrap: wrap;
 }
 
-/* Buttons */
-.btn {
-    border-radius: 0.75rem;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    transition: all 0.3s ease;
-    border: none;
+.twofa-disable-button {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 180px;
 }
 
-.btn-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+.twofa-disable-button.danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
 }
 
-.btn-danger:hover {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    transform: translateY(-1px);
+.twofa-disable-button.danger:hover {
+    transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
 }
 
-.btn-secondary {
-    background: #f3f4f6;
-    color: #374151;
+.twofa-disable-button.secondary {
+    background: linear-gradient(135deg, #f7fafc, #edf2f7);
+    color: #667eea;
+    border: 2px solid #e2e8f0;
 }
 
-.btn-secondary:hover {
-    background: #e5e7eb;
-    transform: translateY(-1px);
+.twofa-disable-button.secondary:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    text-decoration: none;
 }
 
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
-    .twofa-container {
-        padding: 1rem;
+    .twofa-disable-card {
+        padding: 2rem;
+        margin: 1rem;
     }
     
-    .twofa-header h1 {
+    .twofa-disable-title {
         font-size: 2rem;
+    }
+    
+    .twofa-disable-subtitle {
+        font-size: 1rem;
+    }
+    
+    .warning-content {
+        padding: 1.5rem;
     }
     
     .form-actions {
         flex-direction: column;
     }
     
-    .btn {
-        width: 100%;
-        justify-content: center;
+    .twofa-disable-button {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .modern-2fa-disable-section {
+        padding: 1rem 0;
+    }
+    
+    .twofa-disable-card {
+        padding: 1.5rem;
+    }
+    
+    .twofa-disable-title {
+        font-size: 1.75rem;
     }
 }
 </style>
+
 {% endblock %} 

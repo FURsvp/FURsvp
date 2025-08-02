@@ -1,5 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
+import html
 
 register = template.Library()
 
@@ -29,4 +30,11 @@ def group_logo_img(group, css_class='', alt_text=None):
         src = group_logo_src(group)
         alt = alt_text or f"{group.name} logo"
         return mark_safe(f'<img src="{src}" alt="{alt}" class="{css_class}">')
-    return '' 
+    return ''
+
+@register.filter
+def decode_html_entities(text):
+    """Decode HTML entities like &amp; to &"""
+    if text:
+        return html.unescape(text)
+    return text 

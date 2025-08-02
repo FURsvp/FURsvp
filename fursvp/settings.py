@@ -182,30 +182,6 @@ CACHES = {
     }
 }
 
-TINYMCE_DEFAULT_CONFIG = {
-    'height': 360,
-    'width': '100%',
-    'menubar': False,
-    'plugins': 'autolink lists link image charmap print preview anchor',
-    'toolbar': 'bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | preview save print | insertfile image media template link anchor codesample | ltr rtl',
-    'content_style': 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }',
-    'branding': False,
-    'promotion': False,
-    'license_key': 'gpl',
-    'statusbar': True,
-    'resize': 'both',
-    'toolbar_mode': 'sliding',
-    'toolbar_sticky': True,
-    # Secure configuration
-    'valid_elements': 'p[style],strong,em,span[style],a[href|target=_blank],ul,ol,li,br,img[src|alt|width|height|style]',
-    'extended_valid_elements': 'img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name]',
-    'forced_root_block': 'p',
-    'force_br_newlines': False,
-    'force_p_newlines': True,
-    'remove_script_host': True,
-    'convert_urls': False,
-}
-
 LOGIN_REDIRECT_URL = '/'
 
 # Django-Q Cluster Configuration
@@ -275,3 +251,4 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'info@fursvp.org')

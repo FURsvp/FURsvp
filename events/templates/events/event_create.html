@@ -2,6 +2,11 @@
 {% block title %}Create Event - FURsvp{% endblock %}
 {% load widget_tweaks %}
 
+{% block extra_css %}
+{{ block.super }}
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <style>
 /***** Modern Form Styles for Create/Edit Event *****/
@@ -434,9 +439,7 @@
 
 {% block extra_js %}
 {{ block.super }}
-{{ form.media }}
-<script src="https://cdn.jsdelivr.net/npm/tinymce@7.9.1/tinymce.min.js" crossorigin="anonymous"
-    referrerpolicy="no-referrer"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Initialize address autocomplete
@@ -791,116 +794,59 @@
         );
     });
 
-    // Initialize TinyMCE
-        function initTinyMCE() {
-            const isDark = document.body.classList.contains('dark-mode');
-    tinymce.init({
-                selector: '#{{ form.description.id_for_label }}',
-        height: 300,
-        width: '100%',
-        menubar: false,
-                plugins: 'advlist autolink lists image charmap anchor searchreplace visualblocks code insertdatetime table help wordcount textcolor backcolor link',
-                toolbar: 'bold italic strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | image code | removeformat',
-        branding: false,
-        promotion: false,
-                license_key: 'gpl',
-        automatic_uploads: true,
-        file_picker_types: 'image',
-        images_reuse_filename: true,
-                statusbar: false,
-                resize: false,
-                menubar: false,
-                skin: isDark ? 'oxide-dark' : 'oxide',
-                content_css: isDark ? '/static/tinymce-dark-content.css' : '',
-                toolbar_mode: 'wrap',
-                toolbar_sticky: true,
-                toolbar_sticky_offset: 0,
-                content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; } img { max-width: 100%; height: auto; display: block; margin: 1em auto; } .tox-statusbar { display: none !important; }',
-                auto_link: true,
-                link_default_target: '_blank',
-                link_default_rel: 'noopener noreferrer',
-                document_base_url: '{{ request.scheme }}://{{ request.get_host }}/',
-        file_picker_callback: function (callback, value, meta) {
-            if (meta.filetype === 'image') {
-                const input = document.createElement('input');
-                input.setAttribute('type', 'file');
-                input.setAttribute('accept', 'image/*');
-
-                input.onchange = function () {
-                    const file = this.files[0];
-                    const reader = new FileReader();
-                    reader.onload = function () {
-                        const base64data = reader.result;
-                                console.log('Base64 data generated:', base64data.substring(
-                                    0,
-                                    50) + '...');
-                        
-                        // Create an image element to get dimensions
-                        const img = new Image();
-                                img.onload = function () {
-                            // Calculate dimensions to fit within modal
-                            const maxWidth = 800; // Maximum width for images
-                            let width = img.width;
-                            let height = img.height;
-                            
-                            if (width > maxWidth) {
-                                const ratio = maxWidth / width;
-                                width = maxWidth;
-                                height = height * ratio;
-                            }
-                            
-                            // Insert the image with calculated dimensions
-                                    const imageHtml =
-                                        `<img src="${base64data}" alt="${file.name}" style="max-width: 100%; width: ${width}px; height: ${height}px; object-fit: contain;" />`;
-                                    callback(base64data, {
-                                        alt: file.name
-                                    });
-                        };
-                        img.src = base64data;
-                    };
-                    reader.readAsDataURL(file);
-                };
-
-                input.click();
-            }
-        },
-                setup: function (editor) {
-                    editor.on('init', function () {
-                        editor.getContainer().style.transition =
-                            'border-color 0.15s ease-in-out';
-                    });
-                    editor.on('change', function () {
-                console.log('Editor content changed');
-            });
-                    editor.on('ObjectResized', function (e) {
-                console.log('Object resized:', e);
-            });
-                    editor.on('SetContent', function (e) {
-                console.log('Content set:', e);
-            });
-                    editor.on('BeforeSetContent', function (e) {
-                console.log('Before content set:', e);
-                    });
-                }
-            });
+    // Initialize Quill.js
+    function initQuill() {
+        const isDark = document.body.classList.contains('dark-mode');
+        const descriptionField = document.getElementById('{{ form.description.id_for_label }}');
+        
+        if (!descriptionField) return;
+        
+        // Create Quill container
+        const quillContainer = document.createElement('div');
+        quillContainer.id = 'quill-editor';
+        quillContainer.style.height = '300px';
+        descriptionField.parentNode.insertBefore(quillContainer, descriptionField);
+        descriptionField.style.display = 'none';
+        
+        // Initialize Quill
+        const quill = new Quill('#quill-editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link', 'image'],
+                    ['clean']
+                ]
+            },
+            placeholder: 'Describe your event...',
+            readOnly: false
+        });
+        
+        // Set initial content if any
+        if (descriptionField.value) {
+            quill.root.innerHTML = descriptionField.value;
         }
-
-        // Initialize TinyMCE on page load
-        initTinyMCE();
-
-        // Function to re-initialize TinyMCE when dark mode changes
-        function reinitTinyMCE() {
-            const editor = tinymce.get('{{ form.description.id_for_label }}');
-            if (editor) {
-                editor.destroy();
-            }
-            setTimeout(initTinyMCE, 100);
+        
+        // Sync Quill content with hidden textarea
+        quill.on('text-change', function() {
+            descriptionField.value = quill.root.innerHTML;
+        });
+        
+        // Dark mode support
+        if (isDark) {
+            quillContainer.querySelector('.ql-toolbar').style.backgroundColor = '#2d3748';
+            quillContainer.querySelector('.ql-toolbar').style.borderColor = '#4a5568';
+            quillContainer.querySelector('.ql-container').style.backgroundColor = '#2d3748';
+            quillContainer.querySelector('.ql-container').style.borderColor = '#4a5568';
+            quillContainer.querySelector('.ql-editor').style.color = '#e2e8f0';
         }
+    }
 
-        // Listen for dark mode changes
-        document.addEventListener('darkModeChanged', function (event) {
-            setTimeout(reinitTinyMCE, 200);
-    });
+    // Initialize Quill on page load
+    initQuill();
 
     // Initialize Flatpickr
     flatpickr("#{{ form.date.id_for_label }}", {

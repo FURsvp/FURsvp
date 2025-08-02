@@ -14,6 +14,7 @@ urlpatterns = [
     path('faq/', views.faq, name='faq'),
     path('eula/', views.eula, name='eula'),
     path('privacy/', views.privacy, name='privacy'),
+    path('contact/', views.contact, name='contact'),
     path('group/<int:group_id>/leadership/', manage_group_leadership, name='manage_group_leadership'),
     path('group/', views.groups_list, name='groups_list'),
     path('event/<int:event_id>/rsvp_answers/<int:user_id>/', views.rsvp_answers, name='rsvp_answers'),

@@ -28,6 +28,8 @@ from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_GET
 from django.contrib.auth.models import User
 from .models import PlatformStats
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 # Create your views here.
@@ -550,6 +552,29 @@ def event_detail(request, event_id):
         maybe_rsvps = []
         not_attending_rsvps = []
 
+    # Pre-load avatar data for all users to avoid individual HTTP requests
+    def get_avatar_data(profile):
+        if profile.profile_picture_base64:
+            return {
+                'has_pfp': True,
+                'avatar': profile.profile_picture_base64,
+                'initials': None,
+                'color': None
+            }
+        else:
+            return {
+                'has_pfp': False,
+                'avatar': None,
+                'initials': profile.get_initials(),
+                'color': profile.get_avatar_color()
+            }
+    
+    # Add avatar data to all users in the context
+    avatar_data = {}
+    for rsvp in rsvps:
+        if rsvp.user and rsvp.user.profile:
+            avatar_data[rsvp.user.id] = get_avatar_data(rsvp.user.profile)
+
     context = {
         'event': event,
         'rsvps': rsvps,
@@ -577,6 +602,7 @@ def event_detail(request, event_id):
         'can_view_attendee_list': can_view_attendee_list,
         'edit_event_errors': edit_event_errors,
         'edit_event_post': edit_event_post,
+        'avatar_data': avatar_data,  # Add avatar data to context
     }
     return render(request, 'events/event_detail.html', context)
 
@@ -1561,3 +1587,64 @@ def blog(request):
         'bluesky_profile': profile,
     }
     return render(request, 'events/blog.html', context)
+
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        inquiry_type = request.POST.get('inquiry_type')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        # Validate required fields
+        if not all([name, email, inquiry_type, subject, message]):
+            messages.error(request, 'Please fill in all required fields.')
+            return render(request, 'events/contact.html')
+        
+        # Prepare email content
+        inquiry_type_display = {
+            'general': 'General Inquiries',
+            'organizer': 'Organizer Inquiries', 
+            'user': 'User Inquiries',
+            'development': 'Development Inquiries'
+        }.get(inquiry_type, inquiry_type)
+        
+        email_subject = f"FURsvp Contact: {subject} - {inquiry_type_display}"
+        
+        email_body = f"""
+New contact form submission from FURsvp website:
+
+Name: {name}
+Email: {email}
+Inquiry Type: {inquiry_type_display}
+Subject: {subject}
+
+Message:
+{message}
+
+---
+This message was sent from the FURsvp contact form.
+        """
+        
+        try:
+            # Send email using Django's email backend
+            send_mail(
+                subject=email_subject,
+                message=email_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.CONTACT_EMAIL],  # You'll need to add this to settings
+                fail_silently=False,
+            )
+            
+            messages.success(request, 'Thank you for your message! We will get back to you within 3 business days.')
+            return render(request, 'events/contact.html')
+            
+        except Exception as e:
+            messages.error(request, 'Sorry, there was an error sending your message. Please try again later.')
+            return render(request, 'events/contact.html')
+    
+    return render(request, 'events/contact.html')
+
+def custom_404(request, exception=None):
+    """Custom 404 error page"""
+    return render(request, 'events/404.html', status=404)

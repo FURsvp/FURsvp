@@ -10,6 +10,18 @@ def get_item(dictionary, key):
 def get_avatar_sized_html(profile, size):
     return profile.get_avatar_html(size=size)
 
+@register.filter
+def get_avatar_from_data(user_id, avatar_data):
+    """Get avatar HTML using pre-loaded avatar data"""
+    if not avatar_data or user_id not in avatar_data:
+        return '<div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: #667eea; color: white; font-weight: bold;">U</div>'
+    
+    data = avatar_data[user_id]
+    if data['has_pfp'] and data['avatar']:
+        return f'<img src="{data["avatar"]}" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">'
+    else:
+        return f'<div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background-color: {data["color"]}; color: white; font-weight: bold;">{data["initials"]}</div>'
+
 @register.inclusion_tag('users/verified_checkmark.html')
 def verified_checkmark(user, size="16px"):
     """Returns a verified checkmark icon if user is staff/admin"""

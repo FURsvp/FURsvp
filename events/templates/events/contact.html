@@ -1,0 +1,319 @@
+{% extends 'events/base.html' %}
+{% load static %}
+
+{% block title %}Contact FURsvp{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Contact Page Styles */
+.contact-hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 4rem 0;
+    color: white;
+    text-align: center;
+}
+
+.contact-hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.contact-hero-title {
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contact-hero-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.contact-form-section {
+    padding: 4rem 0;
+    background: #f8fafc;
+}
+
+.contact-form-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-form-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.contact-form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.contact-form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.contact-form-subtitle {
+    color: #718096;
+    font-size: 1.1rem;
+}
+
+.form-group-modern {
+    margin-bottom: 1.5rem;
+}
+
+.form-label-modern {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control-modern {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    color: #2d3748;
+}
+
+.form-control-modern:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-select-modern {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    color: #2d3748;
+    cursor: pointer;
+}
+
+.form-select-modern:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-textarea-modern {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    color: #2d3748;
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.form-textarea-modern:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-submit-modern {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-submit-modern:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-submit-modern:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.alert-modern {
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    border: none;
+    font-weight: 500;
+}
+
+.alert-success-modern {
+    background: rgba(34, 197, 94, 0.1);
+    color: #166534;
+    border-left: 4px solid #22c55e;
+}
+
+.alert-error-modern {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border-left: 4px solid #ef4444;
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contact-hero-title {
+        font-size: 2rem;
+    }
+    
+    .contact-form-card,
+    .contact-info-card {
+        padding: 2rem;
+        margin: 0 1rem;
+    }
+    
+    .contact-methods {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Contact Hero Section -->
+<section class="contact-hero-section">
+    <div class="contact-hero-content">
+        <h1 class="contact-hero-title">Contact FURsvp</h1>
+        <p class="contact-hero-subtitle">We're here to help! Send us a message and we'll get back to you as soon as possible.</p>
+    </div>
+</section>
+
+<!-- Contact Form Section -->
+<section class="contact-form-section">
+    <div class="container">
+        <div class="contact-form-card">
+            <div class="contact-form-header">
+                <h2 class="contact-form-title">Send us a Message</h2>
+                <p class="contact-form-subtitle">Fill out the form below and we'll respond within 3 business days.</p>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-modern {% if message.tags == 'success' %}alert-success-modern{% else %}alert-error-modern{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="contact-form">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            <label for="name" class="form-label-modern">Name *</label>
+                            <input type="text" id="name" name="name" class="form-control-modern" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            <label for="email" class="form-label-modern">Email *</label>
+                            <input type="email" id="email" name="email" class="form-control-modern" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group-modern">
+                    <label for="inquiry_type" class="form-label-modern">Inquiry Type *</label>
+                    <select id="inquiry_type" name="inquiry_type" class="form-select-modern" required>
+                        <option value="">Select an inquiry type...</option>
+                        <option value="general">General Inquiries</option>
+                        <option value="organizer">Organizer Inquiries</option>
+                        <option value="user">User Inquiries</option>
+                        <option value="development">Development Inquiries</option>
+                    </select>
+                </div>
+
+                <div class="form-group-modern">
+                    <label for="subject" class="form-label-modern">Subject *</label>
+                    <input type="text" id="subject" name="subject" class="form-control-modern" required>
+                </div>
+
+                <div class="form-group-modern">
+                    <label for="message" class="form-label-modern">Message *</label>
+                    <textarea id="message" name="message" class="form-textarea-modern" placeholder="Please describe your inquiry in detail..." required></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn-submit-modern" id="submitBtn">
+                        <span class="material-icons">send</span>
+                        Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.contact-form');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Disable submit button to prevent double submission
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="material-icons">hourglass_empty</span> Sending...';
+        });
+    }
+    
+    // Auto-resize textarea
+    const textarea = document.getElementById('message');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    }
+});
+</script>
+{% endblock %} 

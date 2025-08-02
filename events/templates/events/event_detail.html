@@ -6,6 +6,7 @@
 {% block extra_css %}
 {{ block.super }}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -211,240 +212,6 @@
                 </div>
             </div>
 
-            <!-- Attendees Section -->
-            {% if can_view_attendee_list or rsvp_groups.confirmed|length > 0 or rsvp_groups.waitlisted|length > 0 or rsvp_groups.maybe|length > 0 or rsvp_groups.not_attending|length > 0 %}
-            <div class="modern-card mb-4">
-                <div class="modern-card-header attendees">
-                    <h2 class="mb-0 d-flex align-items-center">
-                        <i class="material-icons me-2">groups</i> Attendees
-                        <span class="attendee-count">{{ confirmed_rsvps_count }}</span>
-                    </h2>
-                </div>
-                <div class="modern-card-body">
-                    {% if not can_view_attendee_list %}
-                    <div class="modern-alert alert-info mb-4">
-                        <div class="alert-content">
-                            <i class="material-icons me-2">visibility_off</i>
-                            <span>The attendee list is hidden. You can only see your own RSVP.</span>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Confirmed RSVPs -->
-                    <div class="attendee-section mb-4">
-                        <h3 class="attendee-section-title confirmed">
-                            <i class="material-icons me-2">check_circle</i> Confirmed
-                            <span class="attendee-count">({{ confirmed_rsvps_count }})</span>
-                        </h3>
-                        <div class="attendee-list">
-                            {% for rsvp_data in rsvp_groups.confirmed %}
-                            {% with rsvp=rsvp_data.rsvp %}
-                            <div class="attendee-item">
-                                {% if rsvp.user %}
-                                <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
-                                <div class="attendee-info">
-                                    <div class="d-flex align-items-center">
-                                        {% if can_view_contact_info %}
-                                        <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
-                                            data-bs-target="#contactInfoModal"
-                                            data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                            data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                            data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                            data-user-id="{{ rsvp.user.id }}">
-                                            {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
-                                        </a>
-                                        {% if rsvp.user.profile.discord_username %}
-                                        {% endif %}
-                                        {% else %}
-                                        <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% else %}
-                                <div class="attendee-avatar">
-                                    <i class="material-icons">person</i>
-                                </div>
-                                <div class="attendee-info">
-                                    <span class="attendee-name">{{ rsvp.name }}</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endwith %}
-                            {% empty %}
-                            <div class="empty-attendees">
-                                <i class="material-icons">group_off</i>
-                                <span>No confirmed RSVPs yet</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <!-- Maybe RSVPs -->
-                    <div class="attendee-section mb-4">
-                        <h3 class="attendee-section-title maybe">
-                            <i class="material-icons me-2">help</i> Maybe
-                            <span class="attendee-count">({{ rsvp_groups.maybe|length }})</span>
-                        </h3>
-                        <div class="attendee-list">
-                            {% for rsvp_data in rsvp_groups.maybe %}
-                            {% with rsvp=rsvp_data.rsvp %}
-                            <div class="attendee-item">
-                                {% if rsvp.user %}
-                                <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
-                                <div class="attendee-info">
-                                    <div class="d-flex align-items-center">
-                                        {% if can_view_contact_info %}
-                                        <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
-                                            data-bs-target="#contactInfoModal"
-                                            data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                            data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                            data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                            data-user-id="{{ rsvp.user.id }}">
-                                            {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
-                                        </a>
-                                        {% if rsvp.user.profile.discord_username %}
-                                        {% endif %}
-                                        {% else %}
-                                        <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% else %}
-                                <div class="attendee-avatar">
-                                    <i class="material-icons">person</i>
-                                </div>
-                                <div class="attendee-info">
-                                    <span class="attendee-name">{{ rsvp.name }}</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endwith %}
-                            {% empty %}
-                            <div class="empty-attendees">
-                                <i class="material-icons">help_outline</i>
-                                <span>No maybes yet</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <!-- Not Attending -->
-                    <div class="attendee-section mb-4">
-                        <h3 class="attendee-section-title not-attending">
-                            <i class="material-icons me-2">cancel</i> Not Attending
-                            <span class="attendee-count">({{ rsvp_groups.not_attending|length }})</span>
-                        </h3>
-                        <div class="attendee-list">
-                            {% for rsvp_data in rsvp_groups.not_attending %}
-                            {% with rsvp=rsvp_data.rsvp %}
-                            <div class="attendee-item">
-                                {% if rsvp.user %}
-                                <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
-                                <div class="attendee-info">
-                                    <div class="d-flex align-items-center">
-                                        {% if can_view_contact_info %}
-                                        <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
-                                            data-bs-target="#contactInfoModal"
-                                            data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                            data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                            data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                            data-user-id="{{ rsvp.user.id }}">
-                                            {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
-                                        </a>
-                                        {% if rsvp.user.profile.discord_username %}
-                                        {% endif %}
-                                        {% else %}
-                                        <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% else %}
-                                <div class="attendee-avatar">
-                                    <i class="material-icons">person</i>
-                                </div>
-                                <div class="attendee-info">
-                                    <span class="attendee-name">{{ rsvp.name }}</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endwith %}
-                            {% empty %}
-                            <div class="empty-attendees">
-                                <i class="material-icons">sentiment_satisfied</i>
-                                <span>No one has declined yet</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <!-- Waitlisted -->
-                    {% if event.waitlist_enabled %}
-                    <div class="attendee-section mb-4">
-                        <h3 class="attendee-section-title waitlisted">
-                            <i class="material-icons me-2">queue</i> Waitlisted
-                            <span class="attendee-count">({{ waitlisted_rsvps_count }})</span>
-                        </h3>
-                        <div class="attendee-list">
-                            {% for rsvp_data in rsvp_groups.waitlisted %}
-                            {% with rsvp=rsvp_data.rsvp %}
-                            {% if rsvp.status == 'waitlisted' %}
-                            <div class="attendee-item">
-                                {% if rsvp.user %}
-                                <div class="attendee-avatar">{{ rsvp.user.profile|get_avatar_sized_html:40|safe }}</div>
-                                <div class="attendee-info">
-                                    <div class="d-flex align-items-center">
-                                        {% if can_view_contact_info %}
-                                        <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
-                                            data-bs-target="#contactInfoModal"
-                                            data-display-name="{{ rsvp.user.profile.get_display_name }}"
-                                            data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
-                                            data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
-                                            data-user-id="{{ rsvp.user.id }}">
-                                            {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
-                                        </a>
-
-                                        {% else %}
-                                        <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% else %}
-                                <div class="attendee-avatar">
-                                    <i class="material-icons">person</i>
-                                </div>
-                                <div class="attendee-info">
-                                    <span class="attendee-name">{{ rsvp.name }}</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-                            {% endwith %}
-                            {% empty %}
-                            <div class="empty-attendees">
-                                <i class="material-icons">queue</i>
-                                <span>No one on waitlist yet</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            {% else %}
-            <div class="card shadow-custom mb-4">
-                <div class="card-header bg-gradient-success text-white">
-                    <h2 class="mb-0 d-flex align-items-center">
-                        <span class="material-icons me-2">groups</span> Attendees
-                    </h2>
-                </div>
-                <div class="card-body p-4">
-                    <div class="alert alert-info mb-0">
-                        <span class="material-icons me-2">lock</span>
-                        The attendee list is only visible to group leaders for this event.
-                    </div>
-                </div>
-            </div>
-            {% endif %}
         </div>
 
         <!-- RSVP/Organizer Tools (Right) -->
@@ -587,7 +354,7 @@
 <!-- Edit Event Modal -->
 {% if is_organizer or is_site_admin or is_delegated_assistant %}
 <div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-gradient-primary text-white">
                 <h5 class="modal-title d-flex align-items-center" id="editEventModalLabel">
@@ -597,7 +364,7 @@
             </div>
             <form method="post" action="{% url 'edit_event' event.id %}" enctype="multipart/form-data" id="editEventForm">
                 {% csrf_token %}
-                <div class="modal-body">
+                <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <!-- Title Field -->
                     <div class="mb-3">
                         <label for="{{ event_form.title.id_for_label }}" class="form-label">
@@ -655,8 +422,8 @@
                             <span class="material-icons me-2">location_on</span> Street Address
                         </label>
                         <div class="input-group mb-2">
-                            {% render_field event_form.address class="form-control" placeholder="Enter street address" %}
-                            <button type="button" class="btn btn-outline-primary" id="useLocationBtn" title="Use My Location">
+                            {% render_field event_form.address class="form-control" placeholder="Enter street address" style="max-width: calc(100% - 50px);" %}
+                            <button type="button" class="btn btn-outline-primary" id="useLocationBtn" title="Use My Location" style="min-width: 50px;">
                                 <span class="material-icons">my_location</span>
                             </button>
                         </div>
@@ -721,8 +488,8 @@
                     <!-- Checkboxes -->
                     <div class="mb-3">
                         <div class="form-check">
-                            {% render_field event_form.waitlist_enabled class="form-check-input" %}
-                            <label class="form-check-label d-flex align-items-center" for="{{ event_form.waitlist_enabled.id_for_label }}">
+                            {% render_field event_form.waitlist_enabled class="form-check-input" id="waitlist_checkbox" %}
+                            <label class="form-check-label d-flex align-items-center" for="waitlist_checkbox">
                                 <span class="material-icons me-2">hourglass_empty</span> Enable Waitlist
                             </label>
                         </div>
@@ -733,8 +500,8 @@
 
                     <div class="mb-3">
                         <div class="form-check">
-                            {% render_field event_form.attendee_list_public class="form-check-input" %}
-                            <label class="form-check-label d-flex align-items-center" for="{{ event_form.attendee_list_public.id_for_label }}">
+                            {% render_field event_form.attendee_list_public class="form-check-input" id="attendee_list_checkbox" %}
+                            <label class="form-check-label d-flex align-items-center" for="attendee_list_checkbox">
                                 <span class="material-icons me-2">visibility</span> Make attendee list public
                             </label>
                         </div>
@@ -790,6 +557,329 @@
 </div>
 {% endif %}
 
+<!-- Attendees Section - Full Width -->
+{% if can_view_attendee_list or rsvp_groups.confirmed|length > 0 or rsvp_groups.waitlisted|length > 0 or rsvp_groups.maybe|length > 0 or rsvp_groups.not_attending|length > 0 %}
+<div class="modern-card mb-4">
+    <div class="modern-card-header attendees">
+        <h2 class="mb-0 d-flex align-items-center">
+            <i class="material-icons me-2">groups</i> Attendees
+            <span class="attendee-count">{{ confirmed_rsvps_count }}</span>
+        </h2>
+    </div>
+    <div class="modern-card-body">
+        {% if not can_view_attendee_list %}
+        <div class="modern-alert alert-info mb-4">
+            <div class="alert-content">
+                <i class="material-icons me-2">visibility_off</i>
+                <span>The attendee list is hidden. You can only see your own RSVP.</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Attendee Filters -->
+        <div class="attendee-filters mb-4">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="filter-label-modern">
+                        <span class="material-icons">search</span>
+                        Search Attendees
+                    </label>
+                    <input type="text" id="attendeeSearch" class="form-control search-input-modern" 
+                           placeholder="Search by name..." 
+                           onkeyup="filterAttendees()">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="filter-label-modern">
+                        <span class="material-icons">sort</span>
+                        Sort By
+                    </label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="filter-btn-modern active" 
+                                onclick="sortAttendees('name', event)">
+                            <span class="material-icons">sort_by_alpha</span>
+                            Name
+                        </button>
+                        <button type="button" class="filter-btn-modern" 
+                                onclick="sortAttendees('date', event)">
+                            <span class="material-icons">schedule</span>
+                            Date
+                        </button>
+                        <button type="button" class="filter-btn-modern" 
+                                onclick="sortAttendees('status', event)">
+                            <span class="material-icons">category</span>
+                            Status
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="filter-label-modern">
+                        <span class="material-icons">filter_list</span>
+                        Filter Status
+                    </label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="filter-btn-modern active" 
+                                onclick="filterByStatus('all', event)">
+                            <span class="material-icons">all_inclusive</span>
+                            All
+                        </button>
+                        <button type="button" class="filter-btn-modern" 
+                                onclick="filterByStatus('confirmed', event)">
+                            <span class="material-icons">check_circle</span>
+                            Confirmed
+                        </button>
+                        <button type="button" class="filter-btn-modern" 
+                                onclick="filterByStatus('maybe', event)">
+                            <span class="material-icons">help</span>
+                            Maybe
+                        </button>
+                        {% if event.waitlist_enabled %}
+                        <button type="button" class="filter-btn-modern" 
+                                onclick="filterByStatus('waitlisted', event)">
+                            <span class="material-icons">queue</span>
+                            Waitlisted
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="filter-label-modern">
+                        <span class="material-icons">view_module</span>
+                        View Options
+                    </label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="filter-btn-modern active" 
+                                onclick="setViewMode('list', event)">
+                            <span class="material-icons">view_list</span>
+                            List
+                        </button>
+                        <button type="button" class="filter-btn-modern" 
+                                onclick="setViewMode('grid', event)">
+                            <span class="material-icons">grid_view</span>
+                            Grid
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmed RSVPs -->
+        <div class="attendee-section mb-4">
+            <h3 class="attendee-section-title confirmed">
+                <i class="material-icons me-2">check_circle</i> Confirmed
+                <span class="attendee-count">({{ confirmed_rsvps_count }})</span>
+            </h3>
+            <div class="attendee-list">
+                {% for rsvp_data in rsvp_groups.confirmed %}
+                {% with rsvp=rsvp_data.rsvp %}
+                <div class="attendee-item" data-status="confirmed" data-name="{{ rsvp.user.profile.get_display_name|lower }}" data-date="{{ rsvp.created_at|date:'Y-m-d' }}">
+                    {% if rsvp.user %}
+                    <div class="attendee-avatar">{{ rsvp.user.id|get_avatar_from_data:avatar_data|safe }}</div>
+                    <div class="attendee-info">
+                        <div class="d-flex align-items-center">
+                            {% if can_view_contact_info %}
+                            <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                data-bs-target="#contactInfoModal"
+                                data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                data-user-id="{{ rsvp.user.id }}">
+                                {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                            </a>
+                            {% if rsvp.user.profile.discord_username %}
+                            {% endif %}
+                            {% else %}
+                            <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="attendee-avatar">
+                        <i class="material-icons">person</i>
+                    </div>
+                    <div class="attendee-info">
+                        <span class="attendee-name">{{ rsvp.name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endwith %}
+                {% empty %}
+                <div class="empty-attendees">
+                    <i class="material-icons">group_off</i>
+                    <span>No confirmed RSVPs yet</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Maybe RSVPs -->
+        <div class="attendee-section mb-4">
+            <h3 class="attendee-section-title maybe">
+                <i class="material-icons me-2">help</i> Maybe
+                <span class="attendee-count">({{ rsvp_groups.maybe|length }})</span>
+            </h3>
+            <div class="attendee-list">
+                {% for rsvp_data in rsvp_groups.maybe %}
+                {% with rsvp=rsvp_data.rsvp %}
+                <div class="attendee-item" data-status="maybe" data-name="{{ rsvp.user.profile.get_display_name|lower }}" data-date="{{ rsvp.created_at|date:'Y-m-d' }}">
+                    {% if rsvp.user %}
+                    <div class="attendee-avatar">{{ rsvp.user.id|get_avatar_from_data:avatar_data|safe }}</div>
+                    <div class="attendee-info">
+                        <div class="d-flex align-items-center">
+                            {% if can_view_contact_info %}
+                            <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                data-bs-target="#contactInfoModal"
+                                data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                data-user-id="{{ rsvp.user.id }}">
+                                {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                            </a>
+                            {% if rsvp.user.profile.discord_username %}
+                            {% endif %}
+                            {% else %}
+                            <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="attendee-avatar">
+                        <i class="material-icons">person</i>
+                    </div>
+                    <div class="attendee-info">
+                        <span class="attendee-name">{{ rsvp.name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endwith %}
+                {% empty %}
+                <div class="empty-attendees">
+                    <i class="material-icons">help_outline</i>
+                    <span>No maybes yet</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Not Attending -->
+        <div class="attendee-section mb-4">
+            <h3 class="attendee-section-title not-attending">
+                <i class="material-icons me-2">cancel</i> Not Attending
+                <span class="attendee-count">({{ rsvp_groups.not_attending|length }})</span>
+            </h3>
+            <div class="attendee-list">
+                {% for rsvp_data in rsvp_groups.not_attending %}
+                {% with rsvp=rsvp_data.rsvp %}
+                <div class="attendee-item" data-status="not_attending" data-name="{{ rsvp.user.profile.get_display_name|lower }}" data-date="{{ rsvp.created_at|date:'Y-m-d' }}">
+                    {% if rsvp.user %}
+                    <div class="attendee-avatar">{{ rsvp.user.id|get_avatar_from_data:avatar_data|safe }}</div>
+                    <div class="attendee-info">
+                        <div class="d-flex align-items-center">
+                            {% if can_view_contact_info %}
+                            <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                data-bs-target="#contactInfoModal"
+                                data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                data-user-id="{{ rsvp.user.id }}">
+                                {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                            </a>
+                            {% if rsvp.user.profile.discord_username %}
+                            {% endif %}
+                            {% else %}
+                            <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="attendee-avatar">
+                        <i class="material-icons">person</i>
+                    </div>
+                    <div class="attendee-info">
+                        <span class="attendee-name">{{ rsvp.name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endwith %}
+                {% empty %}
+                <div class="empty-attendees">
+                    <i class="material-icons">sentiment_satisfied</i>
+                    <span>No one has declined yet</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Waitlisted -->
+        {% if event.waitlist_enabled %}
+        <div class="attendee-section mb-4">
+            <h3 class="attendee-section-title waitlisted">
+                <i class="material-icons me-2">queue</i> Waitlisted
+                <span class="attendee-count">({{ waitlisted_rsvps_count }})</span>
+            </h3>
+            <div class="attendee-list">
+                {% for rsvp_data in rsvp_groups.waitlisted %}
+                {% with rsvp=rsvp_data.rsvp %}
+                {% if rsvp.status == 'waitlisted' %}
+                <div class="attendee-item" data-status="waitlisted" data-name="{{ rsvp.user.profile.get_display_name|lower }}" data-date="{{ rsvp.created_at|date:'Y-m-d' }}">
+                    {% if rsvp.user %}
+                    <div class="attendee-avatar">{{ rsvp.user.id|get_avatar_from_data:avatar_data|safe }}</div>
+                    <div class="attendee-info">
+                        <div class="d-flex align-items-center">
+                            {% if can_view_contact_info %}
+                            <a href="#" class="attendee-name js-open-contact-modal" data-bs-toggle="modal"
+                                data-bs-target="#contactInfoModal"
+                                data-display-name="{{ rsvp.user.profile.get_display_name }}"
+                                data-discord="{{ rsvp.user.profile.discord_username|default_if_none:'' }}"
+                                data-telegram="{{ rsvp.user.profile.telegram_username|default_if_none:'' }}"
+                                data-user-id="{{ rsvp.user.id }}">
+                                {{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}
+                            </a>
+
+                            {% else %}
+                            <span class="attendee-name">{{ rsvp.user.profile.get_display_name }}{% verified_checkmark rsvp.user %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="attendee-avatar">
+                        <i class="material-icons">person</i>
+                    </div>
+                    <div class="attendee-info">
+                        <span class="attendee-name">{{ rsvp.name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% endwith %}
+                {% empty %}
+                <div class="empty-attendees">
+                    <i class="material-icons">queue</i>
+                    <span>No one on waitlist yet</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+<div class="card shadow-custom mb-4">
+    <div class="card-header bg-gradient-success text-white">
+        <h2 class="mb-0 d-flex align-items-center">
+            <span class="material-icons me-2">groups</span> Attendees
+        </h2>
+    </div>
+    <div class="card-body p-4">
+        <div class="alert alert-info mb-0">
+            <span class="material-icons me-2">lock</span>
+            The attendee list is only visible to group leaders for this event.
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- Contact Info Modal -->
 <div class="modal fade" id="contactInfoModal" tabindex="-1" aria-labelledby="contactInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -807,7 +897,13 @@
                 </div>
                 <div class="mb-3">
                     <strong>Discord:</strong>
-                    <span id="modalContactDiscord"></span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span id="modalContactDiscord"></span>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="copyDiscordFromModal()" id="copyDiscordBtn" style="display: none;">
+                            <span class="material-icons">content_copy</span>
+                            Copy
+                        </button>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <strong>Telegram:</strong>
@@ -838,6 +934,7 @@
 {% block extra_js %}
 {{ block.super }}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Contact Info Modal
@@ -861,6 +958,16 @@
                 if (modalDisplayName) modalDisplayName.textContent = displayName || 'Not provided';
                 if (modalDiscord) modalDiscord.textContent = discord || 'Not provided';
                 if (modalTelegram) modalTelegram.textContent = telegram || 'Not provided';
+                
+                // Show/hide Discord copy button
+                const copyDiscordBtn = contactInfoModal.querySelector('#copyDiscordBtn');
+                if (copyDiscordBtn) {
+                    if (discord && discord.trim() !== '') {
+                        copyDiscordBtn.style.display = 'inline-flex';
+                    } else {
+                        copyDiscordBtn.style.display = 'none';
+                    }
+                }
                 if (answersDiv) answersDiv.innerHTML = '';
                 
                 if (isOrganizer && userId) {
@@ -872,9 +979,10 @@
 
                             function escapeHtml(text) {
                                 if (!text) return '';
-                                return text.replace(/[&<>"']/g, function (m) {
+                                // Remove &nbsp; entities and replace with regular spaces
+                                text = text.replace(/&nbsp;/g, ' ');
+                                return text.replace(/[<>"']/g, function (m) {
                                     return ({
-                                        '&': '&amp;',
                                         '<': '&lt;',
                                         '>': '&gt;',
                                         '"': '&quot;',
@@ -1014,47 +1122,275 @@
                 }
             });
         }
+
+        // Initialize Quill.js for edit event modal
+        function initQuill() {
+            const isDark = document.body.classList.contains('dark-mode');
+            const descriptionField = document.querySelector('#editEventModal textarea[name="description"]');
+            
+            if (!descriptionField) return;
+            
+            // Create Quill container
+            const quillContainer = document.createElement('div');
+            quillContainer.id = 'quill-editor-event';
+            quillContainer.style.height = '300px';
+            descriptionField.parentNode.insertBefore(quillContainer, descriptionField);
+            descriptionField.style.display = 'none';
+            
+            // Initialize Quill
+            const quill = new Quill('#quill-editor-event', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'align': [] }],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Describe your event...',
+                readOnly: false
+            });
+            
+            // Set initial content if any
+            if (descriptionField.value) {
+                quill.root.innerHTML = descriptionField.value;
+            }
+            
+            // Sync Quill content with hidden textarea
+            quill.on('text-change', function() {
+                descriptionField.value = quill.root.innerHTML;
+            });
+            
+            // Dark mode support
+            if (isDark) {
+                quillContainer.querySelector('.ql-toolbar').style.backgroundColor = '#2d3748';
+                quillContainer.querySelector('.ql-toolbar').style.borderColor = '#4a5568';
+                quillContainer.querySelector('.ql-container').style.backgroundColor = '#2d3748';
+                quillContainer.querySelector('.ql-container').style.borderColor = '#4a5568';
+                quillContainer.querySelector('.ql-editor').style.color = '#e2e8f0';
+            }
+        }
+
+        // Initialize Quill when edit event modal is shown
+        const editEventModal = document.getElementById('editEventModal');
+        if (editEventModal) {
+            editEventModal.addEventListener('shown.bs.modal', function () {
+                setTimeout(initQuill, 100);
+            });
+        }
+
+        // Initialize Leaflet Map
+        function initializeMap() {
+            const mapElement = document.getElementById('event-map');
+            if (!mapElement) return;
+
+            const address = '{{ event.address|escapejs }}';
+            if (!address) return;
+
+            // Clear any existing content
+            mapElement.innerHTML = '';
+
+            // Try to get coordinates using Nominatim (OpenStreetMap's geocoding service)
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        const lat = parseFloat(data[0].lat);
+                        const lon = parseFloat(data[0].lon);
+                        
+                        // Initialize Leaflet map
+                        const map = L.map('event-map').setView([lat, lon], 17);
+                        
+                        // Add custom styled tile layer with themed appearance
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            className: 'themed-tiles'
+                        }).addTo(map);
+                        
+                        // Add custom marker
+                        const customIcon = L.divIcon({
+                            className: 'custom-marker',
+                            html: '<div class="marker-pin"><i class="material-icons">location_on</i></div>',
+                            iconSize: [40, 40],
+                            iconAnchor: [20, 40],
+                            popupAnchor: [0, -40]
+                        });
+                        
+                        L.marker([lat, lon], {icon: customIcon})
+                            .addTo(map)
+                            .bindPopup('<div class="marker-popup"><strong>Event Location</strong><br>' + address + '</div>');
+                        
+                    } else {
+                        // Fallback: show a message if geocoding fails
+                        mapElement.innerHTML = `
+                            <div class="map-error">
+                                <i class="material-icons">location_off</i>
+                                <p>Unable to display map for this location</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.log('Could not geocode address, showing error message');
+                    mapElement.innerHTML = `
+                        <div class="map-error">
+                            <i class="material-icons">location_off</i>
+                            <p>Unable to display map for this location</p>
+                        </div>
+                    `;
+                });
+        }
+
+        // Initialize map when page loads
+        if (document.getElementById('event-map')) {
+            initializeMap();
+        }
     });
 </script>
 
 
 
 <script>
-// Discord popup functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle Discord button clicks
-    document.addEventListener('click', function(e) {
-            const displayName = button.getAttribute('data-display-name');
-            
-            const content = `
-                <p>Contact <strong>${displayName}</strong> on Discord:</p>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="discordUsername" value="${discord}" readonly>
-                    <button class="btn btn-outline-primary" type="button" onclick="copyDiscordUsername()">
-                        <i class="material-icons">content_copy</i>
-                        Copy
-                    </button>
-                </div>
-            `;
-            
-            customPopup.show(content, '<i class="material-icons">chat</i> Discord Contact');
-        }
-    });
-});
+// Discord copy functionality
+function copyDiscordFromModal() {
+    const modalDiscord = document.querySelector('#modalContactDiscord');
+    const textToCopy = modalDiscord.textContent;
+    const button = event.target.closest('button');
+    
+    // Use modern clipboard API if available, fallback to execCommand
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            showCopyFeedback(button);
+        }).catch(() => {
+            // Fallback to execCommand
+            fallbackCopyTextToClipboard(modalDiscord);
+            showCopyFeedback(button);
+        });
+    } else {
+        // Fallback to execCommand for older browsers
+        fallbackCopyTextToClipboard(modalDiscord);
+        showCopyFeedback(button);
+    }
+}
 
-function copyDiscordUsername() {
-    const input = document.getElementById('discordUsername');
+function fallbackCopyTextToClipboard(input) {
     input.select();
     input.setSelectionRange(0, 99999);
-    document.execCommand('copy');
+    try {
+        document.execCommand('copy');
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
+}
+
+function showCopyFeedback(button) {
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<span class="material-icons">check</span><span>Copied!</span>';
+    button.classList.add('copied');
     
-    // Show feedback
-    const button = event.target.closest('button');
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="material-icons">check</i> Copied!';
     setTimeout(() => {
-        button.innerHTML = originalText;
+        button.innerHTML = originalContent;
+        button.classList.remove('copied');
     }, 2000);
+}
+
+// Attendee filtering and sorting functions
+let currentStatusFilter = 'all';
+let currentSortBy = 'name';
+let currentViewMode = 'list';
+
+function filterAttendees() {
+    const searchTerm = document.getElementById('attendeeSearch').value.toLowerCase();
+    const attendeeItems = document.querySelectorAll('.attendee-item');
+    
+    attendeeItems.forEach(item => {
+        const name = item.getAttribute('data-name') || '';
+        const status = item.getAttribute('data-status') || '';
+        const matchesSearch = name.includes(searchTerm);
+        const matchesStatus = currentStatusFilter === 'all' || status === currentStatusFilter;
+        
+        if (matchesSearch && matchesStatus) {
+            item.classList.remove('hidden');
+        } else {
+            item.classList.add('hidden');
+        }
+    });
+}
+
+function filterByStatus(status, event) {
+    currentStatusFilter = status;
+    
+    // Update button states
+    document.querySelectorAll('[onclick^="filterByStatus"]').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    filterAttendees();
+}
+
+function sortAttendees(sortBy, event) {
+    currentSortBy = sortBy;
+    
+    // Update button states
+    document.querySelectorAll('[onclick^="sortAttendees"]').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    const attendeeLists = document.querySelectorAll('.attendee-list');
+    
+    attendeeLists.forEach(list => {
+        const items = Array.from(list.querySelectorAll('.attendee-item:not(.hidden)'));
+        
+        items.sort((a, b) => {
+            let aValue, bValue;
+            
+            switch(sortBy) {
+                case 'name':
+                    aValue = a.getAttribute('data-name') || '';
+                    bValue = b.getAttribute('data-name') || '';
+                    return aValue.localeCompare(bValue);
+                case 'date':
+                    aValue = a.getAttribute('data-date') || '';
+                    bValue = b.getAttribute('data-date') || '';
+                    return new Date(bValue) - new Date(aValue); // Newest first
+                case 'status':
+                    aValue = a.getAttribute('data-status') || '';
+                    bValue = b.getAttribute('data-status') || '';
+                    const statusOrder = { 'confirmed': 1, 'maybe': 2, 'waitlisted': 3, 'not_attending': 4 };
+                    return (statusOrder[aValue] || 5) - (statusOrder[bValue] || 5);
+                default:
+                    return 0;
+            }
+        });
+        
+        // Re-append sorted items
+        items.forEach(item => list.appendChild(item));
+    });
+}
+
+function setViewMode(mode, event) {
+    currentViewMode = mode;
+    
+    // Update button states
+    document.querySelectorAll('[onclick^="setViewMode"]').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    const attendeeLists = document.querySelectorAll('.attendee-list');
+    
+    attendeeLists.forEach(list => {
+        if (mode === 'grid') {
+            list.classList.add('grid-view');
+        } else {
+            list.classList.remove('grid-view');
+        }
+    });
 }
 </script>
 
@@ -1111,18 +1447,63 @@ function copyDiscordUsername() {
 
 /* Event Hero Section */
 .event-hero-section {
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
 }
 
 .event-hero-card {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: var(--border-radius-xl);
-    padding: 4rem 3rem;
+    padding: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+/* Discord Modal Styling */
+.discord-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.discord-input {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    background: #f8fafc;
+    color: #2d3748;
+    flex: 1;
+}
+
+.discord-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.discord-copy-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    box-shadow: var(--shadow-xl);
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.discord-copy-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+.discord-copy-btn.copied {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
 .event-hero-card::before {
@@ -1171,6 +1552,7 @@ function copyDiscordUsername() {
         line-height: 1.1;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         letter-spacing: -0.02em;
+        color: white;
     }
 
     .event-badges {
@@ -1218,6 +1600,7 @@ function copyDiscordUsername() {
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         transition: all 0.2s ease;
+        color: white;
     }
 
     .event-detail-item:hover {
@@ -1900,5 +2283,175 @@ function copyDiscordUsername() {
         height: 300px;
     }
 }
+
+/* Quill.js Editor Styling */
+.ql-editor {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #2d3748;
+}
+
+.ql-toolbar {
+    border-radius: 8px 8px 0 0;
+    border-color: #e2e8f0;
+    background: #f8fafc;
+}
+
+.ql-container {
+    border-radius: 0 0 8px 8px;
+    border-color: #e2e8f0;
+    min-height: 200px;
+}
+
+.ql-editor:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.ql-editor p {
+    margin-bottom: 0.5rem;
+}
+
+.ql-editor img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0.5rem auto;
+}
+
+/* Dark mode support for Quill */
+.dark-mode .ql-toolbar {
+    background: #2d3748;
+    border-color: #4a5568;
+}
+
+.dark-mode .ql-container {
+    background: #2d3748;
+    border-color: #4a5568;
+}
+
+.dark-mode .ql-editor {
+    color: #e2e8f0;
+}
+
+.dark-mode .ql-stroke {
+    stroke: #e2e8f0;
+}
+
+.dark-mode .ql-fill {
+    fill: #e2e8f0;
+}
+
+.dark-mode .ql-picker {
+    color: #e2e8f0;
+}
+
+/* Attendee Filters */
+.attendee-filters {
+    background: #f8fafc;
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+.filter-label-modern {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-input-modern {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    color: #2d3748;
+}
+
+.search-input-modern:focus {
+    outline: none;
+    border-color: #4f46e5;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.filter-btn-modern {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.filter-btn-modern:hover {
+    border-color: #4f46e5;
+    color: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.filter-btn-modern.active {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.filter-btn-modern.active:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 50%, #db2777 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+/* Attendee Grid View */
+.attendee-list.grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.attendee-list.grid-view .attendee-item {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.attendee-list.grid-view .attendee-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.attendee-list.grid-view .attendee-avatar {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 0.5rem;
+}
+
+.attendee-list.grid-view .attendee-info {
+    text-align: center;
+}
+
+/* Hidden attendees */
+.attendee-item.hidden {
+    display: none;
+}
+
+/* Attendee Sections */
 </style>
 {% endblock %}
