@@ -2,126 +2,141 @@
 {% block title %}Two-Factor Authentication - FURsvp{% endblock %}
 
 {% block content %}
-<div class="twofa-container">
-    <!-- 2FA Header -->
-    <div class="twofa-header">
-        <h1>
-            <i class="material-icons align-middle me-2">security</i>
-            Two-Factor Authentication
-        </h1>
-        <p>Secure your account with an extra layer of protection</p>
-    </div>
+<!-- Modern 2FA Section -->
+<section class="modern-2fa-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="twofa-card">
+                    <!-- Header -->
+                    <div class="twofa-header">
+                        <div class="twofa-badge">
+                            <span class="material-icons">pets</span>
+                            <span>FURsvp</span>
+                        </div>
+                        <h1 class="twofa-title">
+                            Two-Factor Authentication
+                        </h1>
+                        <p class="twofa-subtitle">
+                            Secure your account with an extra layer of protection
+                        </p>
+                    </div>
 
-    <div class="twofa-card">
-        <div class="twofa-card-header">
-            <h3>
-                <i class="material-icons align-middle me-2">security</i>
-                Security Settings
-            </h3>
-            <p>Manage your two-factor authentication preferences</p>
-        </div>
-        
-        <div class="twofa-content">
-            {% if device %}
-            <div class="twofa-enabled">
-                <div class="twofa-status">
-                    <i class="material-icons">check_circle</i>
-                    <h4>2FA is enabled</h4>
-                    <p>Your account is protected with two-factor authentication.</p>
+                    <!-- 2FA Content -->
+                    <div class="twofa-content">
+                        {% if device %}
+                        <div class="twofa-enabled">
+                            <div class="twofa-status">
+                                <div class="status-icon">
+                                    <span class="material-icons">check_circle</span>
+                                </div>
+                                <h3>2FA is enabled</h3>
+                                <p>Your account is protected with two-factor authentication.</p>
+                            </div>
+                            <form method="post" action="{% url 'twofa_disable' %}" class="twofa-form">
+                                {% csrf_token %}
+                                <button type="submit" class="twofa-button danger">
+                                    <span class="material-icons">security</span>
+                                    <span>Disable 2FA</span>
+                                </button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="twofa-disabled">
+                            <div class="twofa-status">
+                                <div class="status-icon">
+                                    <span class="material-icons">warning</span>
+                                </div>
+                                <h3>2FA is not enabled</h3>
+                                <p>Enable two-factor authentication to add an extra layer of security to your account.</p>
+                            </div>
+                            <a href="{% url 'twofa_enable' %}" class="twofa-button primary">
+                                <span class="material-icons">security</span>
+                                <span>Enable 2FA</span>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Back to Profile -->
+                    <div class="back-to-profile">
+                        <a href="{% url 'profile' %}" class="back-link">
+                            <span class="material-icons">arrow_back</span>
+                            <span>Back to Profile</span>
+                        </a>
+                    </div>
                 </div>
-                <form method="post" action="{% url 'twofa_disable' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">
-                        <i class="material-icons">security</i>
-                        Disable 2FA
-                    </button>
-                </form>
             </div>
-            {% else %}
-            <div class="twofa-disabled">
-                <div class="twofa-status">
-                    <i class="material-icons">warning</i>
-                    <h4>2FA is not enabled</h4>
-                    <p>Enable two-factor authentication to add an extra layer of security to your account.</p>
-                </div>
-                <a href="{% url 'twofa_enable' %}" class="btn btn-primary-admin">
-                    <i class="material-icons">security</i>
-                    Enable 2FA
-                </a>
-            </div>
-            {% endif %}
         </div>
     </div>
-</div>
-{% endblock %}
+</section>
 
-{% block extra_css %}
 <style>
-/* 2FA Container */
-.twofa-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem 0;
-}
-
-/* 2FA Header */
-.twofa-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.twofa-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 0.5rem;
+/* Modern 2FA Styles */
+.modern-2fa-section {
+    position: relative;
+    min-height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
+    padding: 2rem 0;
+    background: #f8fafc;
 }
 
-.twofa-header p {
-    color: #6b7280;
-    font-size: 1.125rem;
-    margin: 0;
-}
-
-/* 2FA Card */
 .twofa-card {
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
     overflow: hidden;
 }
 
-.twofa-card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2rem;
+.twofa-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.twofa-header {
     text-align: center;
+    margin-bottom: 2.5rem;
 }
 
-.twofa-card-header h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    display: flex;
+.twofa-badge {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 0.5rem;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
 }
 
-.twofa-card-header p {
+.twofa-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.twofa-subtitle {
+    color: #718096;
+    font-size: 1.1rem;
     margin: 0;
-    opacity: 0.9;
-    font-size: 1rem;
 }
 
-/* 2FA Content */
 .twofa-content {
-    padding: 2rem;
+    margin-bottom: 2rem;
 }
 
 .twofa-enabled,
@@ -133,75 +148,135 @@
     margin-bottom: 2rem;
 }
 
-.twofa-status i {
-    font-size: 3rem;
+.status-icon {
     margin-bottom: 1rem;
 }
 
-.twofa-enabled .twofa-status i {
+.status-icon .material-icons {
+    font-size: 4rem;
+}
+
+.twofa-enabled .status-icon .material-icons {
     color: #059669;
 }
 
-.twofa-disabled .twofa-status i {
+.twofa-disabled .status-icon .material-icons {
     color: #f59e0b;
 }
 
-.twofa-status h4 {
-    font-size: 1.25rem;
+.twofa-status h3 {
+    font-size: 1.5rem;
     font-weight: 600;
-    color: #1f2937;
+    color: #1a202c;
     margin: 0 0 0.5rem 0;
 }
 
 .twofa-status p {
-    color: #6b7280;
+    color: #718096;
     margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
-/* Buttons */
-.btn {
-    border-radius: 0.75rem;
-    padding: 0.75rem 1.5rem;
+.twofa-form {
+    margin-top: 1rem;
+}
+
+.twofa-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
     font-weight: 600;
-    font-size: 0.875rem;
-    transition: all 0.3s ease;
+    text-decoration: none;
     border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.twofa-button.primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.twofa-button.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    text-decoration: none;
+    color: white;
+}
+
+.twofa-button.danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.twofa-button.danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+}
+
+.back-to-profile {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.back-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.btn-primary-admin {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+.back-link:hover {
+    color: #5a67d8;
+    text-decoration: none;
 }
 
-.btn-primary-admin:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
-}
-
-.btn-danger:hover {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
-}
-
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
-    .twofa-container {
-        padding: 1rem;
+    .twofa-card {
+        padding: 2rem;
+        margin: 1rem;
     }
     
-    .twofa-header h1 {
+    .twofa-title {
         font-size: 2rem;
+    }
+    
+    .twofa-subtitle {
+        font-size: 1rem;
+    }
+    
+    .status-icon .material-icons {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .modern-2fa-section {
+        padding: 1rem 0;
+    }
+    
+    .twofa-card {
+        padding: 1.5rem;
+    }
+    
+    .twofa-title {
+        font-size: 1.75rem;
+    }
+    
+    .twofa-button {
+        min-width: 100%;
     }
 }
 </style>
+
 {% endblock %} 

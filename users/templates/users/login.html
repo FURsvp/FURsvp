@@ -2,251 +2,334 @@
 {% block title %}Login - FURsvp{% endblock %}
 {% load widget_tweaks %}
 {% block content %}
-<!-- Breadcrumbs -->
-<nav aria-label="breadcrumb" class="mb-4">
-    <div class="modern-breadcrumbs">
-        <a href="{% url 'home' %}">
-            <i class="material-icons">home</i>
-            Home
-        </a>
-        <span class="breadcrumb-chevron">›</span>
-        <span class="breadcrumb-current">Login</span>
+
+<!-- Modern Login Section -->
+<section class="modern-login-section">
+    <div class="login-background">
+        <div class="login-pattern"></div>
+        <div class="login-gradient"></div>
     </div>
-</nav>
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="login-card">
+                    <!-- Header -->
+                    <div class="login-header">
+                        <div class="login-badge">
+                            <span class="material-icons">pets</span>
+                            <span>FURsvp</span>
+                        </div>
+                        <h1 class="login-title">
+                            Welcome Back
+                        </h1>
+                        <p class="login-subtitle">
+                            Sign in to your account to continue
+                        </p>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form method="post" id="login-form" class="login-form">
+                        {% csrf_token %}
+                        
+                        {% if error %}
+                            <div class="error-message">
+                                <span class="material-icons">error</span>
+                                <span>{{ error }}</span>
+                            </div>
+                        {% endif %}
+
+                        <!-- Username Field -->
+                        <div class="form-field">
+                            <label for="id_username" class="field-label">
+                                <span class="material-icons">person</span>
+                                Username
+                            </label>
+                            <input type="text" 
+                                   class="form-input" 
+                                   id="id_username" 
+                                   name="username" 
+                                   required 
+                                   value="{{ username|default:'' }}"
+                                   placeholder="Enter your username">
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-field">
+                            <label for="id_password" class="field-label">
+                                <span class="material-icons">lock</span>
+                                Password
+                            </label>
+                            <div class="password-input-group">
+                                <input type="password" 
+                                       class="form-input" 
+                                       id="id_password" 
+                                       name="password" 
+                                       required
+                                       {% if password %} value="{{ password }}"{% endif %}
+                                       placeholder="Enter your password">
+                                <button type="button" class="password-toggle" id="togglePasswordIcon">
+                                    <span class="material-icons">visibility</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 2FA Field -->
+                        <div class="form-field" id="twofa-section" style="display: {% if show_2fa %}block{% else %}none{% endif %};">
+                            <label for="id_token" class="field-label">
+                                <span class="material-icons">security</span>
+                                2FA Code
+                            </label>
+                            <input type="text" 
+                                   class="form-input" 
+                                   id="id_token" 
+                                   name="token" 
+                                   autocomplete="one-time-code"
+                                   placeholder="Enter your 2FA code">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="login-button" id="login-btn">
+                            <span class="material-icons">login</span>
+                            <span>Sign In</span>
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
+
+                    <!-- Telegram Login -->
+                    {% if telegram_login_enabled %}
+                    <div class="telegram-section">
+                        <div class="telegram-header">
+                            <span class="material-icons">send</span>
+                            <span>Login with Telegram</span>
+                        </div>
+                        <div id="telegram-login-widget">
+                            <script async src="https://telegram.org/js/telegram-widget.js?22"
+                                data-telegram-login="{{ telegram_bot_username }}"
+                                data-size="large"
+                                data-userpic="true"
+                                data-auth-url="{% url 'telegram_login_embedded' %}?return_to={{ request.GET.next|default:'/'|urlencode }}">
+                            </script>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Register Link -->
+                    <div class="register-section">
+                        <a href="{% url 'register' %}" class="register-button">
+                            <span class="material-icons">person_add</span>
+                            <span>Create Account</span>
+                        </a>
+                    </div>
+
+                    <!-- Forgot Password -->
+                    <div class="forgot-password">
+                        <a href="{% url 'password_reset' %}" class="forgot-link">
+                            Forgot password?
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <style>
-.input-group .form-control:focus {
-    box-shadow: 0 0 0 2px #b3d1f7;
-    border-color: #2a3faa;
-}
-.input-group .form-control {
-    border-radius: 0 0 0 0;
-}
-.input-group-text {
-    background: #fff;
-    border-radius: 0.5rem 0 0 0.5rem;
-    border-right: 0;
+/* Modern Login Styles */
+.modern-login-section {
+    position: relative;
+    min-height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: 0 0.75rem;
-}
-.input-group-text:last-child {
-    border-radius: 0 0.5rem 0.5rem 0 !important;
-    border-right: 1px solid #ced4da;
-    background: #fff;
-}
-#togglePasswordIcon {
-    font-size: 1.1rem;
-    line-height: 1;
-    margin: 0;
-    display: block;
-}
-
-.input-group .form-control#id_username {
-    border-radius: 0 0.5rem 0.5rem 0 !important;
-}
-.input-group-text:first-child {
-    border-radius: 0.5rem 0 0 0.5rem !important;
-}
-
-.input-group .form-control,
-.input-group-text {
-    height: 48px;
-    padding-top: 0;
-    padding-bottom: 0;
-    font-size: 1.1rem;
-}
-
-#togglePasswordIcon {
-    font-size: 1.5rem;
-    line-height: 1;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 48px;
-    width: 48px;
-    padding: 0;
-}
-
-/* Modern Glassmorphism Card */
-.login-glass-card {
-    background: rgba(255,255,255,0.85);
-    border-radius: 1.5rem;
-    box-shadow: 0 8px 32px rgba(59,130,246,0.13);
-    backdrop-filter: blur(6px);
-    padding: 2.5rem 2.2rem 2.2rem 2.2rem;
-    margin-bottom: 2.5rem;
-    border: 1.5px solid #e0e7ef;
-}
-.login-title {
-    font-size: 2.3rem;
-    font-weight: 900;
-    color: #223b7b;
-    letter-spacing: 0.01em;
-    margin-bottom: 1.7rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.7rem;
-}
-.login-title .material-icons {
-    font-size: 2.3rem;
-    color: #2563eb;
-    margin-right: 0.3rem;
-}
-.login-form-label {
-    font-weight: 700;
-    color: #223b7b;
-    margin-bottom: 0.4rem;
-}
-.input-group .form-control {
+    padding: 2rem 0;
     background: #f8fafc;
-    border-radius: 0 0.7rem 0.7rem 0 !important;
-    border: 1.5px solid #e0e7ef;
-    font-size: 1.13rem;
-    font-weight: 500;
-    color: #223b7b;
-    transition: box-shadow 0.18s, border-color 0.18s;
-}
-.input-group .form-control:focus {
-    box-shadow: 0 0 0 2px #b3d1f7;
-    border-color: #2563eb;
-    background: #fff;
-}
-.input-group-text {
-    background: #f0f9ff;
-    border-radius: 0.7rem 0 0 0.7rem !important;
-    border: 1.5px solid #e0e7ef;
-    border-right: 0;
-    color: #2563eb;
-    font-size: 1.25rem;
-    height: 48px;
-    width: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-.input-group-text:last-child {
-    border-radius: 0 0.7rem 0.7rem 0 !important;
-    border-left: 0;
-    background: #f0f9ff;
-}
-.login-btn-modern {
-    width: 100%;
-    background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-    color: #fff !important;
-    font-weight: 800;
-    border: none;
-    border-radius: 2em;
-    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-    padding: 0.9em 0;
-    font-size: 1.18rem;
-    transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
-    margin-top: 0.2rem;
-    margin-bottom: 0.7rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.7em;
-}
-.login-btn-modern:hover, .login-btn-modern:focus {
-    background: linear-gradient(90deg, #1a2f9a 0%, #0e7490 100%);
-    color: #fff !important;
-    box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-    transform: scale(1.03);
-}
-.register-link-modern {
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin-top: 0.5rem;
-    text-decoration: none;
-    font-weight: 700;
-    color: #2563eb;
-    background: linear-gradient(90deg, #e0e7ff 0%, #f0f9ff 100%);
-    border-radius: 2em;
-    padding: 0.7em 0;
-    font-size: 1.08rem;
-    transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.13s;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
-}
-.register-link-modern:hover, .register-link-modern:focus {
-    background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-    color: #fff !important;
-    box-shadow: 0 4px 18px rgba(59, 130, 246, 0.13);
-    transform: scale(1.03);
-    text-decoration: none;
-}
-.login-error-box {
-    background: linear-gradient(90deg, #fee2e2 0%, #fecaca 100%);
-    border: 1.5px solid #f87171;
-    border-radius: 1rem;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    color: #dc2626;
-    font-weight: 600;
 }
 
-/* Telegram Login Styles */
-.telegram-login-section {
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 2px solid #e0e7ef;
+.login-background {
+    display: none;
 }
 
-.telegram-login-title {
+.login-pattern {
+    display: none;
+}
+
+.login-gradient {
+    display: none;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.login-header {
     text-align: center;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #223b7b;
-    margin-bottom: 1.5rem;
-    display: flex;
+    margin-bottom: 2.5rem;
+}
+
+.login-badge {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 0.5rem;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
 }
 
-.telegram-login-title .material-icons {
-    color: #229ED9;
-    font-size: 1.4rem;
+.login-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
 }
 
-.telegram-login-btn {
+.login-subtitle {
+    color: #718096;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.login-form {
+    margin-bottom: 2rem;
+}
+
+.form-field {
+    margin-bottom: 1.5rem;
+}
+
+.field-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.field-label .material-icons {
+    font-size: 1.2rem;
+    color: #667eea;
+}
+
+.form-input {
     width: 100%;
-    background: linear-gradient(90deg, #229ED9 0%, #0088cc 100%);
-    color: #fff !important;
-    font-weight: 800;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    color: #2d3748;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input::placeholder {
+    color: #a0aec0;
+}
+
+.password-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-group .form-input {
+    padding-right: 3.5rem;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
     border: none;
-    border-radius: 2em;
-    box-shadow: 0 2px 12px rgba(34, 158, 217, 0.15);
-    padding: 0.9em 0;
-    font-size: 1.18rem;
-    transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
+    color: #a0aec0;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.password-toggle:hover {
+    background: #f1f5f9;
+    color: #667eea;
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #fed7d7, #feb2b2);
+    color: #c53030;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    border: 1px solid #f56565;
+}
+
+.login-button {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.7em;
-    text-decoration: none;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-top: 1rem;
 }
 
-.telegram-login-btn:hover, .telegram-login-btn:focus {
-    background: linear-gradient(90deg, #0088cc 0%, #229ED9 100%);
-    color: #fff !important;
-    box-shadow: 0 4px 18px rgba(34, 158, 217, 0.25);
-    transform: scale(1.03);
-    text-decoration: none;
+.login-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
 .divider {
     display: flex;
     align-items: center;
     margin: 2rem 0;
-    color: #6b7280;
-    font-weight: 600;
+    color: #a0aec0;
+    font-weight: 500;
 }
 
 .divider::before,
@@ -254,94 +337,109 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: #e0e7ef;
+    background: #e2e8f0;
 }
 
-.divider::before {
-    margin-right: 1rem;
+.divider span {
+    padding: 0 1rem;
+    background: rgba(255, 255, 255, 0.95);
 }
 
-.divider::after {
-    margin-left: 1rem;
+.telegram-section {
+    margin-bottom: 2rem;
 }
 
-.input-group .form-control#id_password {
-    border-radius: 0 0 0 0 !important;
+.telegram-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #2d3748;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.telegram-header .material-icons {
+    color: #229ED9;
+}
+
+.register-section {
+    margin-bottom: 1.5rem;
+}
+
+.register-button {
+    width: 100%;
+    background: linear-gradient(135deg, #f7fafc, #edf2f7);
+    color: #667eea;
+    border: 2px solid #e2e8f0;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.register-button:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    text-decoration: none;
+}
+
+.forgot-password {
+    text-align: center;
+}
+
+.forgot-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.forgot-link:hover {
+    color: #5a67d8;
+    text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-card {
+        padding: 2rem;
+        margin: 1rem;
+    }
+    
+    .login-title {
+        font-size: 2rem;
+    }
+    
+    .login-subtitle {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .modern-login-section {
+        padding: 1rem 0;
+    }
+    
+    .login-card {
+        padding: 1.5rem;
+    }
+    
+    .login-title {
+        font-size: 1.75rem;
+    }
 }
 </style>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="login-glass-card">
-                <h1 class="login-title mb-4">
-                    <i class="material-icons">login</i> Login
-                </h1>
-                <form method="post" id="login-form">
-                    {% csrf_token %}
-                    {% if error %}
-                        <div class="alert alert-danger login-error-box">
-                            {{ error }}
-                        </div>
-                    {% endif %}
-                    <div class="mb-3">
-                        <label for="id_username" class="form-label login-form-label">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="material-icons">person</i>
-                            </span>
-                            <input type="text" class="form-control" id="id_username" name="username" required value="{{ username|default:'' }}">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_password" class="form-label login-form-label">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="material-icons">lock</i>
-                            </span>
-                            <input type="password" class="form-control" id="id_password" name="password" required{% if password %} value="{{ password }}"{% endif %}>
-                            <span class="input-group-text" id="togglePasswordIcon" style="cursor: pointer;">
-                                <i class="material-icons">visibility</i>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="mb-3" id="twofa-section" style="display: {% if show_2fa %}block{% else %}none{% endif %};">
-                        <label for="id_token" class="form-label login-form-label">Enter 2FA code</label>
-                        <input type="text" class="form-control" id="id_token" name="token" autocomplete="one-time-code">
-                    </div>
-                    <button type="submit" class="login-btn-modern" id="login-btn">
-                        <i class="material-icons">login</i> Login
-                    </button>
-                </form>
-                <div class="divider">or</div>
-                {% if telegram_login_enabled %}
-                <div class="telegram-login-section">
-                    <div class="telegram-login-title">
-                        <i class="material-icons">send</i>
-                        Login with Telegram
-                    </div>
-                    <div id="telegram-login-widget">
-                        <script async src="https://telegram.org/js/telegram-widget.js?22"
-                            data-telegram-login="{{ telegram_bot_username }}"
-                            data-size="large"
-                            data-userpic="true"
-                            data-auth-url="{% url 'telegram_login_embedded' %}?return_to={{ request.GET.next|default:'/'|urlencode }}">
-                        </script>
-                    </div>
-                </div>
-                {% endif %}
-                <a href="{% url 'register' %}" class="register-link-modern">
-                    <i class="material-icons">person_add</i> Create Account
-                </a>
-                <div class="text-center mt-3">
-                    <a href="{% url 'password_reset' %}" class="forgot-password-link">Forgot password?</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://telegram.org/js/telegram-widget.js?22"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Password visibility toggle
@@ -353,20 +451,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordField.setAttribute('type', type);
             
-            const icon = this.querySelector('i');
+            const icon = this.querySelector('.material-icons');
             icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
         });
     }
+    
     // Focus 2FA input if shown
     if (document.getElementById('twofa-section').style.display !== 'none') {
         document.getElementById('id_token').focus();
     }
 });
 </script>
+
 {% if error and '2FA' in error %}
 <script>
-    document.getElementById('twofa-section').style.display = '';
+    document.getElementById('twofa-section').style.display = 'block';
     document.getElementById('id_token').focus();
 </script>
 {% endif %}
+
 {% endblock %} 

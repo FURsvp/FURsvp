@@ -2,421 +2,526 @@
 {% block title %}Account Creation - FURsvp{% endblock %}
 
 {% block content %}
-<style>
-    .input-group .form-control:focus {
-        box-shadow: 0 0 0 2px #b3d1f7;
-        border-color: #2a3faa;
-    }
-
-    .invalid-feedback ul {
-        margin-bottom: 0;
-        padding-left: 1.2em;
-    }
-
-    .invalid-feedback li {
-        font-size: 1rem;
-    }
-
-    .input-group-text {
-        border-radius: 0.5rem 0 0 0.5rem;
-        border-right: 0 !important;
-        background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 48px;
-        padding: 0 0.75rem;
-    }
-
-    .input-group .form-control {
-        border-radius: 0 0.5rem 0.5rem 0;
-        border-left: 0 !important;
-        height: 48px;
-        font-size: 1.1rem;
-    }
-
-    .form-label {
-        font-weight: 500;
-        font-size: 1.2rem;
-    }
-
-    .mb-3 {
-        width: 100%;
-    }
-
-    .input-group {
-        width: 100%;
-    }
-
-    .d-grid.gap-2 {
-        width: 100%;
-    }
-
-    .btn.btn-primary.btn-lg {
-        width: 100%;
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-        color: #fff !important;
-        font-weight: 800;
-        border: none;
-        border-radius: 2em;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-        padding: 0.9em 0;
-        font-size: 1.18rem;
-        transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.7em;
-    }
-
-    .btn.btn-primary.btn-lg:hover, .btn.btn-primary.btn-lg:focus {
-        background: linear-gradient(90deg, #1a2f9a 0%, #0e7490 100%);
-        color: #fff !important;
-        box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-        transform: scale(1.03);
-    }
-
-    .login-error-box {
-        background: #ffe6e6;
-        color: #a94442;
-        border: 1.5px solid #f5c6cb;
-        border-radius: 12px;
-        padding: 1.25rem 1.5rem;
-        font-size: 1.1rem;
-        font-weight: 500;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(169, 68, 66, 0.05);
-    }
-
-    .form-check {
-        padding: 1rem;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        background-color: #f8f9fa;
-        margin-bottom: 1rem;
-    }
-
-    .form-check-input {
-        margin-top: 0.2rem;
-    }
-
-    .form-check-label {
-        font-size: 1rem;
-        line-height: 1.5;
-        margin-left: 0.5rem;
-    }
-
-    .form-check-label a {
-        color: #2a3faa;
-        font-weight: 500;
-    }
-
-    .form-check-label a:hover {
-        text-decoration: underline !important;
-    }
-
-    .eula-check {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        padding: 1rem;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        background-color: #f8f9fa;
-        margin-bottom: 1rem;
-        box-sizing: border-box;
-    }
-    .eula-check .form-check-input {
-        margin: 0 0.75rem 0 0;
-        position: relative;
-        top: 0;
-    }
-    .eula-check .form-check-label {
-        font-size: 1rem;
-        line-height: 1.5;
-        margin: 0;
-        width: 100%;
-    }
-    .eula-check .form-check-label a {
-        color: #2a3faa;
-        font-weight: 500;
-    }
-    .eula-check .form-check-label a:hover {
-        text-decoration: underline !important;
-    }
-
-    .login-glass-card {
-        background: rgba(255,255,255,0.85);
-        border-radius: 1.5rem;
-        box-shadow: 0 8px 32px rgba(59,130,246,0.13);
-        backdrop-filter: blur(6px);
-        padding: 2.5rem 2.2rem 2.2rem 2.2rem;
-        margin-bottom: 2.5rem;
-        border: 1.5px solid #e0e7ef;
-    }
-    .login-title {
-        font-size: 2.3rem;
-        font-weight: 900;
-        color: #223b7b;
-        letter-spacing: 0.01em;
-        margin-bottom: 1.7rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.7rem;
-    }
-    .login-title .material-icons {
-        font-size: 2.3rem;
-        color: #2563eb;
-        margin-right: 0.3rem;
-    }
-    .input-group .form-control {
-        background: #f8fafc;
-        border-radius: 0 0.7rem 0.7rem 0 !important;
-        border: 1.5px solid #e0e7ef;
-        font-size: 1.13rem;
-        font-weight: 500;
-        color: #223b7b;
-        transition: box-shadow 0.18s, border-color 0.18s;
-    }
-    .input-group .form-control:focus {
-        box-shadow: 0 0 0 2px #b3d1f7;
-        border-color: #2563eb;
-        background: #fff;
-    }
-    .input-group-text {
-        background: #f0f9ff;
-        border-radius: 0.7rem 0 0 0.7rem !important;
-        border: 1.5px solid #e0e7ef;
-        border-right: 0;
-        color: #2563eb;
-        font-size: 1.25rem;
-        height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 0.9rem;
-    }
-    .input-group-text:last-child {
-        border-radius: 0 0.7rem 0.7rem 0 !important;
-        border-left: 0;
-        background: #f0f9ff;
-    }
-    .register-btn-modern {
-        width: 100%;
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-        color: #fff !important;
-        font-weight: 800;
-        border: none;
-        border-radius: 2em;
-        box-shadow: 0 2px 12px rgba(59, 130, 246, 0.10);
-        padding: 0.9em 0;
-        font-size: 1.18rem;
-        transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
-        margin-top: 0.2rem;
-        margin-bottom: 0.7rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.7em;
-    }
-    .register-btn-modern:hover, .register-btn-modern:focus {
-        background: linear-gradient(90deg, #1a2f9a 0%, #0e7490 100%);
-        color: #fff !important;
-        box-shadow: 0 4px 18px rgba(59, 130, 246, 0.18);
-        transform: scale(1.03);
-    }
-    .login-link-modern {
-        display: block;
-        width: 100%;
-        text-align: center;
-        margin-top: 0.5rem;
-        text-decoration: none;
-        font-weight: 700;
-        color: #2563eb;
-        background: linear-gradient(90deg, #e0e7ff 0%, #f0f9ff 100%);
-        border-radius: 2em;
-        padding: 0.7em 0;
-        font-size: 1.08rem;
-        transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.13s;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
-    }
-    .login-link-modern:hover, .login-link-modern:focus {
-        background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
-        color: #fff;
-        box-shadow: 0 4px 18px rgba(59, 130, 246, 0.13);
-        transform: scale(1.03);
-        text-decoration: none;
-    }
-    @media (max-width: 600px) {
-        .login-glass-card {
-            padding: 1.2rem 0.5rem 1.2rem 0.5rem;
-        }
-        .login-title {
-            font-size: 1.5rem;
-            gap: 0.3rem;
-        }
-        .register-btn-modern, .login-link-modern {
-            font-size: 1rem;
-            padding: 0.7em 0;
-        }
-    }
-</style>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <nav aria-label="breadcrumb" class="mb-4">
-                <div class="modern-breadcrumbs">
-                    <a href="/" class="d-flex align-items-center">
-                        <i class="material-icons me-1">home</i> Home
-                    </a>
-                    <span class="breadcrumb-chevron">›</span>
-                    <span class="breadcrumb-current">Account Creation</span>
-                </div>
-            </nav>
-
-            <div class="login-glass-card">
-                <h1 class="login-title mb-4">
-                        <i class="material-icons">person_add</i> Account Creation
-                    </h1>
-                    {% if form.non_field_errors or form.errors %}
-                        <div class="alert alert-danger login-error-box text-center">
-                            <ul class="mb-0" style="list-style: none; padding-left: 0;">
-                                {% for error in form.non_field_errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                                {% with required_field_error_found=False %}
-                                {% for field in form %}
-                                    {% for error in field.errors %}
-                                        {% if error == 'This field is required.' %}
-                                            {% if not required_field_error_found %}
-                                                <li>Missing field(s)</li>
-                                                {% with True as required_field_error_found %}
-                                                {% endwith %}
-                                            {% endif %}
-                                        {% else %}
-                                            <li>{{ error }}</li>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endfor %}
-                                {% endwith %}
-                            </ul>
+<!-- Modern Register Section -->
+<section class="modern-register-section">
+    <div class="register-background">
+        <div class="register-pattern"></div>
+        <div class="register-gradient"></div>
+    </div>
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="register-card">
+                    <!-- Header -->
+                    <div class="register-header">
+                        <div class="register-badge">
+                            <span class="material-icons">pets</span>
+                            <span>FURsvp</span>
                         </div>
-                    {% endif %}
-                    <form method="post" novalidate>
+                        <h1 class="register-title">
+                            Create Your Account
+                        </h1>
+                        <p class="register-subtitle">
+                            Join the furry fandom and start joining events
+                        </p>
+                    </div>
+
+                    <!-- Register Form -->
+                    <form method="post" class="register-form">
                         {% csrf_token %}
-                        <div class="mb-3">
-                        <label for="id_username" class="form-label login-form-label">Username</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="material-icons">person</i>
-                                </span>
-                                <input type="text" class="form-control border-start-0" id="id_username" name="username"
-                                    required maxlength="150" autocomplete="username"
-                                    value="{{ form.username.value|default_if_none:'' }}">
+                        
+                        {% if form.errors %}
+                            <div class="error-message">
+                                <span class="material-icons">error</span>
+                                <span>Please correct the errors below.</span>
                             </div>
+                        {% endif %}
+
+                        <!-- Username Field -->
+                        <div class="form-field">
+                            <label for="{{ form.username.id_for_label }}" class="field-label">
+                                <span class="material-icons">person</span>
+                                Username
+                            </label>
+                            <input type="text" 
+                                   class="form-input {% if form.username.errors %}error{% endif %}" 
+                                   id="{{ form.username.id_for_label }}" 
+                                   name="{{ form.username.name }}" 
+                                   required 
+                                   value="{{ form.username.value|default:'' }}"
+                                   placeholder="Choose a username">
+                            {% if form.username.errors %}
+                                <div class="field-error">
+                                    {{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
-                        <div class="mb-3">
-                        <label for="id_email" class="form-label login-form-label">Email address</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="material-icons">email</i>
-                                </span>
-                                <input type="email" class="form-control border-start-0" id="id_email" name="email"
-                                    required autocomplete="email" value="{{ form.email.value|default_if_none:'' }}">
+
+                        <!-- Email Field -->
+                        <div class="form-field">
+                            <label for="{{ form.email.id_for_label }}" class="field-label">
+                                <span class="material-icons">email</span>
+                                Email
+                            </label>
+                            <input type="email" 
+                                   class="form-input {% if form.email.errors %}error{% endif %}" 
+                                   id="{{ form.email.id_for_label }}" 
+                                   name="{{ form.email.name }}" 
+                                   required 
+                                   value="{{ form.email.value|default:'' }}"
+                                   placeholder="Enter your email address">
+                            {% if form.email.errors %}
+                                <div class="field-error">
+                                    {{ form.email.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-field">
+                            <label for="{{ form.password1.id_for_label }}" class="field-label">
+                                <span class="material-icons">lock</span>
+                                Password
+                            </label>
+                            <div class="password-input-group">
+                                <input type="password" 
+                                       class="form-input {% if form.password1.errors %}error{% endif %}" 
+                                       id="{{ form.password1.id_for_label }}" 
+                                       name="{{ form.password1.name }}" 
+                                       required
+                                       placeholder="Create a strong password">
+                                <button type="button" class="password-toggle" id="togglePassword1Icon">
+                                    <span class="material-icons">visibility</span>
+                                </button>
                             </div>
+                            {% if form.password1.errors %}
+                                <div class="field-error">
+                                    {{ form.password1.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
-                        <div class="mb-3">
-                        <label for="id_password1" class="form-label login-form-label">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="material-icons">lock</i>
-                                </span>
-                                <input type="password" class="form-control border-start-0" id="id_password1"
-                                    name="password1" required autocomplete="new-password">
+
+                        <!-- Confirm Password Field -->
+                        <div class="form-field">
+                            <label for="{{ form.password2.id_for_label }}" class="field-label">
+                                <span class="material-icons">lock_clock</span>
+                                Confirm Password
+                            </label>
+                            <div class="password-input-group">
+                                <input type="password" 
+                                       class="form-input {% if form.password2.errors %}error{% endif %}" 
+                                       id="{{ form.password2.id_for_label }}" 
+                                       name="{{ form.password2.name }}" 
+                                       required
+                                       placeholder="Confirm your password">
+                                <button type="button" class="password-toggle" id="togglePassword2Icon">
+                                    <span class="material-icons">visibility</span>
+                                </button>
                             </div>
+                            {% if form.password2.errors %}
+                                <div class="field-error">
+                                    {{ form.password2.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
-                        <div class="mb-3">
-                        <label for="id_password2" class="form-label login-form-label">Password confirmation</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="material-icons">lock</i>
-                                </span>
-                                <input type="password" class="form-control border-start-0" id="id_password2"
-                                    name="password2" required autocomplete="new-password">
-                            </div>
-                        </div>
-                    <div class="eula-check mb-3">
-                        <input type="checkbox" class="form-check-input" id="id_eula_agreement" name="eula_agreement" required>
-                        <label class="form-check-label" for="id_eula_agreement">
-                            I agree to the <a href="/eula/" target="_blank">End User License Agreement (EULA)</a>
+
+                        <!-- Terms Checkbox -->
+                        <div class="form-field">
+                            <div class="checkbox-field">
+                                <input type="checkbox" 
+                                       id="{{ form.agree_to_terms.id_for_label }}" 
+                                       name="{{ form.agree_to_terms.name }}" 
+                                       class="checkbox-input"
+                                       {% if form.agree_to_terms.value %}checked{% endif %}>
+                                <label for="{{ form.agree_to_terms.id_for_label }}" class="checkbox-label">
+                                    <span class="material-icons">check_circle</span>
+                                    <span>I agree to the <a href="{% url 'terms' %}" target="_blank">Terms of Service</a> and <a href="{% url 'privacy' %}" target="_blank">Privacy Policy</a></span>
                                 </label>
+                            </div>
+                            {% if form.agree_to_terms.errors %}
+                                <div class="field-error">
+                                    {{ form.agree_to_terms.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
-                        <div class="d-grid gap-2">
-                        <button type="submit" class="register-btn-modern">
-                            <i class="material-icons align-middle me-1">person_add</i> Register
-                            </button>
-                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="register-button">
+                            <span class="material-icons">person_add</span>
+                            <span>Create Account</span>
+                        </button>
                     </form>
-                <a href="/users/login/" class="login-link-modern">Already have an account? Login here</a>
+
+                    <!-- Login Link -->
+                    <div class="login-section">
+                        <div class="divider">
+                            <span>or</span>
+                        </div>
+                        <a href="{% url 'login' %}" class="login-button">
+                            <span class="material-icons">login</span>
+                            <span>Sign In</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+</section>
 
-{% block extra_js %}
+<style>
+/* Modern Register Styles */
+.modern-register-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 2rem 0;
+    background: #f8fafc;
+}
+
+.register-background {
+    display: none;
+}
+
+.register-pattern {
+    display: none;
+}
+
+.register-gradient {
+    display: none;
+}
+
+.register-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.register-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.register-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.register-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.register-subtitle {
+    color: #718096;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.register-form {
+    margin-bottom: 2rem;
+}
+
+.form-field {
+    margin-bottom: 1.5rem;
+}
+
+.field-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.field-label .material-icons {
+    font-size: 1.2rem;
+    color: #667eea;
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    color: #2d3748;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input.error {
+    border-color: #e53e3e;
+    background: #fed7d7;
+}
+
+.form-input::placeholder {
+    color: #a0aec0;
+}
+
+.password-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-group .form-input {
+    padding-right: 3.5rem;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #a0aec0;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.password-toggle:hover {
+    background: #f1f5f9;
+    color: #667eea;
+}
+
+.field-error {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #fed7d7, #feb2b2);
+    color: #c53030;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    border: 1px solid #f56565;
+}
+
+.checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+}
+
+.checkbox-input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: #667eea;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: #2d3748;
+    line-height: 1.5;
+    cursor: pointer;
+    margin: 0;
+}
+
+.checkbox-label .material-icons {
+    font-size: 1.2rem;
+    color: #667eea;
+    margin-top: 0.125rem;
+}
+
+.checkbox-label a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.checkbox-label a:hover {
+    text-decoration: underline;
+}
+
+.register-button {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.register-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.login-section {
+    margin-top: 2rem;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 2rem 0;
+    color: #a0aec0;
+    font-weight: 500;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.divider span {
+    padding: 0 1rem;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.login-button {
+    width: 100%;
+    background: linear-gradient(135deg, #f7fafc, #edf2f7);
+    color: #667eea;
+    border: 2px solid #e2e8f0;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.login-button:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .register-card {
+        padding: 2rem;
+        margin: 1rem;
+    }
+    
+    .register-title {
+        font-size: 2rem;
+    }
+    
+    .register-subtitle {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .modern-register-section {
+        padding: 1rem 0;
+    }
+    
+    .register-card {
+        padding: 1.5rem;
+    }
+    
+    .register-title {
+        font-size: 1.75rem;
+    }
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const eulaCheckbox = document.getElementById('id_eula_agreement');
-    const submitButton = document.querySelector('button[type="submit"]');
-    const form = document.querySelector('form');
-
-    // Function to update button state
-    function updateSubmitButton() {
-        if (eulaCheckbox && eulaCheckbox.checked) {
-            submitButton.disabled = false;
-            submitButton.classList.remove('btn-secondary');
-            submitButton.classList.add('btn-primary');
-        } else {
-            submitButton.disabled = true;
-            submitButton.classList.remove('btn-primary');
-            submitButton.classList.add('btn-secondary');
-        }
+    // Password visibility toggles
+    const togglePassword1 = document.getElementById('togglePassword1Icon');
+    const password1Field = document.getElementById('{{ form.password1.id_for_label }}');
+    
+    if (togglePassword1 && password1Field) {
+        togglePassword1.addEventListener('click', function() {
+            const type = password1Field.getAttribute('type') === 'password' ? 'text' : 'password';
+            password1Field.setAttribute('type', type);
+            
+            const icon = this.querySelector('.material-icons');
+            icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+        });
     }
-
-    // Initialize button state
-    updateSubmitButton();
-
-    // Update button state when checkbox changes
-    if (eulaCheckbox) {
-        eulaCheckbox.addEventListener('change', updateSubmitButton);
-    }
-
-    // Form submission validation
-    form.addEventListener('submit', function(e) {
-        if (!eulaCheckbox || !eulaCheckbox.checked) {
-            e.preventDefault();
-            alert('You must agree to the End User License Agreement to create an account.');
-            if (eulaCheckbox) {
-                eulaCheckbox.focus();
-            }
-            return false;
-        }
-    });
-
-    // Add visual feedback when clicking the EULA link
-    const eulaLink = document.querySelector('a[href*="eula"]');
-    if (eulaLink) {
-        eulaLink.addEventListener('click', function() {
-            // Add a small visual indicator that the link was clicked
-            this.style.textDecoration = 'underline';
-            setTimeout(() => {
-                this.style.textDecoration = 'none';
-            }, 200);
+    
+    const togglePassword2 = document.getElementById('togglePassword2Icon');
+    const password2Field = document.getElementById('{{ form.password2.id_for_label }}');
+    
+    if (togglePassword2 && password2Field) {
+        togglePassword2.addEventListener('click', function() {
+            const type = password2Field.getAttribute('type') === 'password' ? 'text' : 'password';
+            password2Field.setAttribute('type', type);
+            
+            const icon = this.querySelector('.material-icons');
+            icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
         });
     }
 });
 </script>
+
 {% endblock %}
