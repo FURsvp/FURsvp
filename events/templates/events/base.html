@@ -1275,6 +1275,219 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Modal Focus Management System -->
+    <script>
+        // Modal Focus Management
+        class ModalFocusManager {
+            constructor() {
+                this.previousActiveElement = null;
+                this.modalElement = null;
+                this.focusableElements = [];
+                this.firstFocusableElement = null;
+                this.lastFocusableElement = null;
+                this.init();
+            }
+
+            init() {
+                // Listen for modal events
+                document.addEventListener('shown.bs.modal', (event) => {
+                    this.handleModalShown(event);
+                });
+
+                document.addEventListener('hidden.bs.modal', (event) => {
+                    this.handleModalHidden(event);
+                });
+
+                // Handle escape key
+                document.addEventListener('keydown', (event) => {
+                    this.handleKeydown(event);
+                });
+            }
+
+            handleModalShown(event) {
+                this.modalElement = event.target;
+                this.previousActiveElement = document.activeElement;
+                
+                // Get all focusable elements in the modal
+                this.focusableElements = this.getFocusableElements(this.modalElement);
+                
+                if (this.focusableElements.length > 0) {
+                    this.firstFocusableElement = this.focusableElements[0];
+                    this.lastFocusableElement = this.focusableElements[this.focusableElements.length - 1];
+                    
+                    // Focus the first focusable element
+                    this.firstFocusableElement.focus();
+                    
+                    // Add body class to prevent background scrolling
+                    document.body.classList.add('modal-open');
+                    
+                    // Announce modal to screen readers
+                    this.announceModal();
+                }
+            }
+
+            handleModalHidden(event) {
+                // Restore focus to the previous element
+                if (this.previousActiveElement && this.previousActiveElement.focus) {
+                    this.previousActiveElement.focus();
+                }
+                
+                // Remove body class
+                document.body.classList.remove('modal-open');
+                
+                // Reset variables
+                this.previousActiveElement = null;
+                this.modalElement = null;
+                this.focusableElements = [];
+                this.firstFocusableElement = null;
+                this.lastFocusableElement = null;
+            }
+
+            handleKeydown(event) {
+                if (!this.modalElement || !this.modalElement.classList.contains('show')) {
+                    return;
+                }
+
+                const key = event.key;
+                const isTabPressed = key === 'Tab';
+                const isEscapePressed = key === 'Escape';
+
+                if (isEscapePressed) {
+                    // Close modal on escape
+                    const modal = bootstrap.Modal.getInstance(this.modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+                    return;
+                }
+
+                if (isTabPressed) {
+                    // Trap focus within modal
+                    if (event.shiftKey) {
+                        // Shift + Tab
+                        if (document.activeElement === this.firstFocusableElement) {
+                            event.preventDefault();
+                            this.lastFocusableElement.focus();
+                        }
+                    } else {
+                        // Tab
+                        if (document.activeElement === this.lastFocusableElement) {
+                            event.preventDefault();
+                            this.firstFocusableElement.focus();
+                        }
+                    }
+                }
+            }
+
+            getFocusableElements(container) {
+                const focusableSelectors = [
+                    'button:not([disabled])',
+                    'input:not([disabled])',
+                    'select:not([disabled])',
+                    'textarea:not([disabled])',
+                    'a[href]',
+                    'area[href]',
+                    'iframe',
+                    'object',
+                    'embed',
+                    '[tabindex]:not([tabindex="-1"])',
+                    '[contenteditable]',
+                    'audio[controls]',
+                    'video[controls]',
+                    'summary'
+                ];
+
+                const elements = container.querySelectorAll(focusableSelectors.join(','));
+                return Array.from(elements).filter(element => {
+                    // Filter out hidden elements
+                    const style = window.getComputedStyle(element);
+                    return style.display !== 'none' && 
+                           style.visibility !== 'hidden' && 
+                           element.offsetParent !== null;
+                });
+            }
+
+            announceModal() {
+                // Create a live region to announce modal to screen readers
+                let liveRegion = document.getElementById('modal-announcement');
+                if (!liveRegion) {
+                    liveRegion = document.createElement('div');
+                    liveRegion.id = 'modal-announcement';
+                    liveRegion.setAttribute('aria-live', 'polite');
+                    liveRegion.setAttribute('aria-atomic', 'true');
+                    liveRegion.style.position = 'absolute';
+                    liveRegion.style.left = '-10000px';
+                    liveRegion.style.width = '1px';
+                    liveRegion.style.height = '1px';
+                    liveRegion.style.overflow = 'hidden';
+                    document.body.appendChild(liveRegion);
+                }
+
+                const modalTitle = this.modalElement.querySelector('.modal-title');
+                const title = modalTitle ? modalTitle.textContent : 'Modal opened';
+                liveRegion.textContent = title;
+            }
+        }
+
+        // Initialize modal focus management when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ModalFocusManager();
+        });
+
+        // Enhanced modal initialization for existing modals
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize all existing modals with focus management
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                // Ensure modals have proper ARIA attributes
+                if (!modal.getAttribute('aria-labelledby')) {
+                    const title = modal.querySelector('.modal-title');
+                    if (title && !title.id) {
+                        title.id = 'modal-title-' + Math.random().toString(36).substr(2, 9);
+                    }
+                    if (title && title.id) {
+                        modal.setAttribute('aria-labelledby', title.id);
+                    }
+                }
+
+                // Add role if not present
+                if (!modal.getAttribute('role')) {
+                    modal.setAttribute('role', 'dialog');
+                }
+
+                // Add aria-modal if not present
+                if (!modal.getAttribute('aria-modal')) {
+                    modal.setAttribute('aria-modal', 'true');
+                }
+            });
+        });
+
+        // Prevent background scrolling when modal is open
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const target = mutation.target;
+                        if (target.classList.contains('modal-open')) {
+                            // Disable body scrolling
+                            document.body.style.overflow = 'hidden';
+                            document.body.style.paddingRight = '0px';
+                        } else {
+                            // Re-enable body scrolling
+                            document.body.style.overflow = '';
+                            document.body.style.paddingRight = '';
+                        }
+                    }
+                });
+            });
+
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+        });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

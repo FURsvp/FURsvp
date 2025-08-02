@@ -1065,132 +1065,127 @@ def event_index(request):
         (models.Q(date=now.date()) & models.Q(end_time__gt=now.time())),
         status='active'
     )
-
-    if filter_adult == 'false':
-        all_events = all_events.exclude(age_restriction__in=['adult', 'mature'])
+    
+    # Convert to list for filtering
+    all_events = list(all_events)
+    
+    # Handle adult content filtering
+    if filter_adult == 'false' or filter_adult == 'hide':
+        all_events = [e for e in all_events if e.age_restriction not in ['adult', 'mature']]
+    elif filter_adult == 'show':
+        # Show only adult events
+        all_events = [e for e in all_events if e.age_restriction in ['adult', 'mature']]
+    # If filter_adult is 'true' or empty, show all events (default behavior)
 
     # Apply search filter
     if search_query:
-        all_events = all_events.filter(
-            models.Q(title__icontains=search_query) |
-            models.Q(description__icontains=search_query) |
-            models.Q(city__icontains=search_query) |
-            models.Q(group__name__icontains=search_query)
-        )
+        all_events = [e for e in all_events if 
+                     search_query.lower() in e.title.lower() or
+                     (e.description and search_query.lower() in e.description.lower()) or
+                     (e.city and search_query.lower() in e.city.lower()) or
+                     (e.group and search_query.lower() in e.group.name.lower())]
 
     # Apply state filter
     if state_filter:
-        all_events = all_events.filter(state__iexact=state_filter)
+        all_events = [e for e in all_events if e.state and e.state.lower() == state_filter.lower()]
 
     # Get user location from form or session
     user_location = request.GET.get('user_location') or request.session.get('user_location', 'CA')
     if user_location:
         request.session['user_location'] = user_location
     
-    # Apply mileage filter using OpenStreetMap geocoding
-    if mileage_range and mileage_range != 'all':
-        try:
-            mileage = int(mileage_range)
-            
-            # Get user coordinates from session
-            user_lat = request.session.get('user_lat')
-            user_lng = request.session.get('user_lng')
-            
-            if user_lat and user_lng:
-                # Use OpenStreetMap to calculate distances to event cities
-                import requests
-                import math
-                
-                def calculate_distance(lat1, lon1, lat2, lon2):
-                    """Calculate distance between two points using Haversine formula"""
-                    R = 3959  # Earth's radius in miles
-                    
-                    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
-                    dlat = lat2 - lat1
-                    dlon = lon2 - lon1
-                    
-                    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
-                    c = 2 * math.asin(math.sqrt(a))
-                    distance = R * c
-                    
-                    return distance
-                
-                def geocode_city(city, state):
-                    """Geocode a city using OpenStreetMap Nominatim API"""
-                    try:
-                        query = f"{city}, {state}, USA"
-                        url = "https://nominatim.openstreetmap.org/search"
-                        params = {
-                            'q': query,
-                            'format': 'json',
-                            'limit': 1,
-                            'countrycodes': 'us'
-                        }
-                        headers = {
-                            'User-Agent': 'FURsvp/1.0 (https://fursvp.org)'
-                        }
-                        
-                        response = requests.get(url, params=params, headers=headers, timeout=5)
-                        if response.status_code == 200:
-                            data = response.json()
-                            if data:
-                                return float(data[0]['lat']), float(data[0]['lon'])
-                    except Exception as e:
-                        print(f"Geocoding error for {city}, {state}: {e}")
-                    return None, None
-                
-                # Filter events by distance
-                events_within_range = []
-                user_lat, user_lng = float(user_lat), float(user_lng)
-                
-                for event in all_events:
-                    if event.city and event.state:
-                        # Try to get coordinates for the event city
-                        event_lat, event_lng = geocode_city(event.city, event.state)
-                        
-                        if event_lat and event_lng:
-                            # Calculate distance
-                            distance = calculate_distance(user_lat, user_lng, event_lat, event_lng)
-                            
-                            if distance <= mileage:
-                                events_within_range.append(event.id)
-                        else:
-                            # Fallback: include events in the same state for local searches
-                            if mileage <= 50:
-                                user_state = request.session.get('user_state', user_location)
-                                if event.state == user_state:
-                                    events_within_range.append(event.id)
-                
-                # Filter the queryset to only include events within range
-                if events_within_range:
-                    all_events = all_events.filter(id__in=events_within_range)
-                else:
-                    # If no events found, show events in the same state
-                    user_state = request.session.get('user_state', user_location)
-                    all_events = all_events.filter(state__iexact=user_state)
-            else:
-                # Fallback to state-based filtering if no coordinates
-                if mileage <= 100:
-                    all_events = all_events.filter(state__iexact=user_location)
-                
-        except ValueError:
-            pass
+    # Apply mileage filter using OpenStreetMap geocoding - temporarily disabled
+    # if mileage_range and mileage_range != 'all':
+    #     try:
+    #         mileage = int(mileage_range)
+    #         print(f"DEBUG: Before mileage filtering: {len(all_events)} events")
+    #         
+    #         # Get user coordinates from session
+    #         user_lat = request.session.get('user_lat')
+    #         user_lng = request.session.get('user_lng')
+    #         
+    #         if user_lat and user_lng:
+    #             # Use OpenStreetMap to calculate distances to event cities
+    #             import requests
+    #             import math
+    #             
+    #             def calculate_distance(lat1, lon1, lat2, lon2):
+    #                 """Calculate distance between two points using Haversine formula"""
+    #                 R = 3959  # Earth's radius in miles
+    #                 
+    #                 lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    #                 dlat = lat2 - lat1
+    #                 dlon = lon2 - lon1
+    #                     
+    #                     a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    #                     c = 2 * math.asin(math.sqrt(a))
+    #                     distance = R * c
+    #                     
+    #                     return distance
+    #                 
+    #                 def geocode_city(city, state):
+    #                     """Geocode a city using OpenStreetMap Nominatim API"""
+    #                     try:
+    #                         query = f"{city}, {state}, USA"
+    #                         url = "https://nominatim.openstreetmap.org/search"
+    #                         params = {
+    #                             'q': query,
+    #                             'format': 'json',
+    #                             'limit': 1,
+    #                             'countrycodes': 'us'
+    #                         }
+    #                         headers = {
+    #                             'User-Agent': 'FURsvp/1.0 (https://fursvp.org)'
+    #                         }
+    #                         
+    #                         response = requests.get(url, params=params, headers=headers, timeout=5)
+    #                         if response.status_code == 200:
+    #                             data = response.json()
+    #                             if data:
+    #                                     return float(data[0]['lat']), float(data[0]['lon'])
+    #                     except Exception as e:
+    #                         print(f"Geocoding error for {city}, {state}: {e}")
+    #                     return None, None
+    #                 
+    #                 # Filter events by distance
+    #                 events_within_range = []
+    #                 user_lat, user_lng = float(user_lat), float(user_lng)
+    #                 
+    #                 for event in all_events:
+    #                     if event.city and event.state:
+    #                         # Try to get coordinates for the event city
+    #                         event_lat, event_lng = geocode_city(event.city, event.state)
+    #                         
+    #                         if event_lat and event_lng:
+    #                             # Calculate distance
+    #                             distance = calculate_distance(user_lat, user_lng, event_lat, event_lng)
+    #                             
+    #                             if distance <= mileage:
+    #                                 events_within_range.append(event.id)
+    #                         else:
+    #                             # Fallback: include events in the same state for local searches
+    #                             if mileage <= 50:
+    #                                 user_state = request.session.get('user_state', user_location)
+    #                                 if event.state == user_state:
+    #                                     events_within_range.append(event.id)
+    #                 
+    #                 # Filter the list to only include events within range
+    #                 if events_within_range:
+    #                     all_events = [e for e in all_events if e.id in events_within_range]
+    #                 else:
+    #                     # If no events found, show events in the same state
+    #                     user_state = request.session.get('user_state', user_location)
+    #                     all_events = [e for e in all_events if e.state and e.state.lower() == user_state.lower()]
+    #             else:
+    #                 # Fallback to state-based filtering if no coordinates
+    #                 if mileage <= 100:
+    #                     all_events = [e for e in all_events if e.state and e.state.lower() == user_location.lower()]
+    #                 
+    #         except ValueError:
+    #             pass
 
-    all_events = all_events.annotate(
-        confirmed_count=models.Count('rsvps', filter=models.Q(rsvps__status='confirmed'))
-    )
-    
     # Add user's RSVP information if user is authenticated
     if request.user.is_authenticated:
-        all_events = all_events.annotate(
-            user_rsvp_status=models.Subquery(
-                RSVP.objects.filter(
-                    event=models.OuterRef('pk'),
-                    user=request.user
-                ).values('status')[:1]
-            )
-        )
-        
         # Add user's RSVP list for template compatibility
         for event in all_events:
             user_rsvp = event.rsvps.filter(user=request.user).first()
@@ -1201,29 +1196,51 @@ def event_index(request):
     
     # Apply sorting
     if sort_by == 'date':
-        all_events = all_events.order_by('date', 'start_time') if sort_order == 'asc' else all_events.order_by('-date', '-start_time')
+        # all_events = all_events.order_by('date', 'start_time') if sort_order == 'asc' else all_events.order_by('-date', '-start_time')
+        pass
     elif sort_by == 'group':
-        all_events = all_events.order_by(models.functions.Lower('group__name') if sort_order == 'asc' else models.functions.Lower('group__name').desc())
+        # all_events = all_events.order_by(models.functions.Lower('group__name') if sort_order == 'asc' else models.functions.Lower('group__name').desc())
+        pass
     elif sort_by == 'title':
-        all_events = all_events.order_by(models.functions.Lower('title') if sort_order == 'asc' else models.functions.Lower('title').desc())
+        # all_events = all_events.order_by(models.functions.Lower('title') if sort_order == 'asc' else models.functions.Lower('title').desc())
+        pass
     elif sort_by == 'rsvps':
-        all_events = all_events.annotate(rsvp_count=models.Count('rsvps')).order_by(
-            'rsvp_count' if sort_order == 'asc' else '-rsvp_count'
-        )
+        # all_events = all_events.annotate(rsvp_count=models.Count('rsvps')).order_by(
+        #     'rsvp_count' if sort_order == 'asc' else '-rsvp_count'
+        # )
+        pass
     
-    # Pagination
-    paginator = Paginator(all_events, 20)  # Show 20 events per page for expanded view
-    try:
-        events_page = paginator.page(page)
-    except PageNotAnInteger:
-        events_page = paginator.page(1)
-    except EmptyPage:
-        events_page = paginator.page(paginator.num_pages)
+    # Pagination - handle list instead of queryset
+    page = int(page)
+    per_page = 20
+    start = (page - 1) * per_page
+    end = start + per_page
+    
+    # Create a simple pagination object
+    class SimplePage:
+        def __init__(self, object_list, number, has_next, has_previous):
+            self.object_list = object_list
+            self.number = number
+            self._has_next = has_next
+            self._has_previous = has_previous
+        
+        def has_next(self):
+            return self._has_next
+        
+        def has_previous(self):
+            return self._has_previous
+    
+    events_page = SimplePage(
+        all_events[start:end],
+        page,
+        end < len(all_events),
+        page > 1
+    )
     
     # Add user's RSVP information if user is authenticated (AFTER pagination)
     if request.user.is_authenticated:
         # Add user's RSVP list for template compatibility
-        for event in events_page:
+        for event in events_page.object_list:
             user_rsvp = event.rsvps.filter(user=request.user).first()
             if user_rsvp:
                 event.user_rsvp_list = [user_rsvp]
@@ -1232,6 +1249,12 @@ def event_index(request):
     
     # Get all unique states for the dropdown
     all_states = Event.objects.exclude(state__isnull=True).exclude(state__exact='').values_list('state', flat=True).distinct().order_by('state')
+    
+    # Get groups count for stats
+    from users.models import Group
+    groups_count = Group.objects.count()
+    
+
     
     context = {
         'calendar': cal,
@@ -1249,12 +1272,13 @@ def event_index(request):
         'current_order': sort_order,
         'filter_adult': filter_adult,
         'view_type': view_type,
-        'paginator': paginator,
+        'paginator': None,
         'page_obj': events_page,
         'all_states': all_states,
         'mileage_range': mileage_range,
         'search_query': search_query,
         'state_filter': state_filter,
+        'groups_count': groups_count,
     }
     
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':

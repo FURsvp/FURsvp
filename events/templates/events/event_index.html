@@ -1,1704 +1,765 @@
 {% extends 'events/base.html' %}
 {% load calendar_extras %}
-{% block title %}Events - {{ month_name }} {{ year }} - FURsvp{% endblock %}
+{% load group_extras %}
+{% block title %}Events - FURsvp{% endblock %}
 
 {% block content %}
 <style>
-    /* Modern Button Styling */
-    .btn {
-        border-radius: 12px;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        border: none;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* Modern Events Page Styling */
+    .events-page {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
     }
 
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .btn:active {
-        transform: translateY(0);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-    }
-
-    .btn-primary:hover {
-        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-        color: white;
-    }
-
-    .btn-outline-primary {
+    .page-header-modern {
         background: white;
-        color: #667eea;
-        border: 2px solid #667eea;
-    }
-
-    .btn-outline-primary:hover {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-color: transparent;
-    }
-
-    .btn-outline-secondary {
-        background: white;
-        color: #6c757d;
-        border: 2px solid #6c757d;
-    }
-
-    .btn-outline-secondary:hover {
-        background: #6c757d;
-        color: white;
-        border-color: #6c757d;
-    }
-
-    /* Adult Toggle Button */
-    .adult-toggle-btn {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 0.75rem 1.5rem;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-    }
-
-    .adult-toggle-btn:hover {
-        background: linear-gradient(135deg, #ff5252 0%, #e64a19 100%);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
-    }
-
-    .adult-toggle-btn.hide-adult {
-        background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
-        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-    }
-
-    .adult-toggle-btn.hide-adult:hover {
-        background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
-        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-    }
-
-    /* View Controls */
-    .view-controls .btn {
-        border-radius: 8px;
-        padding: 0.5rem 0.75rem;
-        margin: 0 2px;
-    }
-
-    /* Sort Buttons */
-    .sorting-controls .btn-group .btn {
-        border-radius: 8px;
-        padding: 0.75rem 1.25rem;
-        margin: 0 1px;
-        font-size: 0.95rem;
-    }
-
-    .sorting-controls .btn-group .btn:first-child {
-        border-top-left-radius: 12px;
-        border-bottom-left-radius: 12px;
-    }
-
-    .sorting-controls .btn-group .btn:last-child {
-        border-top-right-radius: 12px;
-        border-bottom-right-radius: 12px;
-    }
-
-    /* Clear All Button */
-    .clear-all-btn {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        color: #495057;
-        border: 2px solid #dee2e6;
-        border-radius: 12px;
-        padding: 0.75rem 1.5rem;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .clear-all-btn:hover {
-        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-        color: #343a40;
-        border-color: #adb5bd;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Location Buttons */
-    .location-btn {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 0.75rem 1.5rem;
-        font-weight: 600;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
-    }
-
-    .location-btn:hover {
-        background: linear-gradient(135deg, #43a3f5 0%, #00e5f2 100%);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
-    }
-
-    .location-btn.loading {
-        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-        pointer-events: none;
-    }
-
-    .location-btn.success {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-    }
-
-    /* Material Icons in Buttons */
-    .btn .material-icons {
-        transition: transform 0.3s ease;
-    }
-
-    .btn:hover .material-icons {
-        transform: scale(1.1);
-    }
-
-    /* Button Groups */
-    .btn-group {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-group .btn {
-        border-radius: 0;
-        margin: 0;
-        border: none;
-    }
-
-    .btn-group .btn:first-child {
-        border-top-left-radius: 12px;
-        border-bottom-left-radius: 12px;
-    }
-
-    .btn-group .btn:last-child {
-        border-top-right-radius: 12px;
-        border-bottom-right-radius: 12px;
-    }
-    .calendar-container {
-        background: #f8fafc;
-        border-radius: 1.5rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+        border-radius: 20px;
         padding: 2rem;
         margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
-    .calendar-header {
-        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
-        color: #fff;
-        border-radius: 1.25rem;
-        padding: 1.5rem 2rem;
-        margin-bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .calendar-nav {
+    .page-title-modern {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
         display: flex;
         align-items: center;
         gap: 1rem;
     }
 
-    .calendar-nav-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: #fff;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
+    .page-subtitle {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin: 0.5rem 0 0 0;
+    }
+
+    .stats-container {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-        text-decoration: none;
+        gap: 0.75rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
     }
 
-    .calendar-nav-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        color: #fff;
-        transform: scale(1.1);
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
     }
 
-    .calendar-title {
+    .stat-number {
         font-size: 1.5rem;
         font-weight: 700;
-        margin: 0;
     }
 
-    .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 1px;
-        background: #e2e8f0;
-        border-radius: 1rem;
-        overflow: hidden;
+    .stat-label {
+        font-size: 0.875rem;
+        opacity: 0.9;
     }
 
-    .calendar-day-header {
-        background: linear-gradient(90deg, #64748b 0%, #94a3b8 100%);
-        color: #fff;
-        padding: 1rem;
-        text-align: center;
+    /* Modern Filters */
+    .filters-modern {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .filter-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-label-modern {
         font-weight: 600;
-        font-size: 1.1rem;
-    }
-
-    .calendar-day {
-        background: #fff;
-        min-height: 120px;
-        padding: 0.5rem;
-        position: relative;
-        transition: all 0.2s;
-    }
-
-    .calendar-day:hover {
-        background: #f1f5f9;
-        transform: scale(1.02);
-    }
-
-    .calendar-day.today {
-        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        border: 2px solid #3b82f6;
-    }
-
-    .calendar-day.other-month {
-        background: #f8fafc;
-        color: #94a3b8;
-    }
-
-    .calendar-day.has-events {
-        background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
-        box-shadow: 0 2px 8px rgba(6,182,212,0.10);
-        border: 2px solid #06b6d4;
-        position: relative;
-    }
-    .calendar-day.has-events .event-dot-prominent {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        display: block;
-        margin: 0 auto 0.3rem auto;
-    }
-
-    .day-number {
-        font-weight: 700;
-        font-size: 1.2rem;
-        color: #1e293b;
-        position: absolute;
-        top: 0.5rem;
-        left: 0.7rem;
-        z-index: 2;
-    }
-
-    .calendar-day.other-month .day-number {
-        color: #94a3b8;
-    }
-
-    .event-dot {
-        width: 8px;
-        height: 8px;
-        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 0.25rem;
-    }
-
-    .event-item {
-        font-size: 0.75rem;
-        margin-bottom: 0.25rem;
-        padding: 0.25rem 0.5rem;
-        background: linear-gradient(90deg, #dbeafe 0%, #bfdbfe 100%);
-        border-radius: 0.5rem;
-        border-left: 3px solid #3b82f6;
-        transition: all 0.2s;
-        cursor: pointer;
-        text-decoration: none;
-        color: #1e40af;
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .event-item:hover {
-        background: linear-gradient(90deg, #bfdbfe 0%, #93c5fd 100%);
-        transform: translateX(2px);
-        color: #1e3a8a;
-        text-decoration: none;
-    }
-
-    .event-item.adult {
-        background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
-        border-left-color: #f59e0b;
-        color: #92400e;
-    }
-
-    .event-item.adult:hover {
-        background: linear-gradient(90deg, #fde68a 0%, #fbbf24 100%);
-        color: #78350f;
-    }
-
-    .event-item.mature {
-        background: linear-gradient(90deg, #fecaca 0%, #fca5a5 100%);
-        border-left-color: #ef4444;
-        color: #991b1b;
-    }
-
-    .event-item.mature:hover {
-        background: linear-gradient(90deg, #fca5a5 0%, #f87171 100%);
-        color: #7f1d1d;
-    }
-
-    .event-count {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.7rem;
-        z-index: 2;
-    }
-
-    .no-events {
-        color: #94a3b8;
-        font-style: italic;
-        font-size: 0.8rem;
-        text-align: center;
-        margin-top: 1rem;
-    }
-
-    .calendar-legend {
-        background: #fff;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        margin-top: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .legend-item {
+        color: #374151;
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
-        margin-bottom: 0.5rem;
+        gap: 0.5rem;
     }
 
-    .legend-color {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        margin-right: 0.5rem;
+    .search-input-modern {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+        color: #374151;
     }
 
-    .legend-color.all-ages {
-        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+    .search-input-modern:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
-    .legend-color.adult {
-        background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
+    .search-input-modern::placeholder {
+        color: #9ca3af;
     }
 
-    .legend-color.mature {
-        background: linear-gradient(90deg, #fecaca 0%, #fca5a5 100%);
-    }
-
-    .calendar-day.has-events .event-dot-prominent {
-        margin-top: 2.2rem;
-        margin-bottom: 0.2rem;
-    }
-
-    @media (max-width: 768px) {
-        .calendar-container {
-            padding: 1rem;
-        }
-        
-        .calendar-header {
-            flex-direction: column;
-            gap: 1rem;
-            text-align: center;
-        }
-        
-        .calendar-day {
-            min-height: 80px;
-            padding: 0.25rem;
-        }
-        
-        .event-item {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.4rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .calendar-container {
-            padding: 0.5rem;
-        }
-        .calendar-header {
-            padding: 0.7rem 0.5rem;
-            font-size: 1rem;
-        }
-        .calendar-title {
-            font-size: 1.1rem;
-        }
-        .calendar-grid-scroll {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin-bottom: 0.5rem;
-            position: relative;
-        }
-        .calendar-grid {
-            min-width: 560px;
-            font-size: 0.85rem;
-            display: grid;
-            grid-template-columns: repeat(7, minmax(64px, 1fr));
-        }
-        .calendar-day-header, .calendar-day {
-            min-width: 64px;
-            padding: 0.3rem 0.1rem;
-        }
-        .calendar-day {
-            min-height: 44px;
-        }
-        .calendar-legend {
-            padding: 0.7rem;
-            font-size: 0.9rem;
-        }
-        .calendar-grid-scroll::after {
-            content: '→';
-            position: absolute;
-            right: 8px;
-            top: 8px;
-            color: #b0b8c1;
-            font-size: 1.2em;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-    }
-
-    .btn-today-pretty {
-        background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 100%);
-        color: #fff;
-        border: none;
-        border-radius: 1.2rem;
-        font-weight: 700;
-        font-size: 1.1rem;
-        box-shadow: 0 2px 12px rgba(139,92,246,0.10);
-        padding: 0.7rem 1.7rem;
-        display: inline-flex;
+    .filter-btn-modern {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.75rem 1.25rem;
+        font-weight: 600;
+        color: #374151;
+        transition: all 0.3s ease;
+        display: flex;
         align-items: center;
         gap: 0.5rem;
-        transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
-    }
-    .btn-today-pretty:hover, .btn-today-pretty:focus {
-        background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%);
-        color: #fff;
-        transform: translateY(-2px) scale(1.04);
-        box-shadow: 0 4px 18px rgba(236,72,153,0.18);
         text-decoration: none;
     }
 
-    .dark-mode .calendar-container {
-        background: #23272f !important;
-        color: #f3f4f6 !important;
-    }
-    .dark-mode .calendar-legend {
-        background: #23272f !important;
-        color: #a1a1aa !important;
-        border: 1.5px solid #374151 !important;
-    }
-    .dark-mode .calendar-grid {
-        background: #181c23 !important;
-        border: 1px solid #374151 !important;
-    }
-    .dark-mode .calendar-day-header {
-        background: #23293a !important;
-        color: #e0e7ef !important;
-        font-weight: 700 !important;
-    }
-    .dark-mode .calendar-day {
-        background: #23272f !important;
-        color: #f3f4f6 !important;
-        border: 1px solid #374151 !important;
-    }
-    .dark-mode .calendar-day.today {
-        background: linear-gradient(135deg, #2563eb 0%, #1e293b 100%) !important;
-        border: 2px solid #60a5fa !important;
-    }
-    .dark-mode .event-item {
-        background: linear-gradient(90deg, #2563eb 0%, #1e293b 100%) !important;
-        color: #fff !important;
-        border-left: 3px solid #60a5fa !important;
-    }
-    .dark-mode .day-number {
-        color: #e0e7ef !important;
-        font-weight: 700 !important;
-    }
-    .dark-mode .event-item.adult {
-        background: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%) !important;
-        color: #92400e !important;
-        border-left: 3px solid #fbbf24 !important;
-    }
-    .dark-mode .event-item.mature {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%) !important;
-        color: #fff !important;
-        border-left: 3px solid #ef4444 !important;
+    .filter-btn-modern:hover {
+        border-color: #667eea;
+        color: #667eea;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
     }
 
-    /* Page Header */
-    .page-header {
-        background: transparent;
-        padding: 3rem 0;
-        border-radius: var(--border-radius-xl);
-        margin: 2rem 0;
-        color: inherit;
+    .filter-btn-modern.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+    .filter-btn-modern.active:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
 
-    .page-subtitle {
-        font-size: 1.1rem;
-        opacity: 0.9;
-        margin: 0;
+    /* Modern Event List */
+    .events-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 2rem;
     }
 
-    /* Calendar Section */
-    .calendar-section {
-        margin-bottom: 3rem;
-    }
-
-    /* Enhanced Filters Section */
-    .filters-section {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        padding: 2rem;
-        border-radius: var(--border-radius-lg);
-        border: 1px solid #e2e8f0;
-        box-shadow: var(--shadow-sm);
-        position: relative;
+    .event-item-modern {
+        background: white;
+        border-radius: 16px;
         overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
+        position: relative;
     }
 
-    .filters-section::before {
+    .event-item-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .event-item-content {
+        display: flex;
+        align-items: stretch;
+        min-height: 120px;
+    }
+
+    .event-date-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 120px;
+        position: relative;
+    }
+
+    .event-date-badge::before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
-        height: 3px;
-        background: var(--primary-gradient);
-    }
-
-    /* Search Container */
-    .search-container {
-        position: relative;
-    }
-
-    .search-group {
-        box-shadow: var(--shadow-sm);
-        border-radius: var(--border-radius-lg);
-        overflow: hidden;
-        background: white;
-        border: 2px solid #e2e8f0;
-        transition: all 0.3s ease;
-    }
-
-    .search-group:focus-within {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        transform: translateY(-1px);
-    }
-
-    .search-icon {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        padding: 0.75rem 1rem;
-    }
-
-    .search-input {
-        border: none;
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        background: transparent;
-    }
-
-    .search-input:focus {
-        box-shadow: none;
-        background: transparent;
-    }
-
-    .clear-search {
-        border: none;
-        background: transparent;
-        color: #94a3b8;
-        padding: 0.75rem 1rem;
-        transition: all 0.2s ease;
-    }
-
-    .clear-search:hover {
-        color: #ef4444;
-        background: #fef2f2;
-    }
-
-    /* Filter Container */
-    .filter-container {
-        background: white;
-        padding: 1rem;
-        border-radius: var(--border-radius);
-        border: 1px solid #e2e8f0;
-        box-shadow: var(--shadow-sm);
-        transition: all 0.3s ease;
-    }
-
-    .filter-container:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
-
-    .filter-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.75rem;
-    }
-
-    .filter-label .material-icons {
-        color: var(--primary-color);
-        font-size: 1.1rem;
-    }
-
-    .state-select {
-        border: 1px solid #e2e8f0;
-        border-radius: var(--border-radius);
-        padding: 0.75rem;
-        font-size: 0.9rem;
-        background: #f8fafc;
-        transition: all 0.2s ease;
-    }
-
-    .state-select:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        background: white;
-    }
-
-    /* Mileage Container */
-    .mileage-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .mileage-display {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: var(--border-radius);
-        text-align: center;
-        font-weight: 600;
-        font-size: 0.9rem;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .mileage-slider {
-        height: 8px;
-        border-radius: 4px;
-        background: #e2e8f0;
-        outline: none;
-        cursor: pointer;
-    }
-
-    .mileage-slider::-webkit-slider-thumb {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-        box-shadow: var(--shadow-md);
-        border: 3px solid white;
-    }
-
-    .mileage-slider::-moz-range-thumb {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-        box-shadow: var(--shadow-md);
-        border: 3px solid white;
-    }
-
-    .mileage-slider::-webkit-slider-track {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        border-radius: 4px;
-        height: 8px;
-    }
-
-    .mileage-slider::-moz-range-track {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        border-radius: 4px;
-        height: 8px;
-        border: none;
-    }
-
-    /* Location Button */
-    .location-btn {
-        width: 100%;
-        padding: 0.75rem;
-        border: 2px solid #e2e8f0;
-        border-radius: var(--border-radius);
-        font-weight: 600;
-        transition: all 0.3s ease;
-        background: white;
-    }
-
-    .location-btn:hover {
-        border-color: var(--primary-color);
-        background: #f8fafc;
-        transform: translateY(-1px);
-    }
-
-    .location-btn:active {
-        transform: translateY(0);
-    }
-
-    .location-btn.loading {
-        background: #f1f5f9;
-        color: #64748b;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
         pointer-events: none;
     }
 
-    .location-btn.success {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        border-color: #10b981;
+    .event-day {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
     }
 
-    .location-btn.error {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: white;
-        border-color: #ef4444;
-    }
-
-    /* Location Status */
-    .location-status {
-        font-size: 0.75rem;
-        margin-top: 0.25rem;
-        text-align: center;
-        min-height: 1rem;
-    }
-
-    .location-status.success {
-        color: #10b981;
-    }
-
-    .location-status.error {
-        color: #ef4444;
-    }
-
-    .location-status.loading {
-        color: #64748b;
-    }
-
-    /* Location Explanation */
-    .location-explanation {
-        margin-top: 0.5rem;
-        padding: 0.5rem;
-        background: #f8fafc;
-        border-radius: var(--border-radius);
-        border-left: 3px solid var(--primary-color);
-    }
-
-    .location-explanation .material-icons {
+    .event-month {
         font-size: 0.875rem;
-        vertical-align: middle;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    /* Controls Container */
-    .controls-container {
+    .event-details {
+        flex: 1;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .event-title-modern {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        line-height: 1.3;
+        flex: 1;
+    }
+
+    .event-location {
+        color: #6b7280;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+    }
+
+    .event-group-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 80px;
+        margin-left: 1rem;
+    }
+
+    .group-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .group-logo:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .group-logo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .group-logo-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .group-logo-placeholder .material-icons {
+        font-size: 1.5rem;
+        opacity: 0.8;
+    }
+
+    .group-name {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-align: center;
+        line-height: 1.2;
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .event-description {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .event-description p {
+        margin: 0 0 0.5rem 0;
+    }
+
+    .event-description p:last-child {
+        margin-bottom: 0;
+    }
+
+    .event-footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
         gap: 1rem;
-        padding: 1.5rem;
-        background: white;
-        border-radius: var(--border-radius);
-        border: 1px solid #e2e8f0;
-        box-shadow: var(--shadow-sm);
     }
 
-    .controls-left, .controls-right {
+    .event-tags {
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
+        gap: 0.5rem;
         flex-wrap: wrap;
     }
 
-    /* Apply Filters Button */
-    .apply-filters-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: var(--border-radius);
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .apply-filters-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-    }
-
-    /* Clear All Button */
-    .clear-all-btn {
-        border: 2px solid #e2e8f0;
-        padding: 0.75rem 1.5rem;
-        border-radius: var(--border-radius);
-        font-weight: 600;
-        transition: all 0.3s ease;
-        color: #64748b;
-    }
-
-    .clear-all-btn:hover {
-        border-color: #ef4444;
-        color: #ef4444;
-        background: #fef2f2;
-        transform: translateY(-1px);
-    }
-
-    /* Adult Toggle Button */
-    .adult-toggle-btn {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        border: none;
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: var(--border-radius);
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .adult-toggle-btn.hide-adult {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    }
-
-    .adult-toggle-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
-
-    /* View Controls */
-    .view-controls {
-        border: 2px solid #e2e8f0;
-        border-radius: var(--border-radius);
-        overflow: hidden;
-    }
-
-    .view-controls .btn {
-        border: none;
-        padding: 0.75rem;
-        border-radius: 0;
-        transition: all 0.2s ease;
-    }
-
-    .view-controls .btn:hover {
+    .event-tag {
         background: #f1f5f9;
-        color: var(--primary-color);
+        color: #475569;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
     }
 
-    .view-controls .btn:first-child {
-        border-top-left-radius: var(--border-radius);
-        border-bottom-left-radius: var(--border-radius);
+    .event-tag.adult {
+        background: #fef2f2;
+        color: #dc2626;
     }
 
-    .view-controls .btn:last-child {
-        border-top-right-radius: var(--border-radius);
-        border-bottom-right-radius: var(--border-radius);
+    .event-tag.mature {
+        background: #fef3c7;
+        color: #d97706;
     }
 
-    /* Sorting Controls */
-    .sorting-controls {
-        background: var(--bg-primary);
-        padding: 1rem;
-        border-radius: var(--border-radius);
-        border: 1px solid #e2e8f0;
-    }
-
-    /* View Toggle Container */
-    .view-toggle-container {
+    .event-actions {
         display: flex;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 50px;
-        padding: 4px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        max-width: 300px;
-        margin-left: auto;
+        gap: 0.75rem;
     }
 
-    .view-toggle-btn {
-        flex: 1;
+    .btn-modern {
+        border-radius: 12px;
+        font-weight: 600;
+        padding: 0.75rem 1.25rem;
+        transition: all 0.3s ease;
+        border: none;
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 12px 20px;
-        border-radius: 50px;
+        gap: 0.5rem;
         text-decoration: none;
-        font-weight: 600;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        color: #667eea;
-        background: white;
-        border: none;
+        font-size: 0.875rem;
     }
 
-    .view-toggle-btn.active {
+    .btn-primary-modern {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary-modern:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-outline-modern {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+
+    .btn-outline-modern:hover {
         background: #667eea;
         color: white;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-    }
-
-    .view-toggle-btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
-    .view-toggle-btn.active:hover {
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
-    .view-toggle-btn .material-icons {
-        font-size: 18px;
+    .empty-state-icon {
+        font-size: 4rem;
+        color: #cbd5e1;
+        margin-bottom: 1rem;
     }
 
-    /* Manual Location Response */
-    .manual-location-response {
-        animation: slideDown 0.3s ease-out;
+    .empty-state-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
     }
 
-    .manual-location-response .alert {
-        border-radius: var(--border-radius);
-        border: none;
-        box-shadow: var(--shadow-sm);
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .empty-state-text {
+        color: #64748b;
+        margin-bottom: 2rem;
     }
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .page-title {
+        .event-item-content {
+            flex-direction: column;
+        }
+        
+        .event-date-badge {
+            min-width: auto;
+            padding: 1rem;
+            flex-direction: row;
+            gap: 0.5rem;
+        }
+        
+        .stats-container {
+            flex-direction: column;
+        }
+        
+        .page-title-modern {
             font-size: 2rem;
         }
         
-        .view-toggle-container {
-            max-width: 250px;
+        .event-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
         }
         
-        .view-toggle-btn {
-            padding: 10px 16px;
-            font-size: 13px;
+        .event-group-info {
+            margin-left: 0;
+            margin-top: 0.5rem;
         }
+        
+        .group-logo {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .group-logo-placeholder .material-icons {
+            font-size: 2rem;
+        }
+        
+        .group-name {
+            font-size: 0.875rem;
+            max-width: 100px;
+        }
+        
+        .event-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .event-actions {
+            justify-content: stretch;
+        }
+        
+        .btn-modern {
+            justify-content: center;
+        }
+    }
+
+    /* Dark mode support */
+    .dark-mode .events-page {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    }
+
+    .dark-mode .page-header-modern,
+    .dark-mode .filters-modern,
+    .dark-mode .event-item-modern,
+    .dark-mode .empty-state {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    .dark-mode .search-input-modern {
+        background: #334155;
+        border-color: #475569;
+        color: white;
+    }
+
+    .dark-mode .search-input-modern::placeholder {
+        color: #94a3b8;
+    }
+
+    .dark-mode .filter-btn-modern {
+        background: #334155;
+        border-color: #475569;
+        color: #e2e8f0;
+    }
+
+    .dark-mode .event-description {
+        color: #94a3b8;
+    }
+
+    .dark-mode .event-tag {
+        background: #334155;
+        color: #cbd5e1;
+    }
+
+    .dark-mode .event-title-modern {
+        color: #f1f5f9;
+    }
+
+    .dark-mode .filter-label-modern {
+        color: #e2e8f0;
     }
 </style>
 
-<!-- Breadcrumbs -->
-<nav aria-label="breadcrumb" class="mb-4">
-    <div class="modern-breadcrumbs">
-        <a href="{% url 'home' %}" class="d-flex align-items-center">
-            <i class="material-icons me-1">home</i> Home
-        </a>
-        <span class="breadcrumb-chevron">›</span>
-        <span class="breadcrumb-current">
-            <i class="material-icons me-1">event</i> Events
-        </span>
-    </div>
-</nav>
-
-<!-- Page Header -->
-<section class="page-header mb-5">
+<div class="events-page">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <h1 class="page-title d-flex align-items-center text-primary">
-                    <span class="material-icons me-3">event</span> 
-                    Events
-                </h1>
-            </div>
-            <div class="col-md-6">
-                <div id="viewToggleContainer" class="view-toggle-container">
-                    <button type="button" id="calendarViewBtn" class="view-toggle-btn {% if view_type != 'list' %}active{% endif %}">
-                        <span class="material-icons">calendar_month</span> Calendar
-                    </button>
-                    <button type="button" id="listViewBtn" class="view-toggle-btn {% if view_type == 'list' %}active{% endif %}">
-                        <span class="material-icons">list</span> List
-                    </button>
+        <!-- Modern Page Header -->
+        <div class="page-header-modern">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="page-title-modern">
+                        <span class="material-icons">event</span>
+                        Events
+                    </h1>
+                    <p class="page-subtitle">Discover and join amazing furry events in your area</p>
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Calendar Section -->
-<section class="calendar-section mb-5">
-    <div class="container">
-        {% include 'events/calendar_partial.html' %}
-    </div>
-</section>
-
-<!-- Events Section -->
-<section class="events-section">
-    <div class="container">
-        <div class="card shadow-custom">
-            <div class="card-header bg-gradient-accent text-white">
-                <h2 class="mb-0 d-flex align-items-center">
-                    <span class="material-icons me-2">list</span> 
-                    Events List
-                </h2>
-            </div>
-            <div class="card-body p-4">
-                <!-- Advanced Search and Filters -->
-                <div class="filters-section mb-4">
-                    <form method="get" action="{% url 'event_index' %}">
-                        {% csrf_token %}
-                        <!-- Search Bar - Full Width -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-12">
-                                <div class="filter-container">
-                                    <label class="filter-label">
-                                            <span class="material-icons">search</span>
-                                        Search Events
-                                    </label>
-                                    <div class="input-group search-group">
-                                        <input type="text" id="eventSearchInput" name="search" class="form-control search-input" 
-                                               placeholder="Search events by title, description, city, or group..." 
-                                               value="{{ search_query|escapejs }}">
-                                        <button type="button" class="btn btn-outline-secondary clear-search" id="clearSearch">
-                                            <span class="material-icons">close</span>
-                                        </button>
-                                    </div>
-                                </div>
+                <div class="col-lg-4">
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <span class="material-icons">event</span>
+                            <div>
+                                <div class="stat-number">{{ events.object_list|length }}</div>
+                                <div class="stat-label">Events</div>
                             </div>
                         </div>
-                        
-
-                        
-                        <!-- Distance Filter -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-12">
-                                <div class="filter-container">
-                                    <label class="filter-label">
-                                        <span class="material-icons">my_location</span>
-                                        Distance Filter
-                                    </label>
-                                    <div class="location-distance-container">
-                                        <!-- Location Options Row -->
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-12">
-                                                <div class="location-controls">
-                                                    <div class="d-flex gap-2 align-items-center">
-                                                        <div class="location-btn-container" style="width: 34%;">
-                                                            <button type="button" id="useMyLocation" class="btn btn-outline-primary w-100">
-                                                        <span class="material-icons me-1">my_location</span>
-                                                        Use My Location
-                                                    </button>
-                                                    </div>
-                                                        <div class="text-center" style="width: 32%;">
-                                                            <span class="text-muted">OR</span>
-                                                        </div>
-                                                        <div class="location-btn-container" style="width: 34%;">
-                                                            <button type="button" id="manualLocationBtn" class="btn btn-outline-secondary w-100">
-                                                            <span class="material-icons me-1">edit_location</span>
-                                                            Manual Location
-                                                        </button>
-                                                    </div>
-                                                    </div>
-                                                    <div id="locationStatus" class="location-status mt-2"></div>
-                                                    <div id="manualLocationResponse" class="manual-location-response mt-2" style="display: none;">
-                                                        <div class="alert alert-info">
-                                                            <span class="material-icons me-2">info</span>
-                                                            <span id="locationResponseText"></span>
-                                                        </div>
-                                                    </div>
-                                                    <div id="manualLocationContainer" style="display: none;" class="mt-2">
-                                                            <input type="text" id="manualLocationInput" class="form-control" 
-                                                                   placeholder="City, State (e.g., New York, NY)" 
-                                                                   maxlength="100">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        
-                                        <!-- Mileage Slider Row -->
-                                        <div class="row g-3">
-                                            <div class="col-12">
-                                                <div class="mileage-container">
-                                                    <div class="mileage-display">
-                                                        <span id="mileageValue">{{ mileage_range }}</span> miles
-                                                    </div>
-                                                    <input type="range" class="form-range mileage-slider" id="mileageRange" name="mileage" 
-                                                           min="10" max="500" step="10" value="{{ mileage_range }}">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="stat-card">
+                            <span class="material-icons">groups</span>
+                            <div>
+                                <div class="stat-number">{{ groups_count }}</div>
+                                <div class="stat-label">Groups</div>
                             </div>
-                        </div>
-                        
-                        <!-- Hidden fields for other filters -->
-                        <input type="hidden" name="sort" value="{{ current_sort|escapejs }}">
-                        <input type="hidden" name="order" value="{{ current_order|escapejs }}">
-                        <input type="hidden" name="adult" value="{{ filter_adult|escapejs }}">
-                        <input type="hidden" name="view" value="{{ view_type|escapejs }}">
-                        <input type="hidden" name="year" value="{{ year }}">
-                        <input type="hidden" name="month" value="{{ month }}">
-                        
-                        <!-- Action Buttons and Controls -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="controls-container">
-                                    <!-- Left Side - Filter Actions -->
-                                    <div class="controls-left">
-                                        <button type="button" id="clearAllBtn" class="btn btn-outline-secondary clear-all-btn">
-                                            <span class="material-icons me-2">clear_all</span> 
-                                            Clear All
-                                        </button>
-                                    </div>
-                                    
-                                    <!-- Right Side - View Controls -->
-                                    <div class="controls-right">
-                                        <button type="button" id="adultToggleBtn" class="btn adult-toggle-btn">
-                                            <span class="material-icons me-2">visibility</span> 
-                                            <span class="toggle-text">{% if filter_adult %}Hide 18+/21+{% else %}Show 18+/21+{% endif %}</span>
-                                        </button>
-                                        <div class="btn-group view-controls" role="group">
-                                            <button type="button" id="orderToggleBtn" class="btn btn-outline-primary order-btn" title="Sort Order">
-                                                <span class="material-icons">{% if current_order == 'desc' %}arrow_downward{% else %}arrow_upward{% endif %}</span>
-                                            </button>
-                                            <button type="button" id="viewToggleBtn" class="btn btn-outline-primary view-toggle-btn" title="View Mode">
-                                                <span class="material-icons">{% if view_type == 'list' %}calendar_view_month{% else %}grid_view{% endif %}</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Sorting Controls -->
-                <div class="sorting-controls mb-4">
-                    <div class="d-flex flex-wrap justify-content-center gap-2">
-                        <div class="btn-group" role="group">
-                            <button type="button" id="sortDateBtn" class="btn {% if current_sort == 'date' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                                <span class="material-icons me-1">calendar_today</span> Date
-                            </button>
-                            <button type="button" id="sortGroupBtn" class="btn {% if current_sort == 'group' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                                <span class="material-icons me-1">group</span> Group
-                            </button>
-                            <button type="button" id="sortTitleBtn" class="btn {% if current_sort == 'title' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                                <span class="material-icons me-1">title</span> Title
-                            </button>
-                            <button type="button" id="sortRsvpsBtn" class="btn {% if current_sort == 'rsvps' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                                <span class="material-icons me-1">people</span> RSVPs
-                            </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Events List -->
-                {% include 'events/events_list_partial.html' %}
             </div>
         </div>
-    </div>
-</section>
 
-<!-- Modal for day events -->
-<div class="modal fade" id="eventDayModal" tabindex="-1" aria-labelledby="eventDayModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="eventDayModalLabel">Events on <span id="modalEventDate"></span></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="modalEventList">
-        <!-- Events will be loaded here -->
-      </div>
+        <!-- Modern Filters -->
+        <div class="filters-modern">
+            <form method="get" action="{% url 'event_index' %}">
+                {% csrf_token %}
+                
+                <!-- Search Bar -->
+                <div class="filter-group">
+                    <label class="filter-label-modern">
+                        <span class="material-icons">search</span>
+                        Search Events
+                    </label>
+                    <input type="text" name="search" class="form-control search-input-modern" 
+                           placeholder="Search events by title, description, city, or group..." 
+                           value="{{ search_query|escapejs }}">
+                </div>
+
+                <!-- Quick Filters -->
+                <div class="filter-group">
+                    <label class="filter-label-modern">
+                        <span class="material-icons">filter_list</span>
+                        Quick Filters
+                    </label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="filter-btn-modern {% if not filter_adult %}active{% endif %}" 
+                                onclick="updateFilter('adult', '')">
+                            <span class="material-icons">family_restroom</span>
+                            All Ages
+                        </button>
+                        <button type="button" class="filter-btn-modern {% if filter_adult == 'hide' %}active{% endif %}" 
+                                onclick="updateFilter('adult', 'hide')">
+                            <span class="material-icons">child_care</span>
+                            Family Friendly
+                        </button>
+                        <button type="button" class="filter-btn-modern {% if filter_adult == 'show' %}active{% endif %}" 
+                                onclick="updateFilter('adult', 'show')">
+                            <span class="material-icons">nightlife</span>
+                            Adult Events
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sort Options -->
+                <div class="filter-group">
+                    <label class="filter-label-modern">
+                        <span class="material-icons">sort</span>
+                        Sort By
+                    </label>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="filter-btn-modern {% if current_sort == 'date' %}active{% endif %}" 
+                                onclick="updateFilter('sort', 'date')">
+                            <span class="material-icons">calendar_today</span>
+                            Date
+                        </button>
+                        <button type="button" class="filter-btn-modern {% if current_sort == 'title' %}active{% endif %}" 
+                                onclick="updateFilter('sort', 'title')">
+                            <span class="material-icons">title</span>
+                            Title
+                        </button>
+                        <button type="button" class="filter-btn-modern {% if current_sort == 'location' %}active{% endif %}" 
+                                onclick="updateFilter('sort', 'location')">
+                            <span class="material-icons">location_on</span>
+                            Location
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Events List -->
+        {% if events.object_list %}
+            <div class="events-list">
+                {% for event in events.object_list %}
+                    <div class="event-item-modern">
+                        <div class="event-item-content">
+                            <div class="event-date-badge">
+                                <div class="event-day">{{ event.date|date:"j" }}</div>
+                                <div class="event-month">{{ event.date|date:"M" }}</div>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-header">
+                                    <div>
+                                        <h3 class="event-title-modern">{{ event.title }}</h3>
+                                        {% if event.location %}
+                                            <div class="event-location">
+                                                <span class="material-icons">location_on</span>
+                                                {{ event.location }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    {% if event.group %}
+                                        <div class="event-group-info">
+                                            <div class="group-logo">
+                                                {% if event.group.logo_base64 %}
+                                                    <img src="{% group_logo_src event.group %}" alt="{{ event.group.name }} logo" class="group-logo-img">
+                                                {% else %}
+                                                    <div class="group-logo-placeholder">
+                                                        <span class="material-icons">groups</span>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="group-name">{{ event.group.name }}</div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if event.description %}
+                                    <div class="event-description">
+                                        {{ event.description|striptags|truncatewords:30 }}
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="event-footer">
+                                    <div class="event-tags">
+                                        {% if event.age_restriction == 'adult' %}
+                                            <span class="event-tag adult">18+ Adult</span>
+                                        {% elif event.age_restriction == 'mature' %}
+                                            <span class="event-tag mature">21+ Mature</span>
+                                        {% else %}
+                                            <span class="event-tag">All Ages</span>
+                                        {% endif %}
+                                        
+                                        {% if event.group %}
+                                            <span class="event-tag">{{ event.group.name }}</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="event-actions">
+                                        <a href="{% url 'event_detail' event.id %}" class="btn btn-modern btn-primary-modern">
+                                            <span class="material-icons">visibility</span>
+                                            View Details
+                                        </a>
+                                        {% if event.group %}
+                                            <a href="{% url 'group_detail' event.group.id %}" class="btn btn-modern btn-outline-modern">
+                                                <span class="material-icons">groups</span>
+                                                Group
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <span class="material-icons">event_busy</span>
+                </div>
+                <h3 class="empty-state-title">No events found</h3>
+                <p class="empty-state-text">
+                    {% if search_query %}
+                        No events match your search criteria. Try adjusting your filters.
+                    {% else %}
+                        No events are currently available. Check back later or create your own event!
+                    {% endif %}
+                </p>
+                <a href="{% url 'create_event' %}" class="btn btn-modern btn-primary-modern">
+                    <span class="material-icons">add</span>
+                    Create Event
+                </a>
+            </div>
+        {% endif %}
     </div>
-  </div>
 </div>
-<script id="eventsByDateData" type="application/json">
-{
-{% for date_key, events in events_by_date.items %}
-  "{{ date_key }}": [
-    {% for event in events %}
-      {
-        "title": "{{ event.title|escapejs }}",
-        "url": "{% url 'event_detail' event.id %}",
-        "age": "{{ event.age_restriction }}"
-      }{% if not forloop.last %},{% endif %}
-    {% endfor %}
-  ]{% if not forloop.last %},{% endif %}
-{% endfor %}
-}
-</script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Simple functionality for location and mileage
-        const mileageRange = document.getElementById('mileageRange');
-        const clearSearchBtn = document.getElementById('clearSearch');
-        const searchInput = document.getElementById('eventSearchInput');
-        const manualLocationBtn = document.getElementById('manualLocationBtn');
-        const manualLocationInput = document.getElementById('manualLocationInput');
-        const locationStatus = document.getElementById('locationStatus');
-        const manualLocationResponse = document.getElementById('manualLocationResponse');
-        const locationResponseText = document.getElementById('locationResponseText');
-
-        // Mileage range functionality with debouncing
-        if (mileageRange) {
-            let mileageTimeout;
-            mileageRange.addEventListener('input', function() {
-                // Update display immediately
-                document.getElementById('mileageValue').textContent = this.value;
-                
-                // Debounce the filter update
-                clearTimeout(mileageTimeout);
-                mileageTimeout = setTimeout(() => {
-                    updateFilters({ mileage: this.value });
-                }, 300);
-            });
+    // Modern filter functionality
+    function updateFilter(key, value) {
+        const url = new URL(window.location);
+        if (value) {
+            url.searchParams.set(key, value);
+        } else {
+            url.searchParams.delete(key);
         }
+        window.location.href = url.toString();
+    }
 
-        // Clear search functionality
-        if (clearSearchBtn && searchInput) {
-            clearSearchBtn.addEventListener('click', function() {
-                searchInput.value = '';
-                searchInput.focus();
-            });
-
-            // Show/hide clear button based on search input
-            searchInput.addEventListener('input', function() {
-                if (this.value.length > 0) {
-                    clearSearchBtn.style.display = 'block';
-                } else {
-                    clearSearchBtn.style.display = 'none';
-                }
-            });
-                
-            // Initial state of clear button
-            if (searchInput.value.length > 0) {
-                clearSearchBtn.style.display = 'block';
-                } else {
-                clearSearchBtn.style.display = 'none';
-            }
-        }
-
-        // Automatic location functionality
-        const useMyLocationBtn = document.getElementById('useMyLocation');
-        if (useMyLocationBtn) {
-            useMyLocationBtn.addEventListener('click', function() {
-                if (!navigator.geolocation) {
-                    locationResponseText.textContent = 'Geolocation not supported.';
-                    manualLocationResponse.style.display = 'block';
-                    setTimeout(() => {
-                        manualLocationResponse.style.display = 'none';
-                    }, 3000);
-                    return;
-                }
-
-                // Show loading state
-                useMyLocationBtn.innerHTML = '<span class="material-icons me-1">hourglass_empty</span>Getting Location...';
-                locationResponseText.textContent = 'Getting your location...';
-                manualLocationResponse.style.display = 'block';
-
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        
-                        // Reverse geocode to get city name
-                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'application/json',
-                                'User-Agent': 'FURsvp/1.0'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data && data.address) {
-                                const city = data.address.city || data.address.town || data.address.village || data.address.county || 'Unknown City';
-                                const state = data.address.state || '';
-                                const locationName = state ? `${city}, ${state}` : city;
-                                
-                                locationResponseText.textContent = `Location set to: ${locationName}`;
-                                useMyLocationBtn.innerHTML = '<span class="material-icons me-1">my_location</span>Use My Location';
-                                
-                                // Update the manual location input with the city name
-                                if (manualLocationInput) {
-                                    manualLocationInput.value = locationName;
-                                }
-                            } else {
-                                locationResponseText.textContent = `Location obtained: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-                                useMyLocationBtn.innerHTML = '<span class="material-icons me-1">my_location</span>Use My Location';
-                            }
-                            
-                            setTimeout(() => {
-                                manualLocationResponse.style.display = 'none';
-                            }, 3000);
-                        })
-                        .catch(error => {
-                            console.error('Reverse geocoding error:', error);
-                            locationResponseText.textContent = `Location obtained: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-                            useMyLocationBtn.innerHTML = '<span class="material-icons me-1">my_location</span>Use My Location';
-                            
-                            setTimeout(() => {
-                                manualLocationResponse.style.display = 'none';
-                            }, 3000);
-                        });
-                    },
-                    function(error) {
-                        locationResponseText.textContent = 'Location unavailable.';
-                        useMyLocationBtn.innerHTML = '<span class="material-icons me-1">my_location</span>Use My Location';
-                        
-                        setTimeout(() => {
-                            manualLocationResponse.style.display = 'none';
-                        }, 3000);
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 60000
-                    }
-                );
-            });
-        }
-
-        // Dynamic filter functionality
-        let currentFilters = {
-            search: '{{ search_query|escapejs }}',
-            sort: '{{ current_sort|escapejs }}',
-            order: '{{ current_order|escapejs }}',
-            adult: '{{ filter_adult|escapejs }}',
-            view: '{{ view_type|escapejs }}',
-            mileage: '{{ mileage_range|escapejs }}'
-        };
-
-        // Function to update filters and reload content
-        function updateFilters(newFilters) {
-            Object.assign(currentFilters, newFilters);
-            
-            // Build query string
-            const params = new URLSearchParams();
-            Object.entries(currentFilters).forEach(([key, value]) => {
-                if (value && value !== 'None' && value !== 'False') {
-                    params.set(key, value);
-                }
-            });
-            
-            // Update URL without page refresh
-            const url = new URL(window.location);
-            url.search = params.toString();
-            window.history.pushState({}, '', url);
-            
-            // Reload events content via AJAX
-            fetchEvents();
-        }
-
-        // Function to fetch events with current filters
-        function fetchEvents() {
-            const params = new URLSearchParams();
-            Object.entries(currentFilters).forEach(([key, value]) => {
-                if (value && value !== 'None' && value !== 'False') {
-                    params.set(key, value);
-                }
-            });
-            
-            fetch(`{% url 'event_index' %}?${params.toString()}`)
-                .then(response => response.text())
-                .then(html => {
-                    // Update the events list section
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newEventsList = doc.querySelector('.events-section');
-                    const currentEventsList = document.querySelector('.events-section');
-                    
-                    if (newEventsList && currentEventsList) {
-                        currentEventsList.innerHTML = newEventsList.innerHTML;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching events:', error);
-                });
-        }
-
-        // View toggle functionality
-        const calendarViewBtn = document.getElementById('calendarViewBtn');
-        const listViewBtn = document.getElementById('listViewBtn');
-        const calendarSection = document.querySelector('.calendar-section');
-        const eventsSection = document.querySelector('.events-section');
-        
-        if (calendarViewBtn && listViewBtn) {
-            calendarViewBtn.addEventListener('click', function() {
-                // Update button states
-                calendarViewBtn.classList.add('active');
-                listViewBtn.classList.remove('active');
-                
-                // Show calendar, hide events list
-                if (calendarSection) calendarSection.style.display = 'block';
-                if (eventsSection) eventsSection.style.display = 'none';
-                
-                // Update filters
-                updateFilters({ view: 'calendar' });
-            });
-            
-            listViewBtn.addEventListener('click', function() {
-                // Update button states
-                listViewBtn.classList.add('active');
-                calendarViewBtn.classList.remove('active');
-                
-                // Hide calendar, show events list
-                if (calendarSection) calendarSection.style.display = 'none';
-                if (eventsSection) eventsSection.style.display = 'block';
-                
-                // Update filters
-                updateFilters({ view: 'list' });
-            });
-        }
-
-        // Sort buttons
-        const sortDateBtn = document.getElementById('sortDateBtn');
-        const sortGroupBtn = document.getElementById('sortGroupBtn');
-        const sortTitleBtn = document.getElementById('sortTitleBtn');
-        const sortRsvpsBtn = document.getElementById('sortRsvpsBtn');
-
-        [sortDateBtn, sortGroupBtn, sortTitleBtn, sortRsvpsBtn].forEach(btn => {
-            if (btn) {
-                btn.addEventListener('click', function() {
-                    // Remove active class from all sort buttons
-                    [sortDateBtn, sortGroupBtn, sortTitleBtn, sortRsvpsBtn].forEach(b => {
-                        b.classList.remove('btn-primary');
-                        b.classList.add('btn-outline-primary');
-                    });
-                    
-                    // Add active class to clicked button
-                    this.classList.remove('btn-outline-primary');
-                    this.classList.add('btn-primary');
-                    
-                    // Update sort filter
-                    const sortType = this.id.replace('sort', '').replace('Btn', '').toLowerCase();
-                    updateFilters({ sort: sortType });
-                });
-            }
-        });
-
-        // Order toggle button
-        const orderToggleBtn = document.getElementById('orderToggleBtn');
-        if (orderToggleBtn) {
-            orderToggleBtn.addEventListener('click', function() {
-                const newOrder = currentFilters.order === 'desc' ? 'asc' : 'desc';
-                updateFilters({ order: newOrder });
-                
-                // Update button icon
-                const icon = this.querySelector('.material-icons');
-                if (icon) {
-                    icon.textContent = newOrder === 'desc' ? 'arrow_downward' : 'arrow_upward';
-                }
-            });
-        }
-
-        // Adult toggle button
-        const adultToggleBtn = document.getElementById('adultToggleBtn');
-        if (adultToggleBtn) {
-            adultToggleBtn.addEventListener('click', function() {
-                const newAdult = currentFilters.adult === 'true' ? 'false' : 'true';
-                updateFilters({ adult: newAdult });
-                
-                // Update button text
-                const toggleText = this.querySelector('.toggle-text');
-                if (toggleText) {
-                    toggleText.textContent = newAdult === 'true' ? 'Hide 18+/21+' : 'Show 18+/21+';
-                }
-            });
-        }
-
-        // Clear all button
-        const clearAllBtn = document.getElementById('clearAllBtn');
-        if (clearAllBtn) {
-            clearAllBtn.addEventListener('click', function() {
-                // Reset all filters
-                currentFilters = {
-                    search: '',
-                    sort: '',
-                    order: '',
-                    adult: 'false',
-                    view: 'calendar',
-                    mileage: '50'
-                };
-                
-                // Clear search input
-                if (searchInput) searchInput.value = '';
-                
-                // Reset mileage slider
-                if (mileageRange) mileageRange.value = '50';
-                
-                // Reset button states
-                [sortDateBtn, sortGroupBtn, sortTitleBtn, sortRsvpsBtn].forEach(btn => {
-                    if (btn) {
-                        btn.classList.remove('btn-primary');
-                        btn.classList.add('btn-outline-primary');
-                    }
-                });
-                
-                // Update URL and reload
-                updateFilters(currentFilters);
-            });
-        }
-
-        // Clear filters button in empty state
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.id === 'clearFiltersBtn') {
-                // Reset all filters
-                currentFilters = {
-                    search: '',
-                    sort: '',
-                    order: '',
-                    adult: 'false',
-                    view: 'calendar',
-                    mileage: '50'
-                };
-                
-                // Clear search input
-                if (searchInput) searchInput.value = '';
-                
-                // Reset mileage slider
-                if (mileageRange) mileageRange.value = '50';
-                
-                // Reset button states
-                [sortDateBtn, sortGroupBtn, sortTitleBtn, sortRsvpsBtn].forEach(btn => {
-                    if (btn) {
-                        btn.classList.remove('btn-primary');
-                        btn.classList.add('btn-outline-primary');
-                    }
-                });
-                
-                // Update URL and reload
-                updateFilters(currentFilters);
-            }
-        });
-
-        // Search input with debouncing
+    // Search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('.search-input-modern');
         let searchTimeout;
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    updateFilters({ search: this.value });
-                    }, 500);
-            });
-        }
 
-
-
-        // Manual location functionality
-        if (manualLocationBtn && manualLocationInput) {
-            const manualLocationContainer = document.getElementById('manualLocationContainer');
-
-        manualLocationBtn.addEventListener('click', function() {
-                // Toggle the input field visibility
-                if (manualLocationContainer.style.display === 'none') {
-                    manualLocationContainer.style.display = 'block';
-                manualLocationInput.focus();
-                    manualLocationBtn.innerHTML = '<span class="material-icons me-1">check</span>Save Location';
-            } else {
-                    const location = manualLocationInput.value.trim();
-                    if (location) {
-                        // Show response popup
-                        locationResponseText.textContent = `Location set to: ${location}`;
-                        manualLocationResponse.style.display = 'block';
-                        
-                        // Hide input and reset button
-                        manualLocationContainer.style.display = 'none';
-                manualLocationInput.value = '';
-                        manualLocationBtn.innerHTML = '<span class="material-icons me-1">edit_location</span>Manual Location';
-                        
-                        // Hide response after 3 seconds
-                        setTimeout(() => {
-                            manualLocationResponse.style.display = 'none';
-                        }, 3000);
-                    } else {
-                        locationResponseText.textContent = 'Please enter a location first.';
-                        manualLocationResponse.style.display = 'block';
-                        
-                        // Hide response after 3 seconds
-                        setTimeout(() => {
-                            manualLocationResponse.style.display = 'none';
-                        }, 3000);
-                    }
-                }
-            });
-
-            // Also trigger on Enter key
-        manualLocationInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                    manualLocationBtn.click();
-            }
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const form = searchInput.closest('form');
+                form.submit();
+            }, 500);
         });
-        }
     });
 </script>
-
-<style>
-    /* Prevent scrolling past footer */
-    body {
-        overflow-x: hidden;
-    }
-    
-    .page-wrapper {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .main-content {
-        flex: 1;
-    }
-    
-    footer {
-        margin-top: auto;
-    }
-</style>
 {% endblock %} 
