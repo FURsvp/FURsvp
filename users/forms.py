@@ -111,7 +111,7 @@ class UserPublicProfileForm(forms.ModelForm):
             instance.save()
             if 'email' in self.cleaned_data:
                 instance.user.email = self.cleaned_data['email']
-                instance.user.save()
+                instance.user.save(update_fields=['email'])
         return instance
 
 class GroupForm(forms.ModelForm):
