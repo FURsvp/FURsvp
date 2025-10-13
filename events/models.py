@@ -150,6 +150,10 @@ class RSVP(models.Model):
     question1 = models.CharField(max_length=255, null=True, blank=True, help_text="Organizer-only question 1 (visible only to event organizers)")
     question2 = models.CharField(max_length=255, null=True, blank=True, help_text="Organizer-only question 2 (visible only to event organizers)")
     question3 = models.CharField(max_length=255, null=True, blank=True, help_text="Organizer-only question 3 (visible only to event organizers)")
+    
+    # Badge customization fields
+    accessibility_needs = models.BooleanField(default=False, help_text="Show accessibility indicator on badge")
+    custom_rank = models.CharField(max_length=50, null=True, blank=True, help_text="Custom rank/role label for badge (e.g. 'Sponsor', 'VIP', 'Staff')")
 
     class Meta:
         unique_together = ['event', 'user']

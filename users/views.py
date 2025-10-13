@@ -71,6 +71,9 @@ def pending_approval(request):
 
 @login_required
 def profile(request):
+    # Refresh user and profile from database to ensure we have latest data
+    request.user.refresh_from_db()
+    request.user.profile.refresh_from_db()
     
     user_events = request.user.event_set.all().order_by('date')
     
@@ -138,6 +141,10 @@ def profile(request):
             # Create a mutable copy of request.POST
             post_data = request.POST.copy()
 
+            # Refresh profile from database to avoid stale data
+            request.user.refresh_from_db()
+            request.user.profile.refresh_from_db()
+
             # If profile picture is not being updated via the modal, ensure its value is preserved
             if 'profile_picture_base64' not in post_data and request.user.profile.profile_picture_base64:
                 post_data['profile_picture_base64'] = request.user.profile.profile_picture_base64
@@ -151,6 +158,7 @@ def profile(request):
                 
                 # Save profile settings
                 profile = profile_form.save()
+                messages.success(request, 'Profile updated successfully!')
                 return redirect('profile')
             else:
                 messages.error(request, f'Error updating profile settings: {profile_form.errors}', extra_tags='admin_notification')

@@ -20,6 +20,7 @@ import calendar
 from django.forms.utils import ErrorList
 from events.utils import post_to_telegram_channel
 from django.urls import reverse
+from django.conf import settings
 import os
 import json
 import requests
@@ -1179,3 +1180,505 @@ def blog(request):
         'bluesky_profile': profile,
     }
     return render(request, 'events/blog.html', context)
+
+@login_required
+def export_attendees_csv(request, event_id):
+    """Export attendee data as CSV"""
+    import csv
+    
+    event = get_object_or_404(Event, pk=event_id)
+    
+    # Check permissions
+    is_organizer = request.user == event.organizer or request.user.is_superuser
+    can_access_group = False
+    if event.group:
+        can_access_group = GroupRole.objects.filter(user=request.user, group=event.group).exists()
+        if not can_access_group:
+            can_access_group = GroupDelegation.objects.filter(delegated_user=request.user, group=event.group).exists()
+    
+    if not (is_organizer or can_access_group):
+        return HttpResponseForbidden("You don't have permission to export attendees.")
+    
+    # Create CSV response
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="attendees_{event.title.replace(" ", "_")}_{event.date}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['Badge Number', 'Name', 'Username', 'Status', 'Email', 'Telegram', 'Discord', 'RSVP Date', 'Question 1', 'Question 2', 'Question 3'])
+    
+    # Get all RSVPs ordered by timestamp (first come, first served)
+    rsvps = event.rsvps.filter(status__in=['confirmed', 'waitlisted']).order_by('timestamp').select_related('user__profile')
+    
+    for idx, rsvp in enumerate(rsvps, start=1):
+        if rsvp.user:
+            profile = rsvp.user.profile if hasattr(rsvp.user, 'profile') else None
+            name = profile.get_display_name() if profile else rsvp.user.username
+            email = rsvp.user.email
+            telegram = profile.telegram_username if profile else ''
+            discord = profile.discord_username if profile else ''
+        else:
+            name = rsvp.name or 'Anonymous'
+            email = ''
+            telegram = ''
+            discord = ''
+        
+        writer.writerow([
+            idx,  # Badge number
+            name,
+            rsvp.user.username if rsvp.user else '',
+            rsvp.get_status_display(),
+            email,
+            telegram,
+            discord,
+            rsvp.timestamp.strftime('%Y-%m-%d %H:%M') if rsvp.timestamp else '',
+            rsvp.question1 or '',
+            rsvp.question2 or '',
+            rsvp.question3 or '',
+        ])
+    
+    return response
+
+@login_required
+def generate_badges(request, event_id):
+    """Generate printable badges with QR codes"""
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.units import inch
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.utils import ImageReader
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    from io import BytesIO
+    import qrcode
+    
+    # Try to register Baloo 2 fonts (if available)
+    try:
+        # Register Baloo 2 fonts from static/fonts directory
+        fonts_dir = os.path.join(settings.BASE_DIR, 'static', 'fonts')
+        baloo2_bold_path = os.path.join(fonts_dir, 'Baloo2-Bold.ttf')
+        baloo2_extrabold_path = os.path.join(fonts_dir, 'Baloo2-ExtraBold.ttf')
+        
+        if os.path.exists(baloo2_bold_path):
+            pdfmetrics.registerFont(TTFont('Baloo2-Bold', baloo2_bold_path))
+        if os.path.exists(baloo2_extrabold_path):
+            pdfmetrics.registerFont(TTFont('Baloo2-ExtraBold', baloo2_extrabold_path))
+            name_font = 'Baloo2-ExtraBold'  # Use ExtraBold for names (bolder)
+        else:
+            name_font = 'Baloo2-Bold'
+        
+        font_name = 'Baloo2-Bold'  # For smaller text
+        if not os.path.exists(baloo2_bold_path):
+            font_name = 'Helvetica-Bold'
+            name_font = 'Helvetica-Bold'
+    except Exception as e:
+        print(f"Error loading Baloo 2 font: {e}")
+        font_name = 'Helvetica-Bold'
+        name_font = 'Helvetica-Bold'
+    
+    event = get_object_or_404(Event, pk=event_id)
+    
+    # Check permissions
+    is_organizer = request.user == event.organizer or request.user.is_superuser
+    can_access_group = False
+    if event.group:
+        can_access_group = GroupRole.objects.filter(user=request.user, group=event.group).exists()
+        if not can_access_group:
+            can_access_group = GroupDelegation.objects.filter(delegated_user=request.user, group=event.group).exists()
+    
+    if not (is_organizer or can_access_group):
+        return HttpResponseForbidden("You don't have permission to generate badges.")
+    
+    # Get custom badge order if provided, otherwise use default (timestamp order)
+    badge_order = request.GET.get('order', '').split(',') if request.GET.get('order') else []
+    
+    # Get all confirmed RSVPs
+    rsvps = event.rsvps.filter(status__in=['confirmed', 'waitlisted']).order_by('timestamp').select_related('user__profile')
+    
+    # Reorder if custom order provided
+    if badge_order:
+        rsvp_dict = {str(rsvp.id): rsvp for rsvp in rsvps}
+        ordered_rsvps = []
+        for rsvp_id in badge_order:
+            if rsvp_id in rsvp_dict:
+                ordered_rsvps.append(rsvp_dict[rsvp_id])
+        # Add any remaining RSVPs not in the custom order
+        ordered_rsvps.extend([r for r in rsvps if str(r.id) not in badge_order])
+        rsvps = ordered_rsvps
+    
+    # Create PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="badge_stickers_{event.title.replace(" ", "_")}.pdf"'
+    
+    p = canvas.Canvas(response, pagesize=letter)
+    width, height = letter
+    
+    # Horizontal sticker badge dimensions (8 stickers per page, 2x8 grid)
+    # Each badge is wider than it is tall (horizontal name tag format)
+    stickers_per_row = 2
+    stickers_per_col = 8
+    badge_width = (width - 60) / stickers_per_row  # Wider badges
+    badge_height = (height - 80) / stickers_per_col  # Shorter badges (50% of previous height)
+    
+    for idx, rsvp in enumerate(rsvps):
+        # Calculate position (2x4 grid for horizontal stickers)
+        col = idx % stickers_per_row
+        row = (idx // stickers_per_row) % stickers_per_col
+        x = 30 + col * badge_width
+        y = height - 40 - (row + 1) * badge_height
+        
+        # Start new page every 16 stickers
+        if idx > 0 and idx % (stickers_per_row * stickers_per_col) == 0:
+            p.showPage()
+        
+        # Draw sticker border (rounded rectangle effect with thicker border)
+        p.setLineWidth(2)
+        p.roundRect(x + 5, y + 5, badge_width - 5, badge_height - 5, 5)
+        p.setLineWidth(1)
+        
+        # Get attendee info
+        if rsvp.user:
+            profile = rsvp.user.profile if hasattr(rsvp.user, 'profile') else None
+            name = profile.get_display_name() if profile else rsvp.user.username
+        else:
+            name = rsvp.name or 'Anonymous'
+        
+        # Badge number (using position in list)
+        badge_num = idx + 1
+        
+        # Generate QR code for organizer check-in
+        check_in_url = request.build_absolute_uri(
+            reverse('checkin_attendee', kwargs={'event_id': event.id, 'rsvp_id': rsvp.id})
+        )
+        qr = qrcode.QRCode(version=1, box_size=4, border=1)
+        qr.add_data(check_in_url)
+        qr.make(fit=True)
+        qr_img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Convert QR code to ImageReader
+        qr_buffer = BytesIO()
+        qr_img.save(qr_buffer, format='PNG')
+        qr_buffer.seek(0)
+        qr_reader = ImageReader(qr_buffer)
+        
+        # Draw QR code (small, at top left corner)
+        qr_size = 0.375 * inch  # 25% bigger than before
+        p.drawImage(qr_reader, x + 12, y + badge_height - qr_size - 10, qr_size, qr_size)
+        
+        # Draw accessibility icon if needed (next to QR code)
+        if rsvp.accessibility_needs:
+            # Use the official accessibility SVG icon
+            from svglib.svglib import svg2rlg
+            from reportlab.graphics import renderPDF
+            
+            icon_size = qr_size  # Match QR code size
+            icon_x = x + 12 + qr_size + 6
+            icon_y = y + badge_height - qr_size - 10
+            
+            # Draw black square background
+            p.setFillColorRGB(0, 0, 0)
+            p.rect(icon_x, icon_y, icon_size, icon_size, fill=1, stroke=0)
+            
+            # Try to load and render the SVG
+            try:
+                svg_path = os.path.join(settings.BASE_DIR, 'static', 'accessible.svg')
+                if os.path.exists(svg_path):
+                    # Load SVG as ReportLab drawing
+                    drawing = svg2rlg(svg_path)
+                    if drawing:
+                        # Make all paths white
+                        from reportlab.graphics.shapes import Path
+                        from reportlab.lib import colors
+                        
+                        def make_white(group):
+                            """Recursively make all shapes white"""
+                            for item in group.contents:
+                                if hasattr(item, 'fillColor'):
+                                    item.fillColor = colors.white
+                                if hasattr(item, 'strokeColor'):
+                                    item.strokeColor = colors.white
+                                if hasattr(item, 'contents'):
+                                    make_white(item)
+                        
+                        make_white(drawing)
+                        
+                        # Scale to fit icon size with padding (SVG is 1224x792)
+                        # Scale to 85% of icon size to add some padding
+                        target_size = icon_size * 1.25
+                        scale_factor = target_size / max(drawing.width, drawing.height)
+                        
+                        # Calculate centered position
+                        scaled_width = drawing.width * scale_factor
+                        scaled_height = drawing.height * scale_factor
+                        offset_x = (icon_size - scaled_width) / 2
+                        offset_y = (icon_size - scaled_height) / 2
+                        
+                        drawing.width = scaled_width
+                        drawing.height = scaled_height
+                        drawing.scale(scale_factor, scale_factor)
+                        
+                        # Render the drawing on the canvas, centered
+                        renderPDF.draw(drawing, p, icon_x + offset_x, icon_y + offset_y)
+                else:
+                    # Fallback: simple icon if SVG not found
+                    p.saveState()
+                    p.setFillColorRGB(1, 1, 1)
+                    center_x = icon_x + icon_size / 2
+                    center_y = icon_y + icon_size / 2
+                    # Simple wheelchair icon
+                    p.circle(center_x + icon_size * 0.12, center_y + icon_size * 0.25, icon_size * 0.13, fill=1)
+                    p.setLineWidth(icon_size * 0.10)
+                    p.line(center_x - icon_size * 0.20, center_y + icon_size * 0.08,
+                           center_x + icon_size * 0.30, center_y + icon_size * 0.08)
+                    p.circle(center_x + icon_size * 0.02, center_y - icon_size * 0.08, icon_size * 0.24, fill=0, stroke=1)
+                    p.restoreState()
+            except Exception as e:
+                # Fallback: simple icon if SVG rendering fails
+                print(f"SVG rendering error: {e}")
+                p.saveState()
+                p.setFillColorRGB(1, 1, 1)
+                center_x = icon_x + icon_size / 2
+                center_y = icon_y + icon_size / 2
+                p.circle(center_x + icon_size * 0.12, center_y + icon_size * 0.25, icon_size * 0.13, fill=1)
+                p.setLineWidth(icon_size * 0.10)
+                p.line(center_x - icon_size * 0.20, center_y + icon_size * 0.08,
+                       center_x + icon_size * 0.30, center_y + icon_size * 0.08)
+                p.circle(center_x + icon_size * 0.02, center_y - icon_size * 0.08, icon_size * 0.24, fill=0, stroke=1)
+                p.restoreState()
+        
+        # Draw name (LARGE and centered - main feature of badge) - using BOLD font
+        p.setFont(name_font, 32)
+        # Center the name in the middle of the badge
+        text_width = p.stringWidth(name, name_font, 32)
+        if text_width > badge_width - 40:
+            # If name is too long, use smaller font
+            p.setFont(name_font, 28)
+            text_width = p.stringWidth(name, name_font, 28)
+            if text_width > badge_width - 40:
+                # Still too long, use even smaller
+                p.setFont(name_font, 22)
+                text_width = p.stringWidth(name, name_font, 22)
+                if text_width > badge_width - 40:
+                    # Truncate if still too long
+                    max_name_length = 20
+                    name = name[:max_name_length] + "..." if len(name) > max_name_length else name
+                    text_width = p.stringWidth(name, name_font, 22)
+        
+        name_x = x + (badge_width - text_width) / 2
+        name_y = y + badge_height / 2 - 18  # Moved down a bit to fit better
+        p.drawString(name_x, name_y, name)
+        
+        # Draw badge number (small, bottom left)
+        p.setFont(font_name, 14)
+        p.drawString(x + 15, y + 15, f"{badge_num}")
+        
+        # Draw rank/status label (small, bottom right)
+        p.setFont(font_name, 9)
+        rank_label = rsvp.custom_rank if rsvp.custom_rank else rsvp.get_status_display()
+        rank_width = p.stringWidth(rank_label.upper(), font_name, 9)
+        p.drawString(x + badge_width - rank_width - 15, y + 15, rank_label.upper())
+    
+    p.save()
+    return response
+
+@login_required
+def checkin_attendee(request, event_id, rsvp_id):
+    """Check-in page accessible via QR code on badges"""
+    event = get_object_or_404(Event, pk=event_id)
+    rsvp = get_object_or_404(RSVP, pk=rsvp_id, event=event)
+    
+    # Check permissions
+    is_organizer = request.user == event.organizer or request.user.is_superuser
+    can_access_group = False
+    if event.group:
+        can_access_group = GroupRole.objects.filter(user=request.user, group=event.group).exists()
+        if not can_access_group:
+            can_access_group = GroupDelegation.objects.filter(delegated_user=request.user, group=event.group).exists()
+    
+    if not (is_organizer or can_access_group):
+        return HttpResponseForbidden("You don't have permission to check in attendees.")
+    
+    if request.method == 'POST':
+        # Mark as checked in (we'll add a checked_in field to RSVP model)
+        # For now, just show success message
+        messages.success(request, f'Successfully checked in {rsvp.user.profile.get_display_name() if rsvp.user and hasattr(rsvp.user, "profile") else rsvp.name}')
+        return redirect('event_detail', event_id=event.id)
+    
+    context = {
+        'event': event,
+        'rsvp': rsvp,
+        'attendee_name': rsvp.user.profile.get_display_name() if rsvp.user and hasattr(rsvp.user, 'profile') else (rsvp.name or 'Anonymous'),
+    }
+    return render(request, 'events/checkin.html', context)
+
+@login_required
+def generate_checkin_sheet(request, event_id):
+    """Generate a printable check-in sheet with names and checkboxes"""
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.units import inch
+    from reportlab.pdfgen import canvas
+    from reportlab.lib import colors
+    
+    event = get_object_or_404(Event, pk=event_id)
+    
+    # Check permissions
+    is_organizer = request.user == event.organizer or request.user.is_superuser
+    can_access_group = False
+    if event.group:
+        can_access_group = GroupRole.objects.filter(user=request.user, group=event.group).exists()
+        if not can_access_group:
+            can_access_group = GroupDelegation.objects.filter(delegated_user=request.user, group=event.group).exists()
+    
+    if not (is_organizer or can_access_group):
+        return HttpResponseForbidden("You don't have permission to generate check-in sheets.")
+    
+    # Get all confirmed RSVPs
+    rsvps = event.rsvps.filter(status__in=['confirmed', 'waitlisted']).order_by('timestamp').select_related('user__profile')
+    
+    # Create PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="checkin_sheet_{event.title.replace(" ", "_")}.pdf"'
+    
+    p = canvas.Canvas(response, pagesize=letter)
+    width, height = letter
+    
+    # Header
+    p.setFont("Helvetica-Bold", 18)
+    p.drawString(50, height - 50, f"Check-in Sheet: {event.title}")
+    
+    p.setFont("Helvetica", 12)
+    p.drawString(50, height - 75, f"Date: {event.date.strftime('%B %d, %Y')}")
+    p.drawString(50, height - 95, f"Total Attendees: {rsvps.count()}")
+    
+    # Draw line
+    p.line(50, height - 105, width - 50, height - 105)
+    
+    # Starting position for attendee list
+    y_position = height - 135
+    line_height = 45  # Increased to accommodate more info
+    checkbox_size = 18
+    
+    for idx, rsvp in enumerate(rsvps, start=1):
+        # Check if we need a new page
+        if y_position < 100:
+            p.showPage()
+            # Repeat header on new page
+            p.setFont("Helvetica-Bold", 18)
+            p.drawString(50, height - 50, f"Check-in Sheet: {event.title} (cont.)")
+            p.line(50, height - 65, width - 50, height - 65)
+            y_position = height - 95
+        
+        # Draw checkbox
+        p.rect(50, y_position - checkbox_size + 4, checkbox_size, checkbox_size)
+        
+        # Get attendee info
+        if rsvp.user:
+            profile = rsvp.user.profile if hasattr(rsvp.user, 'profile') else None
+            name = profile.get_display_name() if profile else rsvp.user.username
+            email = rsvp.user.email
+            discord = profile.discord_username if profile else None
+            telegram = profile.telegram_username if profile else None
+        else:
+            name = rsvp.name or 'Anonymous'
+            email = ''
+            discord = None
+            telegram = None
+        
+        # Draw badge number
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(80, y_position, f"#{idx}")
+        
+        # Draw name
+        p.setFont("Helvetica-Bold", 14)
+        name_display = name[:45]  # Truncate if too long
+        
+        # Add custom rank badge if present
+        if rsvp.custom_rank:
+            name_display += f"  [{rsvp.custom_rank}]"
+        
+        p.drawString(120, y_position, name_display[:55])
+        
+        # Draw status and email on second line
+        p.setFont("Helvetica", 10)
+        status_text = f"Status: {rsvp.get_status_display()}"
+        if email:
+            status_text += f"  |  {email[:35]}"
+        p.drawString(120, y_position - 12, status_text)
+        
+        # Draw additional info on third line
+        info_parts = []
+        if rsvp.accessibility_needs:
+            info_parts.append("♿ Accessibility")
+        if discord:
+            info_parts.append(f"Discord: {discord[:20]}")
+        if telegram:
+            info_parts.append(f"TG: @{telegram[:15]}")
+        
+        if info_parts:
+            p.setFont("Helvetica", 9)
+            p.drawString(120, y_position - 24, "  |  ".join(info_parts)[:70])
+        
+        y_position -= line_height
+    
+    p.save()
+    return response
+
+@login_required
+def update_badge_settings(request, event_id, rsvp_id):
+    """AJAX endpoint to update badge settings for an attendee"""
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'POST required'}, status=400)
+    
+    event = get_object_or_404(Event, pk=event_id)
+    rsvp = get_object_or_404(RSVP, pk=rsvp_id, event=event)
+    
+    # Check permissions
+    is_organizer = request.user == event.organizer or request.user.is_superuser
+    can_access_group = False
+    if event.group:
+        can_access_group = GroupRole.objects.filter(user=request.user, group=event.group).exists()
+        if not can_access_group:
+            can_access_group = GroupDelegation.objects.filter(delegated_user=request.user, group=event.group).exists()
+    
+    if not (is_organizer or can_access_group):
+        return JsonResponse({'status': 'error', 'message': 'Permission denied'}, status=403)
+    
+    # Update fields
+    if 'accessibility_needs' in request.POST:
+        rsvp.accessibility_needs = request.POST.get('accessibility_needs') == 'true'
+    
+    if 'custom_rank' in request.POST:
+        custom_rank = request.POST.get('custom_rank', '').strip()
+        rsvp.custom_rank = custom_rank if custom_rank else None
+    
+    rsvp.save()
+    
+    return JsonResponse({
+        'status': 'success',
+        'message': 'Badge settings updated',
+        'accessibility_needs': rsvp.accessibility_needs,
+        'custom_rank': rsvp.custom_rank or ''
+    })
+
+@login_required
+def organizer_tools(request, event_id):
+    """Organizer tools page for managing badges and exports"""
+    event = get_object_or_404(Event, pk=event_id)
+    
+    # Check permissions
+    is_organizer = request.user == event.organizer or request.user.is_superuser
+    can_access_group = False
+    if event.group:
+        can_access_group = GroupRole.objects.filter(user=request.user, group=event.group).exists()
+        if not can_access_group:
+            can_access_group = GroupDelegation.objects.filter(delegated_user=request.user, group=event.group).exists()
+    
+    if not (is_organizer or can_access_group):
+        return HttpResponseForbidden("You don't have permission to access organizer tools.")
+    
+    # Get all confirmed RSVPs ordered by timestamp
+    rsvps = event.rsvps.filter(status__in=['confirmed', 'waitlisted']).order_by('timestamp').select_related('user__profile')
+    
+    context = {
+        'event': event,
+        'rsvps': rsvps,
+    }
+    return render(request, 'events/organizer_tools.html', context)

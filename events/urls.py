@@ -20,4 +20,10 @@ urlpatterns = [
     path('telegram/bot/', telegram_bot_webhook, name='telegram_bot_webhook'),
     path('event/<int:event_id>/rsvp_telegram/', rsvp_telegram, name='rsvp_telegram'),
     path('blog/', blog, name='blog'),
+    path('event/<int:event_id>/organizer-tools/', views.organizer_tools, name='organizer_tools'),
+    path('event/<int:event_id>/export-csv/', views.export_attendees_csv, name='export_attendees_csv'),
+    path('event/<int:event_id>/generate-badges/', views.generate_badges, name='generate_badges'),
+    path('event/<int:event_id>/generate-checkin-sheet/', views.generate_checkin_sheet, name='generate_checkin_sheet'),
+    path('event/<int:event_id>/rsvp/<int:rsvp_id>/update-badge-settings/', views.update_badge_settings, name='update_badge_settings'),
+    path('event/<int:event_id>/checkin/<int:rsvp_id>/', views.checkin_attendee, name='checkin_attendee'),
 ] 

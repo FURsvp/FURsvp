@@ -18,3 +18,5 @@ qrcode
 phonenumbers
 django-sslserver
 atproto
+reportlab
+svglib

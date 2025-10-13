@@ -1,0 +1,300 @@
+{% extends "events/base.html" %}
+{% load static %}
+
+{% block title %}Organizer Tools - {{ event.title }} - FURsvp{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-3">
+                <i class="material-icons" style="vertical-align: middle;">build</i>
+                Organizer Tools
+            </h1>
+            <h3 class="text-muted">{{ event.title }}</h3>
+            <p class="text-muted">{{ event.date|date:"F d, Y" }}</p>
+            <a href="{% url 'event_detail' event.id %}" class="btn btn-secondary mb-3">
+                <i class="material-icons" style="vertical-align: middle;">arrow_back</i>
+                Back to Event
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="material-icons text-primary" style="vertical-align: middle;">file_download</i>
+                        Export Attendees
+                    </h4>
+                    <p class="card-text">Download a CSV file with all attendee information including badge numbers, contact details, and RSVP questions.</p>
+                    <a href="{% url 'export_attendees_csv' event.id %}" class="btn btn-primary">
+                        <i class="material-icons" style="vertical-align: middle;">download</i>
+                        Download CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="material-icons text-primary" style="vertical-align: middle;">badge</i>
+                        Generate Badge Stickers
+                    </h4>
+                    <p class="card-text">Create printable badge stickers with names, badge numbers, QR codes for organizer check-in, and accessibility icons where needed.</p>
+                    <p class="text-muted small"><i class="material-icons" style="font-size: 14px; vertical-align: middle;">info</i> Configure accessibility and rank per attendee below</p>
+                    <a href="{% url 'generate_badges' event.id %}" class="btn btn-primary" id="generateBadgesBtn">
+                        <i class="material-icons" style="vertical-align: middle;">print</i>
+                        Generate Badge Stickers
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="material-icons text-primary" style="vertical-align: middle;">checklist</i>
+                        Check-in Sheet
+                    </h4>
+                    <p class="card-text">Generate a simple printable sheet with attendee names and checkboxes for manual check-in at the event.</p>
+                    <a href="{% url 'generate_checkin_sheet' event.id %}" class="btn btn-primary">
+                        <i class="material-icons" style="vertical-align: middle;">print</i>
+                        Generate Check-in Sheet
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="material-icons text-primary" style="vertical-align: middle;">reorder</i>
+                        Attendee List & Badge Order
+                    </h4>
+                    <p class="card-text mb-3">By default, badge numbers are assigned based on RSVP timestamp (first come, first served). Drag and drop to reorder attendees and customize badge numbers.</p>
+                    
+                    <div class="alert alert-info">
+                        <i class="material-icons" style="vertical-align: middle;">info</i>
+                        Total Attendees: <strong>{{ rsvps.count }}</strong>
+                    </div>
+
+                    <div id="attendee-list" class="list-group mb-3">
+                        {% for rsvp in rsvps %}
+                        <div class="list-group-item" data-rsvp-id="{{ rsvp.id }}" draggable="true">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="badge bg-primary badge-number" style="font-size: 1.2rem; min-width: 50px;">
+                                    #{{ forloop.counter }}
+                                </span>
+                                <i class="material-icons text-muted" style="cursor: move;">drag_indicator</i>
+                                <div style="min-width: 200px;">
+                                    <strong>
+                                        {% if rsvp.user and rsvp.user.profile %}
+                                            {{ rsvp.user.profile.get_display_name }}
+                                        {% elif rsvp.user %}
+                                            {{ rsvp.user.username }}
+                                        {% else %}
+                                            {{ rsvp.name|default:"Anonymous" }}
+                                        {% endif %}
+                                    </strong>
+                                    <span class="text-muted">
+                                        ({{ rsvp.get_status_display }})
+                                    </span>
+                                </div>
+                                <div class="form-check mb-0" style="min-width: 180px;">
+                                    <input class="form-check-input accessibility-checkbox" type="checkbox" 
+                                           id="accessibility-{{ rsvp.id }}" 
+                                           data-rsvp-id="{{ rsvp.id }}"
+                                           {% if rsvp.accessibility_needs %}checked{% endif %}>
+                                    <label class="form-check-label" for="accessibility-{{ rsvp.id }}">
+                                        ♿ Accessibility Needs
+                                    </label>
+                                </div>
+                                <div class="input-group input-group-sm" style="max-width: 350px;">
+                                    <span class="input-group-text">Rank/Role:</span>
+                                    <input type="text" class="form-control rank-input" 
+                                           placeholder="e.g., Sponsor, VIP, Staff" 
+                                           data-rsvp-id="{{ rsvp.id }}"
+                                           value="{{ rsvp.custom_rank|default:'' }}">
+                                    <button class="btn btn-outline-secondary save-rank-btn" type="button" data-rsvp-id="{{ rsvp.id }}" title="Save">
+                                        <i class="material-icons" style="font-size: 18px;">save</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="list-group-item text-center text-muted">
+                            No attendees yet
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-secondary" id="resetOrder">
+                        <i class="material-icons" style="vertical-align: middle;">refresh</i>
+                        Reset to Default Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const eventId = {{ event.id }};
+    
+    // Handle individual accessibility checkboxes
+    document.querySelectorAll('.accessibility-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const rsvpId = this.getAttribute('data-rsvp-id');
+            updateBadgeSettings(rsvpId, {
+                accessibility_needs: this.checked ? 'true' : 'false'
+            });
+        });
+    });
+    
+    // Handle rank/role save buttons
+    document.querySelectorAll('.save-rank-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const rsvpId = this.getAttribute('data-rsvp-id');
+            const rankInput = document.querySelector(`.rank-input[data-rsvp-id="${rsvpId}"]`);
+            updateBadgeSettings(rsvpId, {
+                custom_rank: rankInput.value
+            });
+        });
+    });
+    
+    // Function to update badge settings via AJAX
+    function updateBadgeSettings(rsvpId, data) {
+        fetch(`/event/${eventId}/rsvp/${rsvpId}/update-badge-settings/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: new URLSearchParams(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Show success feedback
+                showToast('Badge settings updated successfully', 'success');
+            } else {
+                showToast('Error updating settings: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error updating settings', 'error');
+        });
+    }
+    
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Simple toast notification function
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed top-0 end-0 m-3`;
+        toast.style.zIndex = '9999';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Drag and drop functionality
+    const attendeeList = document.getElementById('attendee-list');
+    let draggedItem = null;
+
+    attendeeList.addEventListener('dragstart', function(e) {
+        draggedItem = e.target.closest('.list-group-item');
+        e.dataTransfer.effectAllowed = 'move';
+        draggedItem.classList.add('opacity-50');
+    });
+
+    attendeeList.addEventListener('dragend', function(e) {
+        draggedItem.classList.remove('opacity-50');
+        updateBadgeNumbers();
+    });
+
+    attendeeList.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(attendeeList, e.clientY);
+        const draggable = draggedItem;
+        if (afterElement == null) {
+            attendeeList.appendChild(draggable);
+        } else {
+            attendeeList.insertBefore(draggable, afterElement);
+        }
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.list-group-item:not(.opacity-50)')];
+        
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function updateBadgeNumbers() {
+        const items = attendeeList.querySelectorAll('.list-group-item');
+        items.forEach((item, index) => {
+            const badgeNumber = item.querySelector('.badge-number');
+            if (badgeNumber) {
+                badgeNumber.textContent = `#${index + 1}`;
+            }
+        });
+    }
+
+    function getOrderedRsvpIds() {
+        const items = attendeeList.querySelectorAll('.list-group-item');
+        const ids = [];
+        items.forEach(item => {
+            const rsvpId = item.getAttribute('data-rsvp-id');
+            if (rsvpId) {
+                ids.push(rsvpId);
+            }
+        });
+        return ids.join(',');
+    }
+
+    // Generate badges with custom order
+    document.getElementById('regenerateBadgesOrdered').addEventListener('click', function() {
+        const order = getOrderedRsvpIds();
+        window.location.href = `{% url 'generate_badges' event.id %}?order=${order}`;
+    });
+
+    // Reset to default order
+    document.getElementById('resetOrder').addEventListener('click', function() {
+        location.reload();
+    });
+});
+</script>
+{% endblock %}
+
