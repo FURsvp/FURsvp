@@ -36,6 +36,8 @@ class Profile(models.Model):
     telegram_username = models.CharField(max_length=50, blank=True, null=True)
     telegram_id = models.BigIntegerField(blank=True, null=True, unique=True, help_text="Telegram user ID for authentication")
     can_post_blog = models.BooleanField(default=False, help_text='Can post blog posts')
+    is_verified = models.BooleanField(default=False, help_text='Has the user verified their email?')
+    verification_token = models.CharField(max_length=64, blank=True, null=True, help_text='Email verification token')
 
     class Meta:
         permissions = [
