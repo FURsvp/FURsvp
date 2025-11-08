@@ -19,6 +19,7 @@ MANAGE_PY="./manage.py"
 "$PYTHON_PATH" "$MANAGE_PY" migrate users
 "$PYTHON_PATH" "$MANAGE_PY" migrate events
 "$PYTHON_PATH" "$MANAGE_PY" createcachetable
+"$PYTHON_PATH" "$MANAGE_PY" collectstatic
 
 
 echo "Done!"
