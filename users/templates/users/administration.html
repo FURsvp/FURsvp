@@ -37,6 +37,11 @@
                         <i class="material-icons align-middle me-1">notifications</i> Send Notification
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit" type="button" role="tab" aria-controls="audit" aria-selected="false">
+                        <i class="material-icons align-middle me-1">history</i> Audit Log
+                    </button>
+                </li>
                 {% if user.profile.can_post_blog %}
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="blogmgmt-tab" data-bs-toggle="tab" data-bs-target="#blogmgmt" type="button" role="tab" aria-controls="blogmgmt" aria-selected="false">
@@ -524,6 +529,182 @@
                             </div>
                         </form>
                     </div>
+                </div>
+                <div class="tab-pane fade" id="audit" role="tabpanel" aria-labelledby="audit-tab">
+                    <h2 class="card-title h4 mb-4 text-primary fw-bold">
+                        <i class="material-icons me-2">history</i> Audit Log
+                    </h2>
+                    
+                    <!-- Audit Log Filters -->
+                    <div class="card bg-light border-0 rounded-3 mb-4">
+                        <div class="card-body">
+                            <form method="get" class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="audit_search" class="form-label">
+                                        <i class="material-icons align-middle me-1">search</i> Search
+                                    </label>
+                                    <input type="text" name="audit_search" id="audit_search" value="{{ audit_search }}" class="form-control" placeholder="Search audit logs...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="audit_user_filter" class="form-label">
+                                        <i class="material-icons align-middle me-1">person</i> Filter by User
+                                    </label>
+                                    <input type="text" name="audit_user_filter" id="audit_user_filter" value="{{ audit_user_filter }}" class="form-control" placeholder="Username...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="audit_action_filter" class="form-label">
+                                        <i class="material-icons align-middle me-1">category</i> Filter by Action
+                                    </label>
+                                    <select name="audit_action_filter" id="audit_action_filter" class="form-control">
+                                        <option value="">All Actions</option>
+                                        {% for action_code, action_name in audit_actions %}
+                                            <option value="{{ action_code }}" {% if audit_action_filter == action_code %}selected{% endif %}>{{ action_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="material-icons">filter_list</i> Filter
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Audit Log Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle caption-top mb-0" id="auditTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">schedule</i> Timestamp</th>
+                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">person</i> User</th>
+                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">category</i> Action</th>
+                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">description</i> Description</th>
+                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">group</i> Group</th>
+                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">event</i> Event</th>
+                                    <th scope="col" class="text-secondary"><i class="material-icons me-1 opacity-75">computer</i> IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log_entry in audit_logs %}
+                                <tr>
+                                    <td>
+                                        <small class="text-muted">{{ log_entry.timestamp|date:"Y-m-d H:i:s" }}</small>
+                                    </td>
+                                    <td>
+                                        {% if log_entry.user %}
+                                            <span class="fw-medium">{{ log_entry.user.username }}</span>
+                                            {% if log_entry.target_user and log_entry.target_user != log_entry.user %}
+                                                <small class="text-muted d-block">→ {{ log_entry.target_user.username }}</small>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">System</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary py-2 px-3 rounded-pill fw-normal">
+                                            {{ log_entry.get_action_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="text-wrap" style="max-width: 300px;">
+                                            {{ log_entry.description }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if log_entry.group %}
+                                            <span class="badge bg-info text-dark py-2 px-3 rounded-pill fw-normal">
+                                                {{ log_entry.group.name }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if log_entry.event %}
+                                            <span class="badge bg-success text-white py-2 px-3 rounded-pill fw-normal">
+                                                {{ log_entry.event.title }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ log_entry.ip_address|default:"-" }}</small>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="material-icons d-block mb-2 fs-1">history</i>
+                                        No audit log entries found.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Audit Log Pagination -->
+                    {% if audit_logs.paginator.num_pages > 1 %}
+                    <nav aria-label="Audit log pagination" class="mt-4">
+                        <ul class="pagination justify-content-center material-circular-pagination">
+                            {% if audit_logs.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link material-page-link" href="?audit_page=1{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}" aria-label="First">
+                                    <i class="material-icons" style="font-size: 24px;">first_page</i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link material-page-link" href="?audit_page={{ audit_logs.previous_page_number }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}" aria-label="Previous">
+                                    <i class="material-icons" style="font-size: 24px;">chevron_left</i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link material-page-link disabled">
+                                    <i class="material-icons" style="font-size: 24px;">first_page</i>
+                                </span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link material-page-link disabled">
+                                    <i class="material-icons" style="font-size: 24px;">chevron_left</i>
+                                </span>
+                            </li>
+                            {% endif %}
+                            {% for num in audit_logs.paginator.page_range %}
+                                {% if audit_logs.number == num %}
+                                    <li class="page-item active"><a class="page-link material-page-link active" href="#">{{ num }}</a></li>
+                                {% elif num > audit_logs.number|add:'-3' and num < audit_logs.number|add:'3' %}
+                                    <li class="page-item"><a class="page-link material-page-link" href="?audit_page={{ num }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if audit_logs.has_next %}
+                            <li class="page-item">
+                                <a class="page-link material-page-link" href="?audit_page={{ audit_logs.next_page_number }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}" aria-label="Next">
+                                    <i class="material-icons" style="font-size: 24px;">chevron_right</i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link material-page-link" href="?audit_page={{ audit_logs.paginator.num_pages }}{% if request.GET.user_page %}&user_page={{ request.GET.user_page }}{% endif %}{% if request.GET.group_page %}&group_page={{ request.GET.group_page }}{% endif %}{% if request.GET.user_search %}&user_search={{ request.GET.user_search }}{% endif %}{% if request.GET.group_search %}&group_search={{ request.GET.group_search }}{% endif %}{% if request.GET.audit_search %}&audit_search={{ request.GET.audit_search }}{% endif %}{% if request.GET.audit_user_filter %}&audit_user_filter={{ request.GET.audit_user_filter }}{% endif %}{% if request.GET.audit_action_filter %}&audit_action_filter={{ request.GET.audit_action_filter }}{% endif %}" aria-label="Last">
+                                    <i class="material-icons" style="font-size: 24px;">last_page</i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link material-page-link disabled">
+                                    <i class="material-icons" style="font-size: 24px;">chevron_right</i>
+                                </span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link material-page-link disabled">
+                                    <i class="material-icons" style="font-size: 24px;">last_page</i>
+                                </span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
                 </div>
                 {% if user.profile.can_post_blog %}
                 <div class="tab-pane fade" id="blogmgmt" role="tabpanel" aria-labelledby="blogmgmt-tab">
