@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from .forms import UserRegisterForm, UserProfileForm, AssistantAssignmentForm, UserPublicProfileForm, UserPasswordChangeForm
 from events.models import Group, RSVP, Event
 from events.forms import GroupForm, RenameGroupForm
@@ -42,6 +42,11 @@ from .forms import BlueskyBlogPostForm
 from django.contrib.auth.decorators import login_required, permission_required
 import os
 from atproto import Client, models as atproto_models
+import uuid
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
 
 # Create your views here.
 
@@ -49,16 +54,27 @@ def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.save()
             if not hasattr(user, 'profile'):
                 Profile.objects.create(user=user)
-            # Create welcome notification
-            create_notification(
-                user,
-                'Welcome to FURsvp! We\'re excited to have you join our community. You can now RSVP to events and connect with other members.',
-                link='/'
+            profile = user.profile
+            # Generate verification token
+            token = uuid.uuid4().hex
+            profile.verification_token = token
+            profile.is_verified = False
+            profile.save()
+            # Send verification email
+            verification_link = request.build_absolute_uri(f"/users/verify/{token}/")
+            send_mail(
+                'Verify your email address',
+                f'Welcome to FURsvp! Please verify your email by clicking this link: {verification_link}',
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
             )
-            return redirect('registration_success')
+            messages.info(request, 'A verification email has been sent to your address. Please verify to activate your account.')
+            return redirect('login')
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
@@ -68,6 +84,17 @@ def registration_success(request):
 
 def pending_approval(request):
     return render(request, 'users/pending_approval.html')
+
+def verify_email(request, token):
+    profile = get_object_or_404(Profile, verification_token=token)
+    if profile.is_verified:
+        messages.info(request, 'Your email is already verified.')
+    else:
+        profile.is_verified = True
+        profile.verification_token = None
+        profile.save()
+        messages.success(request, 'Your email has been verified! You can now log in.')
+    return redirect('login')
 
 @login_required
 def profile(request):
@@ -846,6 +873,21 @@ class CustomLoginView(LoginView):
         context['telegram_login_enabled'] = settings.TELEGRAM_LOGIN_ENABLED
         return context
 
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'users/password_reset.html'
+    email_template_name = 'users/password_reset_email.html'
+    subject_template_name = 'users/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'users/password_reset_done.html'
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'users/password_reset_confirm.html'
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'users/password_reset_complete.html'
+
 @login_required
 def twofa_settings(request):
     device = TOTPDevice.objects.filter(user=request.user, confirmed=True).first()
@@ -947,15 +989,18 @@ def custom_login(request):
             # First step: username/password
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
-                if device:
-                    request.session['pre_2fa_user_id'] = user.id
-                    request.session['pre_2fa_password'] = password
-                    show_2fa = True
-                    error = None
+                if not hasattr(user, 'profile') or not user.profile.is_verified:
+                    error = 'You must verify your email before logging in. Please check your inbox.'
                 else:
-                    login(request, user)
-                    return redirect('profile')
+                    device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
+                    if device:
+                        request.session['pre_2fa_user_id'] = user.id
+                        request.session['pre_2fa_password'] = password
+                        show_2fa = True
+                        error = None
+                    else:
+                        login(request, user)
+                        return redirect('profile')
             else:
                 error = 'Invalid username or password.'
     else:
@@ -988,3 +1033,10 @@ def api_user_by_telegram(request):
         })
     except Profile.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
+
+def approve_all_logged_in_users():
+    users = User.objects.exclude(last_login=None)
+    for user in users:
+        if hasattr(user, 'profile') and not user.profile.is_verified:
+            user.profile.is_verified = True
+            user.profile.save()
